@@ -16,7 +16,7 @@ one file at a time: each file is re-added deliberately, with dependencies and
 patterns brought up to their current latest versions along the way. See the
 commit history for a file-by-file record of that process.
 
-**Status:** actively in progress — not yet a runnable app.
+**Status:** backend complete (100% TypeScript) and independently runnable; frontend not yet started.
 
 ## 🧩 Stack
 
@@ -26,8 +26,9 @@ commit history for a file-by-file record of that process.
 
 ## 🖥 Getting Started
 
-> These instructions describe the target setup and will work once the
-> backend and frontend workspaces have been added.
+> Steps 1–4 (env, database, migrations, seed data) work today against the
+> backend alone. Step 5 (`yarn dev`) needs the frontend workspace, which
+> hasn't been added yet.
 
 ```shell
 yarn install
