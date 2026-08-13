@@ -47,6 +47,13 @@ yarn install
    yarn dev
    ```
 
+## 📋 Project Tracking
+
+Work on this fork is tracked two ways:
+
+- **[`todo.md`](todo.md)** — the primary, detailed record: a phase-by-phase written log of everything done and everything still open, with dates and the reasoning behind each decision. This is the source of truth.
+- **[GitHub Project board](https://github.com/users/Terrence721/projects/4)** — a Scrum-style Backlog/Planned/In Progress/Verification & QA/Done view of the same work, for a quick at-a-glance status without reading the full log. Kept in sync with [`todo.md`](todo.md).
+
 ## License
 
 MIT — see [LICENSE](LICENSE). Original work Copyright (c) 2021 RealWorld.
