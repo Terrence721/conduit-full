@@ -50,9 +50,29 @@ describe("models/index.js", () => {
     expect(db.sequelize.options.logging).toBe(false);
   });
 
-  test("exposes exactly sequelize + Sequelize until model files exist alongside it", () => {
+  test("exposes sequelize + Sequelize plus every model file alongside it", () => {
     const db = freshDb();
 
-    expect(Object.keys(db).sort()).toEqual(["Sequelize", "sequelize"]);
+    expect(Object.keys(db).sort()).toEqual([
+      "Article",
+      "Comment",
+      "Sequelize",
+      "Tag",
+      "User",
+      "sequelize",
+    ]);
+  });
+
+  test("wires every model's associate() correctly end to end", () => {
+    const db = freshDb();
+
+    expect(db.User.associations.Comments.foreignKey).toBe("userId");
+    expect(db.User.associations.Articles.foreignKey).toBe("userId");
+    expect(db.Article.associations.author.foreignKey).toBe("userId");
+    expect(db.Article.associations.Comments.foreignKey).toBe("articleId");
+    expect(db.Article.associations.tagList.foreignKey).toBe("articleId");
+    expect(db.Comment.associations.Article.foreignKey).toBe("articleId");
+    expect(db.Comment.associations.author.foreignKey).toBe("userId");
+    expect(db.Tag.associations.Articles.foreignKey).toBe("tagName");
   });
 });
