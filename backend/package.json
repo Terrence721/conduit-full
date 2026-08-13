@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "node --watch index.js",
     "sqlz": "sequelize-cli",
-    "start": "node index.js"
+    "start": "node index.js",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
