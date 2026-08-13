@@ -4,6 +4,7 @@
   "description": "RealWorld example app, built with React / Express.js / Sequelize / PostgreSQL including CRUD operations, authentication, routing, pagination, and more.",
   "private": true,
   "license": "MIT",
+  "type": "module",
   "packageManager": "yarn@1.22.22",
   "workspaces": [
     "backend",
@@ -13,11 +14,22 @@
     "dev": "concurrently --names 'Node,Vite' -c 'green,blue' 'yarn workspace backend dev' 'yarn workspace frontend dev'",
     "sqlz": "yarn workspace backend sqlz",
     "start": "yarn workspace frontend build && yarn workspace backend start",
-    "test": "vitest"
+    "test": "vitest",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@vitejs/plugin-react-swc": "^4.3.3",
     "concurrently": "^10.0.4",
+    "eslint": "^10.8.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.4",
+    "globals": "^17.11.0",
+    "prettier": "^3.9.6",
     "vitest": "^4.1.10"
   }
 }

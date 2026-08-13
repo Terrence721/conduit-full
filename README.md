@@ -1,5 +1,8 @@
 # 📝 Conduit — RealWorld Example App (Modernized Fork)
 
+[![Quality](https://github.com/Terrence721/conduit-full/actions/workflows/quality.yml/badge.svg)](https://github.com/Terrence721/conduit-full/actions/workflows/quality.yml)
+[![CodeQL](https://github.com/Terrence721/conduit-full/actions/workflows/codeql.yml/badge.svg)](https://github.com/Terrence721/conduit-full/actions/workflows/codeql.yml)
+
 Last updated: August 13, 2026
 
 This repository is an independently modernized fork of the
