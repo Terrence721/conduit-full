@@ -55,6 +55,17 @@ export default [
         "warn",
         { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
       ],
+      // The backend stays CommonJS by design (no ESM migration bundled into
+      // this TS migration - see todo.md), so require() is the expected way
+      // to pull in sibling modules, not a mistake to flag.
+      "@typescript-eslint/no-require-imports": "off",
+      // models/ hasn't been retrofitted to TypeScript yet (dedicated later
+      // pass - see todo.md), so anything crossing that boundary is
+      // necessarily `any` for now. Downgraded to warn, matching this
+      // project's existing no-unused-vars precedent, rather than off - it
+      // should keep being visible as debt to pay down once models are
+      // typed, not silenced.
+      "@typescript-eslint/no-explicit-any": "warn",
     },
   },
   {
