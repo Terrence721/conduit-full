@@ -1,6 +1,7 @@
 export {};
 
-const { buildTestDb, installTestDb } = require("../testUtils/testDb");
+import testDbModule from "../testUtils/testDb";
+const { buildTestDb, installTestDb } = testDbModule;
 const { bcryptCompare } = require("../helper/bcrypt");
 
 const loadUserController = async (db: any) => {

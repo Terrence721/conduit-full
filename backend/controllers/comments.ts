@@ -1,3 +1,6 @@
+import type { Request, Response, NextFunction } from "express";
+import models from "../models";
+
 const {
   NotFoundError,
   UnauthorizedError,
@@ -5,10 +8,10 @@ const {
   ForbiddenError,
 } = require("../helper/customErrors");
 const { appendFollowers } = require("../helper/helpers");
-const { Article, Comment, User } = require("../models");
+const { Article, Comment, User } = models;
 
 //? All Comments for Article
-const allComments = async (req, res, next) => {
+const allComments = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { loggedUser } = req;
     const { slug } = req.params;
@@ -33,7 +36,11 @@ const allComments = async (req, res, next) => {
 };
 
 //* Create Comment for Article
-const createComment = async (req, res, next) => {
+const createComment = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const { loggedUser } = req;
     if (!loggedUser) throw new UnauthorizedError();
@@ -62,7 +69,11 @@ const createComment = async (req, res, next) => {
 };
 
 //* Delete Comment for Article
-const deleteComment = async (req, res, next) => {
+const deleteComment = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const { loggedUser } = req;
     if (!loggedUser) throw new UnauthorizedError();
@@ -89,4 +100,4 @@ const deleteComment = async (req, res, next) => {
   }
 };
 
-module.exports = { allComments, createComment, deleteComment };
+export = { allComments, createComment, deleteComment };

@@ -3,19 +3,17 @@ export {};
 import express from "express";
 import request from "supertest";
 
-const { buildTestDb, installTestDb } = require("../../testUtils/testDb");
+import testDbModule from "../../testUtils/testDb";
+const { buildTestDb, installTestDb } = testDbModule;
 
 const loadApp = async (db: any) => {
   installTestDb(db);
   vi.resetModules();
-  // vi.resetModules() only resets Vitest's own .ts/ESM module graph, not
-  // Node's native require.cache - authentication.js (and its own internal
-  // require of helper/jwt) is plain CJS, so it has to be evicted by hand or
-  // it can keep a stale jwtVerify closure captured before JWT_KEY was
-  // stubbed in an earlier test.
-  delete require.cache[require.resolve("../../middleware/authentication")];
+  // authentication.ts and controllers/comments.ts are both .ts now, so
+  // vi.resetModules() handles them as part of Vitest's own module graph.
+  // helper/jwt.js is still plain CJS and holds a jwtVerify closure over
+  // JWT_KEY, so it still needs manual eviction.
   delete require.cache[require.resolve("../../helper/jwt")];
-  delete require.cache[require.resolve("../../controllers/comments")];
   const router = (await import("./comments")).default;
   const errorHandler = require("../../middleware/errorHandler");
 

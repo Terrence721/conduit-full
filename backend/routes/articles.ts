@@ -1,9 +1,10 @@
 import express from "express";
 import favoritesRoutes from "./articles/favorites";
 import commentsRoutes from "./articles/comments";
+import verifyToken from "../middleware/authentication";
+import articlesController from "../controllers/articles";
 
 const router = express.Router();
-const verifyToken = require("../middleware/authentication");
 const {
   allArticles,
   createArticle,
@@ -11,7 +12,7 @@ const {
   updateArticle,
   deleteArticle,
   articlesFeed,
-} = require("../controllers/articles");
+} = articlesController;
 
 //? All Articles - by Author/by Tag/Favorited by user
 router.get("/", verifyToken, allArticles);

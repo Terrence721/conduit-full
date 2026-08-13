@@ -1,8 +1,11 @@
+import type { Request, Response, NextFunction } from "express";
+import models from "../models";
+
 const { NotFoundError } = require("../helper/customErrors");
 const { jwtVerify } = require("../helper/jwt");
-const { User } = require("../models");
+const { User } = models;
 
-const verifyToken = async (req, res, next) => {
+const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { headers } = req;
     if (!headers.authorization) return next();
@@ -29,4 +32,4 @@ const verifyToken = async (req, res, next) => {
   }
 };
 
-module.exports = verifyToken;
+export = verifyToken;

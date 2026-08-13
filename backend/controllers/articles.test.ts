@@ -1,19 +1,22 @@
-const { buildTestDb, installTestDb } = require("../testUtils/testDb");
+export {};
 
-const loadArticlesController = (db) => {
+import testDbModule from "../testUtils/testDb";
+const { buildTestDb, installTestDb } = testDbModule;
+
+const loadArticlesController = async (db: any) => {
   installTestDb(db);
-  delete require.cache[require.resolve("./articles")];
-  return require("./articles");
+  vi.resetModules();
+  return (await import("./articles")).default;
 };
 
 const buildRes = () => {
-  const res = {};
+  const res: any = {};
   res.status = vi.fn().mockReturnValue(res);
   res.json = vi.fn().mockReturnValue(res);
   return res;
 };
 
-const createUser = async (db, overrides = {}) => {
+const createUser = async (db: any, overrides = {}) => {
   const user = await db.User.create({
     username: "jake",
     email: "jake@jake.jake",
@@ -28,8 +31,8 @@ describe("controllers/articles.js", () => {
   describe("allArticles", () => {
     test("returns an empty list when there are no articles", async () => {
       const db = await buildTestDb();
-      const { allArticles } = loadArticlesController(db);
-      const req = { query: {}, loggedUser: undefined };
+      const { allArticles } = await loadArticlesController(db);
+      const req: any = { query: {}, loggedUser: undefined };
       const res = buildRes();
       const next = vi.fn();
 
@@ -55,8 +58,8 @@ describe("controllers/articles.js", () => {
       const tag = await db.Tag.create({ name: "dragons" });
       await article.addTagList(tag);
 
-      const { allArticles } = loadArticlesController(db);
-      const req = { query: {}, loggedUser: undefined };
+      const { allArticles } = await loadArticlesController(db);
+      const req: any = { query: {}, loggedUser: undefined };
       const res = buildRes();
       const next = vi.fn();
 
@@ -91,8 +94,8 @@ describe("controllers/articles.js", () => {
       await noMatch.setAuthor(author);
       await noMatch.addTagList(await db.Tag.create({ name: "cats" }));
 
-      const { allArticles } = loadArticlesController(db);
-      const req = { query: { tag: "dragons" }, loggedUser: undefined };
+      const { allArticles } = await loadArticlesController(db);
+      const req: any = { query: { tag: "dragons" }, loggedUser: undefined };
       const res = buildRes();
       const next = vi.fn();
 
@@ -129,8 +132,8 @@ describe("controllers/articles.js", () => {
       });
       await janeArticle.setAuthor(jane);
 
-      const { allArticles } = loadArticlesController(db);
-      const req = { query: { author: "jake" }, loggedUser: undefined };
+      const { allArticles } = await loadArticlesController(db);
+      const req: any = { query: { author: "jake" }, loggedUser: undefined };
       const res = buildRes();
       const next = vi.fn();
 
@@ -160,8 +163,8 @@ describe("controllers/articles.js", () => {
       await article.setAuthor(author);
       await fan.addFavorite(article);
 
-      const { allArticles } = loadArticlesController(db);
-      const req = { query: { favorited: "jane" }, loggedUser: undefined };
+      const { allArticles } = await loadArticlesController(db);
+      const req: any = { query: { favorited: "jane" }, loggedUser: undefined };
       const res = buildRes();
       const next = vi.fn();
 
@@ -174,8 +177,8 @@ describe("controllers/articles.js", () => {
 
     test("throws NotFoundError when favorited names a user that doesn't exist (regression check)", async () => {
       const db = await buildTestDb();
-      const { allArticles } = loadArticlesController(db);
-      const req = { query: { favorited: "ghost" }, loggedUser: undefined };
+      const { allArticles } = await loadArticlesController(db);
+      const req: any = { query: { favorited: "ghost" }, loggedUser: undefined };
       const res = buildRes();
       const next = vi.fn();
 
@@ -190,8 +193,8 @@ describe("controllers/articles.js", () => {
   describe("createArticle", () => {
     test("throws UnauthorizedError when there's no logged-in user", async () => {
       const db = await buildTestDb();
-      const { createArticle } = loadArticlesController(db);
-      const req = { loggedUser: undefined, body: { article: {} } };
+      const { createArticle } = await loadArticlesController(db);
+      const req: any = { loggedUser: undefined, body: { article: {} } };
       const res = buildRes();
       const next = vi.fn();
 
@@ -205,10 +208,10 @@ describe("controllers/articles.js", () => {
       async (missingField) => {
         const db = await buildTestDb();
         const loggedUser = await createUser(db);
-        const { createArticle } = loadArticlesController(db);
-        const article = { title: "T", description: "D", body: "B" };
+        const { createArticle } = await loadArticlesController(db);
+        const article: any = { title: "T", description: "D", body: "B" };
         delete article[missingField];
-        const req = { loggedUser, body: { article } };
+        const req: any = { loggedUser, body: { article } };
         const res = buildRes();
         const next = vi.fn();
 
@@ -221,8 +224,8 @@ describe("controllers/articles.js", () => {
     test("creates an article without a tagList in the request body (regression check)", async () => {
       const db = await buildTestDb();
       const loggedUser = await createUser(db);
-      const { createArticle } = loadArticlesController(db);
-      const req = {
+      const { createArticle } = await loadArticlesController(db);
+      const req: any = {
         loggedUser,
         body: {
           article: {
@@ -245,8 +248,8 @@ describe("controllers/articles.js", () => {
       const db = await buildTestDb();
       const loggedUser = await createUser(db);
       await db.Tag.create({ name: "dragons" });
-      const { createArticle } = loadArticlesController(db);
-      const req = {
+      const { createArticle } = await loadArticlesController(db);
+      const req: any = {
         loggedUser,
         body: {
           article: {
@@ -267,7 +270,10 @@ describe("controllers/articles.js", () => {
         where: { slug: article.slug },
       });
       const tags = await persisted.getTagList();
-      expect(tags.map((t) => t.name).sort()).toEqual(["dragons", "training"]);
+      expect(tags.map((t: any) => t.name).sort()).toEqual([
+        "dragons",
+        "training",
+      ]);
     });
 
     test("throws AlreadyTakenError when the slug is already used", async () => {
@@ -279,8 +285,8 @@ describe("controllers/articles.js", () => {
         description: "d",
         body: "b",
       });
-      const { createArticle } = loadArticlesController(db);
-      const req = {
+      const { createArticle } = await loadArticlesController(db);
+      const req: any = {
         loggedUser,
         body: {
           article: {
@@ -301,7 +307,7 @@ describe("controllers/articles.js", () => {
     test("awaits setAuthor before responding (regression check for a missing-await bug)", async () => {
       const db = await buildTestDb();
       const loggedUser = await createUser(db);
-      const { createArticle } = loadArticlesController(db);
+      const { createArticle } = await loadArticlesController(db);
 
       let setAuthorSettled = false;
       const originalSetAuthor = db.Article.prototype.setAuthor;
@@ -314,7 +320,7 @@ describe("controllers/articles.js", () => {
         },
       );
 
-      const req = {
+      const req: any = {
         loggedUser,
         body: {
           article: {
@@ -342,8 +348,8 @@ describe("controllers/articles.js", () => {
   describe("articlesFeed", () => {
     test("throws UnauthorizedError when there's no logged-in user", async () => {
       const db = await buildTestDb();
-      const { articlesFeed } = loadArticlesController(db);
-      const req = { loggedUser: undefined, query: {} };
+      const { articlesFeed } = await loadArticlesController(db);
+      const req: any = { loggedUser: undefined, query: {} };
       const res = buildRes();
       const next = vi.fn();
 
@@ -380,8 +386,8 @@ describe("controllers/articles.js", () => {
       });
       await strangerArticle.setAuthor(stranger);
 
-      const { articlesFeed } = loadArticlesController(db);
-      const req = { loggedUser: me, query: {} };
+      const { articlesFeed } = await loadArticlesController(db);
+      const req: any = { loggedUser: me, query: {} };
       const res = buildRes();
       const next = vi.fn();
 
@@ -406,8 +412,8 @@ describe("controllers/articles.js", () => {
       });
       await article.setAuthor(author);
 
-      const { singleArticle } = loadArticlesController(db);
-      const req = { loggedUser: undefined, params: { slug: "a" } };
+      const { singleArticle } = await loadArticlesController(db);
+      const req: any = { loggedUser: undefined, params: { slug: "a" } };
       const res = buildRes();
       const next = vi.fn();
 
@@ -420,8 +426,8 @@ describe("controllers/articles.js", () => {
 
     test("throws NotFoundError when the slug doesn't exist", async () => {
       const db = await buildTestDb();
-      const { singleArticle } = loadArticlesController(db);
-      const req = { loggedUser: undefined, params: { slug: "ghost" } };
+      const { singleArticle } = await loadArticlesController(db);
+      const req: any = { loggedUser: undefined, params: { slug: "ghost" } };
       const res = buildRes();
       const next = vi.fn();
 
@@ -434,8 +440,8 @@ describe("controllers/articles.js", () => {
   describe("updateArticle", () => {
     test("throws UnauthorizedError when there's no logged-in user", async () => {
       const db = await buildTestDb();
-      const { updateArticle } = loadArticlesController(db);
-      const req = {
+      const { updateArticle } = await loadArticlesController(db);
+      const req: any = {
         loggedUser: undefined,
         params: { slug: "a" },
         body: { article: {} },
@@ -451,8 +457,8 @@ describe("controllers/articles.js", () => {
     test("throws NotFoundError when the slug doesn't exist", async () => {
       const db = await buildTestDb();
       const loggedUser = await createUser(db);
-      const { updateArticle } = loadArticlesController(db);
-      const req = {
+      const { updateArticle } = await loadArticlesController(db);
+      const req: any = {
         loggedUser,
         params: { slug: "ghost" },
         body: { article: {} },
@@ -483,8 +489,8 @@ describe("controllers/articles.js", () => {
       });
       await article.setAuthor(author);
 
-      const { updateArticle } = loadArticlesController(db);
-      const req = {
+      const { updateArticle } = await loadArticlesController(db);
+      const req: any = {
         loggedUser: other,
         params: { slug: "a" },
         body: { article: { title: "New" } },
@@ -508,8 +514,8 @@ describe("controllers/articles.js", () => {
       });
       await article.setAuthor(author);
 
-      const { updateArticle } = loadArticlesController(db);
-      const req = {
+      const { updateArticle } = await loadArticlesController(db);
+      const req: any = {
         loggedUser: author,
         params: { slug: "old-title" },
         body: { article: { title: "New Title", description: "new d" } },
@@ -533,8 +539,8 @@ describe("controllers/articles.js", () => {
   describe("deleteArticle", () => {
     test("throws UnauthorizedError when there's no logged-in user", async () => {
       const db = await buildTestDb();
-      const { deleteArticle } = loadArticlesController(db);
-      const req = { loggedUser: undefined, params: { slug: "a" } };
+      const { deleteArticle } = await loadArticlesController(db);
+      const req: any = { loggedUser: undefined, params: { slug: "a" } };
       const res = buildRes();
       const next = vi.fn();
 
@@ -546,8 +552,8 @@ describe("controllers/articles.js", () => {
     test("throws NotFoundError when the slug doesn't exist", async () => {
       const db = await buildTestDb();
       const loggedUser = await createUser(db);
-      const { deleteArticle } = loadArticlesController(db);
-      const req = { loggedUser, params: { slug: "ghost" } };
+      const { deleteArticle } = await loadArticlesController(db);
+      const req: any = { loggedUser, params: { slug: "ghost" } };
       const res = buildRes();
       const next = vi.fn();
 
@@ -574,8 +580,8 @@ describe("controllers/articles.js", () => {
       });
       await article.setAuthor(author);
 
-      const { deleteArticle } = loadArticlesController(db);
-      const req = { loggedUser: other, params: { slug: "a" } };
+      const { deleteArticle } = await loadArticlesController(db);
+      const req: any = { loggedUser: other, params: { slug: "a" } };
       const res = buildRes();
       const next = vi.fn();
 
@@ -595,8 +601,8 @@ describe("controllers/articles.js", () => {
       });
       await article.setAuthor(author);
 
-      const { deleteArticle } = loadArticlesController(db);
-      const req = { loggedUser: author, params: { slug: "a" } };
+      const { deleteArticle } = await loadArticlesController(db);
+      const req: any = { loggedUser: author, params: { slug: "a" } };
       const res = buildRes();
       const next = vi.fn();
 

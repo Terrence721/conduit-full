@@ -1,19 +1,22 @@
-const { buildTestDb, installTestDb } = require("../testUtils/testDb");
+export {};
 
-const loadFavoritesController = (db) => {
+import testDbModule from "../testUtils/testDb";
+const { buildTestDb, installTestDb } = testDbModule;
+
+const loadFavoritesController = async (db: any) => {
   installTestDb(db);
-  delete require.cache[require.resolve("./favorites")];
-  return require("./favorites");
+  vi.resetModules();
+  return (await import("./favorites")).default;
 };
 
 const buildRes = () => {
-  const res = {};
+  const res: any = {};
   res.status = vi.fn().mockReturnValue(res);
   res.json = vi.fn().mockReturnValue(res);
   return res;
 };
 
-const createUser = async (db, overrides = {}) => {
+const createUser = async (db: any, overrides = {}) => {
   const user = await db.User.create({
     username: "jake",
     email: "jake@jake.jake",
@@ -24,7 +27,7 @@ const createUser = async (db, overrides = {}) => {
   return user;
 };
 
-const createArticle = async (db, author) => {
+const createArticle = async (db: any, author: any) => {
   const article = await db.Article.create({
     slug: "how-to-train-your-dragon",
     title: "How to train your dragon",
@@ -38,8 +41,8 @@ const createArticle = async (db, author) => {
 describe("controllers/favorites.js", () => {
   test("throws UnauthorizedError when there's no logged-in user", async () => {
     const db = await buildTestDb();
-    const { favoriteToggler } = loadFavoritesController(db);
-    const req = {
+    const { favoriteToggler } = await loadFavoritesController(db);
+    const req: any = {
       method: "POST",
       loggedUser: undefined,
       params: { slug: "a" },
@@ -55,8 +58,8 @@ describe("controllers/favorites.js", () => {
   test("throws NotFoundError when the article slug doesn't exist", async () => {
     const db = await buildTestDb();
     const loggedUser = await createUser(db);
-    const { favoriteToggler } = loadFavoritesController(db);
-    const req = { method: "POST", loggedUser, params: { slug: "ghost" } };
+    const { favoriteToggler } = await loadFavoritesController(db);
+    const req: any = { method: "POST", loggedUser, params: { slug: "ghost" } };
     const res = buildRes();
     const next = vi.fn();
 
@@ -74,8 +77,8 @@ describe("controllers/favorites.js", () => {
     });
     const article = await createArticle(db, author);
 
-    const { favoriteToggler } = loadFavoritesController(db);
-    const req = {
+    const { favoriteToggler } = await loadFavoritesController(db);
+    const req: any = {
       method: "POST",
       loggedUser: fan,
       params: { slug: article.slug },
@@ -106,8 +109,8 @@ describe("controllers/favorites.js", () => {
     const article = await createArticle(db, author);
     await fan.addFavorite(article);
 
-    const { favoriteToggler } = loadFavoritesController(db);
-    const req = {
+    const { favoriteToggler } = await loadFavoritesController(db);
+    const req: any = {
       method: "DELETE",
       loggedUser: fan,
       params: { slug: article.slug },

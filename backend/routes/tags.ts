@@ -1,8 +1,9 @@
 import express from "express";
 import type { Request, Response, NextFunction } from "express";
+import models from "../models";
 
 const router = express.Router();
-const { Tag } = require("../models");
+const { Tag } = models;
 const { appendTagList } = require("../helper/helpers");
 
 // All Tags

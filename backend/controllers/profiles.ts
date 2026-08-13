@@ -1,8 +1,9 @@
 import type { Request, Response, NextFunction } from "express";
+import models from "../models";
 
 const { UnauthorizedError, NotFoundError } = require("../helper/customErrors");
 const { appendFollowers } = require("../helper/helpers");
-const { User } = require("../models");
+const { User } = models;
 
 //? Profile
 const getProfile = async (req: Request, res: Response, next: NextFunction) => {

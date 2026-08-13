@@ -3,12 +3,12 @@ export {};
 import express from "express";
 import request from "supertest";
 
-const { buildTestDb, installTestDb } = require("../testUtils/testDb");
+import testDbModule from "../testUtils/testDb";
+const { buildTestDb, installTestDb } = testDbModule;
 
 const loadApp = async (db: any) => {
   installTestDb(db);
   vi.resetModules();
-  delete require.cache[require.resolve("../middleware/authentication")];
   delete require.cache[require.resolve("../helper/jwt")];
   const router = (await import("./user")).default;
   const errorHandler = require("../middleware/errorHandler");

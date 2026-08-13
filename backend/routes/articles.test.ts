@@ -3,20 +3,17 @@ export {};
 import express from "express";
 import request from "supertest";
 
-const { buildTestDb, installTestDb } = require("../testUtils/testDb");
+import testDbModule from "../testUtils/testDb";
+const { buildTestDb, installTestDb } = testDbModule;
 
 const loadApp = async (db: any) => {
   installTestDb(db);
   vi.resetModules();
-  // articles.ts pulls in ./articles/favorites and ./articles/comments as
-  // sub-routers, each with their own plain-CJS require()s (authentication,
-  // jwt, and their own controllers) that vi.resetModules() doesn't touch -
-  // all need evicting so every route in this test shares the same fake db.
-  delete require.cache[require.resolve("../middleware/authentication")];
+  // authentication.ts and every controller here are .ts now, so
+  // vi.resetModules() covers them as part of Vitest's own module graph.
+  // helper/jwt.js is still plain CJS and holds a jwtVerify closure over
+  // JWT_KEY, so it still needs manual eviction.
   delete require.cache[require.resolve("../helper/jwt")];
-  delete require.cache[require.resolve("../controllers/articles")];
-  delete require.cache[require.resolve("../controllers/favorites")];
-  delete require.cache[require.resolve("../controllers/comments")];
   const router = (await import("./articles")).default;
   const errorHandler = require("../middleware/errorHandler");
 

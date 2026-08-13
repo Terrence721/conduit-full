@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
+import models from "../models";
 
-const { User } = require("../models");
+const { User } = models;
 const { jwtSign } = require("../helper/jwt");
 const { bcryptHash, bcryptCompare } = require("../helper/bcrypt");
 const {

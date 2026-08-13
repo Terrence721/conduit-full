@@ -1,9 +1,10 @@
 // Shared test helper for controller tests: a real, in-memory SQLite
 // Sequelize instance running the actual models/associations, instead of
 // hand-stubbed mocks. Deliberately lives outside backend/models/ - if it
-// sat there, models/index.js's dynamic file loader would try to require()
+// sat there, models/index.ts's dynamic file loader would try to require()
 // it as a model factory too.
-const { Sequelize, DataTypes } = require("sequelize");
+import { Sequelize, DataTypes } from "sequelize";
+
 const defineUser = require("../models/User");
 const defineArticle = require("../models/Article");
 const defineComment = require("../models/Comment");
@@ -16,7 +17,7 @@ const buildTestDb = async () => {
     logging: false,
   });
 
-  const db = {
+  const db: any = {
     User: defineUser(sequelize, DataTypes),
     Article: defineArticle(sequelize, DataTypes),
     Comment: defineComment(sequelize, DataTypes),
@@ -34,18 +35,16 @@ const buildTestDb = async () => {
   return db;
 };
 
-// Injects a built db into require.cache under the resolved path for
-// "../models" (i.e. backend/models/index.js), so controllers that do
-// require("../models") get this real-but-in-memory db instead of the real
-// models/index.js, which needs an actual Postgres connection.
-const installTestDb = (db) => {
-  const modelsPath = require.resolve("../models");
-  require.cache[modelsPath] = {
-    id: modelsPath,
-    filename: modelsPath,
-    loaded: true,
-    exports: db,
-  };
+// Registers a mock for "../models" (i.e. backend/models/index.ts) so
+// anything that does `import models from "../models"` gets this
+// real-but-in-memory db instead of the real models/index.ts, which needs an
+// actual Postgres connection. Replaces the old require.cache-injection
+// trick: now that models/index.ts is .ts, plain require() can no longer
+// resolve it under Vitest at all (not even via a hand-built cache key), so
+// interception has to happen at the ESM/vite-node level instead - which
+// also means every consumer must use a real `import`, not require().
+const installTestDb = (db: any) => {
+  vi.doMock("../models", () => ({ default: db }));
 };
 
-module.exports = { buildTestDb, installTestDb };
+export = { buildTestDb, installTestDb };

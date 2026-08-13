@@ -1,29 +1,21 @@
-// The only genuine external dependency here is DB access via the User
-// model - faked below via require.cache, since it needs a live Postgres
-// this environment doesn't have (vi.mock() doesn't intercept plain CJS
-// require() the way it does ESM imports, so a real require.cache entry is
-// injected instead). jwtVerify/jwtSign are the real modules: real signing,
-// real verification, no mocking, so the actual token-handling logic is
-// exercised for real.
-const modelsPath = require.resolve("../models");
-const authenticationPath = require.resolve("./authentication");
+export {};
 
+// The only genuine external dependency here is DB access via the User
+// model - faked below via vi.doMock(), since it needs a live Postgres this
+// environment doesn't have. jwtVerify/jwtSign are the real modules: real
+// signing, real verification, no mocking, so the actual token-handling
+// logic is exercised for real.
 const fakeUser = { findOne: vi.fn() };
 
-const loadVerifyToken = () => {
-  delete require.cache[authenticationPath];
-  require.cache[modelsPath] = {
-    id: modelsPath,
-    filename: modelsPath,
-    loaded: true,
-    exports: { User: fakeUser },
-  };
-  return require("./authentication");
+const loadVerifyToken = async () => {
+  vi.doMock("../models", () => ({ default: { User: fakeUser } }));
+  vi.resetModules();
+  return (await import("./authentication")).default;
 };
 
-const buildReqResNext = (headers = {}) => ({
-  req: { headers },
-  res: {},
+const buildReqResNext = (headers: any = {}) => ({
+  req: { headers } as any,
+  res: {} as any,
   next: vi.fn(),
 });
 
@@ -32,7 +24,7 @@ const freshJwtHelper = () => {
   return require("../helper/jwt");
 };
 
-describe("middleware/authentication.js", () => {
+describe("middleware/authentication.ts", () => {
   beforeEach(() => {
     vi.stubEnv("JWT_KEY", "test-secret-key");
     fakeUser.findOne.mockReset();
@@ -43,7 +35,7 @@ describe("middleware/authentication.js", () => {
   });
 
   test("calls next() with no error and no loggedUser when there's no Authorization header", async () => {
-    const verifyToken = loadVerifyToken();
+    const verifyToken = await loadVerifyToken();
     const { req, res, next } = buildReqResNext({});
 
     await verifyToken(req, res, next);
@@ -54,7 +46,7 @@ describe("middleware/authentication.js", () => {
   });
 
   test("passes a SyntaxError to next() when the Authorization header is malformed", async () => {
-    const verifyToken = loadVerifyToken();
+    const verifyToken = await loadVerifyToken();
     const { req, res, next } = buildReqResNext({ authorization: "Token" });
 
     await verifyToken(req, res, next);
@@ -71,7 +63,7 @@ describe("middleware/authentication.js", () => {
     const fakeFoundUser = { dataValues: {} };
     fakeUser.findOne.mockResolvedValue(fakeFoundUser);
 
-    const verifyToken = loadVerifyToken();
+    const verifyToken = await loadVerifyToken();
     const { req, res, next } = buildReqResNext({
       authorization: `Token ${token}`,
     });
@@ -92,7 +84,7 @@ describe("middleware/authentication.js", () => {
     });
     fakeUser.findOne.mockResolvedValue(null);
 
-    const verifyToken = loadVerifyToken();
+    const verifyToken = await loadVerifyToken();
     const { req, res, next } = buildReqResNext({
       authorization: `Token ${token}`,
     });
@@ -105,7 +97,7 @@ describe("middleware/authentication.js", () => {
   });
 
   test("passes the verify error to next() for an invalid token", async () => {
-    const verifyToken = loadVerifyToken();
+    const verifyToken = await loadVerifyToken();
     const { req, res, next } = buildReqResNext({
       authorization: "Token not-a-real-token",
     });

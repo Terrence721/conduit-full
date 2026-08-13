@@ -1,3 +1,6 @@
+import type { Request, Response, NextFunction } from "express";
+import models from "../models";
+
 const {
   AlreadyTakenError,
   FieldRequiredError,
@@ -11,7 +14,7 @@ const {
   appendTagList,
   slugify,
 } = require("../helper/helpers");
-const { Article, Tag, User } = require("../models");
+const { Article, Tag, User } = models;
 
 const includeOptions = [
   { model: Tag, as: "tagList", attributes: ["name"] },
@@ -19,11 +22,11 @@ const includeOptions = [
 ];
 
 //? All Articles - by Author/by Tag/Favorited by user
-const allArticles = async (req, res, next) => {
+const allArticles = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { loggedUser } = req;
 
-    const { author, tag, favorited, limit = 3, offset = 0 } = req.query;
+    const { author, tag, favorited, limit = 3, offset = 0 } = req.query as any;
     const searchOptions = {
       include: [
         {
@@ -41,10 +44,10 @@ const allArticles = async (req, res, next) => {
       ],
       limit: parseInt(limit),
       offset: offset * limit,
-      order: [["createdAt", "DESC"]],
+      order: [["createdAt", "DESC"]] as [string, string][],
     };
 
-    let articles = { rows: [], count: 0 };
+    let articles: { rows: any[]; count: number } = { rows: [], count: 0 };
     if (favorited) {
       const user = await User.findOne({ where: { username: favorited } });
       if (!user) throw new NotFoundError("User");
@@ -55,7 +58,7 @@ const allArticles = async (req, res, next) => {
       articles = await Article.findAndCountAll(searchOptions);
     }
 
-    for (let article of articles.rows) {
+    for (const article of articles.rows) {
       const articleTags = await article.getTagList();
 
       appendTagList(articleTags, article);
@@ -72,7 +75,11 @@ const allArticles = async (req, res, next) => {
 };
 
 //* Create Article
-const createArticle = async (req, res, next) => {
+const createArticle = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const { loggedUser } = req;
     if (!loggedUser) throw new UnauthorizedError();
@@ -120,12 +127,16 @@ const createArticle = async (req, res, next) => {
 };
 
 //* Feed
-const articlesFeed = async (req, res, next) => {
+const articlesFeed = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const { loggedUser } = req;
     if (!loggedUser) throw new UnauthorizedError();
 
-    const { limit = 3, offset = 0 } = req.query;
+    const { limit = 3, offset = 0 } = req.query as any;
     const authors = await loggedUser.getFollowing();
 
     const articles = await Article.findAndCountAll({
@@ -133,7 +144,7 @@ const articlesFeed = async (req, res, next) => {
       limit: parseInt(limit),
       offset: offset * limit,
       order: [["createdAt", "DESC"]],
-      where: { userId: authors.map((author) => author.id) },
+      where: { userId: authors.map((author: any) => author.id) },
     });
 
     for (const article of articles.rows) {
@@ -151,7 +162,11 @@ const articlesFeed = async (req, res, next) => {
 };
 
 // Single Article by slug
-const singleArticle = async (req, res, next) => {
+const singleArticle = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const { loggedUser } = req;
 
@@ -173,7 +188,11 @@ const singleArticle = async (req, res, next) => {
 };
 
 //* Update Article
-const updateArticle = async (req, res, next) => {
+const updateArticle = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const { loggedUser } = req;
     if (!loggedUser) throw new UnauthorizedError();
@@ -209,7 +228,11 @@ const updateArticle = async (req, res, next) => {
 };
 
 //* Delete Article
-const deleteArticle = async (req, res, next) => {
+const deleteArticle = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const { loggedUser } = req;
     if (!loggedUser) throw new UnauthorizedError();
@@ -233,7 +256,7 @@ const deleteArticle = async (req, res, next) => {
   }
 };
 
-module.exports = {
+export = {
   allArticles,
   createArticle,
   singleArticle,

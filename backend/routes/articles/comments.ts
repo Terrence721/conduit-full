@@ -1,12 +1,9 @@
 import express from "express";
+import verifyToken from "../../middleware/authentication";
+import commentsController from "../../controllers/comments";
 
 const router = express.Router();
-const verifyToken = require("../../middleware/authentication");
-const {
-  allComments,
-  createComment,
-  deleteComment,
-} = require("../../controllers/comments");
+const { allComments, createComment, deleteComment } = commentsController;
 
 //? All Comments for Article
 router.get("/:slug/comments", verifyToken, allComments);

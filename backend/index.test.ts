@@ -2,16 +2,13 @@ export {};
 
 import request from "supertest";
 
-const { buildTestDb, installTestDb } = require("./testUtils/testDb");
+import testDbModule from "./testUtils/testDb";
+const { buildTestDb, installTestDb } = testDbModule;
 
 const loadApp = async (db: any) => {
   installTestDb(db);
   vi.resetModules();
-  delete require.cache[require.resolve("./middleware/authentication")];
   delete require.cache[require.resolve("./helper/jwt")];
-  delete require.cache[require.resolve("./controllers/articles")];
-  delete require.cache[require.resolve("./controllers/comments")];
-  delete require.cache[require.resolve("./controllers/favorites")];
   return (await import("./index")).default;
 };
 

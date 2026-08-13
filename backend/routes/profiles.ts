@@ -1,8 +1,8 @@
 import express from "express";
 import profilesController from "../controllers/profiles";
+import verifyToken from "../middleware/authentication";
 
 const router = express.Router();
-const verifyToken = require("../middleware/authentication");
 const { getProfile, followToggler } = profilesController;
 
 //? Profile

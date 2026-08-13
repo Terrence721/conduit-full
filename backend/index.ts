@@ -7,10 +7,11 @@ import userRoutes from "./routes/user";
 import articlesRoutes from "./routes/articles";
 import profilesRoutes from "./routes/profiles";
 import tagsRoutes from "./routes/tags";
+import models from "./models";
 
 const env = process.env.NODE_ENV || "development";
 const PORT = process.env.PORT || 3001;
-const { sequelize } = require("./models");
+const { sequelize } = models;
 const errorHandler = require("./middleware/errorHandler");
 
 const app = express();

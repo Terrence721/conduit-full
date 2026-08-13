@@ -1,13 +1,20 @@
+import type { Request, Response, NextFunction } from "express";
+import models from "../models";
+
 const { UnauthorizedError, NotFoundError } = require("../helper/customErrors");
 const {
   appendFollowers,
   appendFavorites,
   appendTagList,
 } = require("../helper/helpers");
-const { Article, Tag, User } = require("../models");
+const { Article, Tag, User } = models;
 
 //*  Favorite/Unfavorite Article
-const favoriteToggler = async (req, res, next) => {
+const favoriteToggler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const { loggedUser } = req;
     if (!loggedUser) throw new UnauthorizedError();
@@ -44,4 +51,4 @@ const favoriteToggler = async (req, res, next) => {
   }
 };
 
-module.exports = { favoriteToggler };
+export = { favoriteToggler };

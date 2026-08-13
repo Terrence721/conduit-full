@@ -3,7 +3,8 @@ export {};
 import express from "express";
 import request from "supertest";
 
-const { buildTestDb, installTestDb } = require("../testUtils/testDb");
+import testDbModule from "../testUtils/testDb";
+const { buildTestDb, installTestDb } = testDbModule;
 
 const loadApp = async (db: any) => {
   installTestDb(db);

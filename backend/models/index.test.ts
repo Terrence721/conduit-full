@@ -1,24 +1,28 @@
+export {};
+
+// config.ts validates *_DB_DIALECT for all three environment blocks eagerly
+// (not just the active NODE_ENV), matching .env.example's convention that
+// all three are always present in a real .env - so DEV_/PROD_DB_DIALECT
+// need valid stubs here too, even though only the "test" block is actually
+// exercised below.
 const testDbEnv = {
   NODE_ENV: "test",
+  DEV_DB_DIALECT: "postgres",
   TEST_DB_USERNAME: "postgres",
   TEST_DB_PASSWORD: "postgres",
   TEST_DB_NAME: "conduit_test",
   TEST_DB_HOSTNAME: "127.0.0.1",
   TEST_DB_DIALECT: "postgres",
   TEST_DB_LOGGING: "false",
+  PROD_DB_DIALECT: "postgres",
 };
 
-// Plain CommonJS require(), not import() - vi.resetModules() only resets
-// vitest's own vite-node module graph, not Node's native require.cache, so
-// ./index and its config.js dependency have to be evicted by hand for each
-// test to actually re-evaluate against that test's stubbed env vars.
-const freshDb = () => {
-  delete require.cache[require.resolve("./index")];
-  delete require.cache[require.resolve("../config/config.js")];
-  return require("./index");
+const freshDb = async () => {
+  vi.resetModules();
+  return (await import("./index")).default;
 };
 
-describe("models/index.js", () => {
+describe("models/index.ts", () => {
   beforeEach(() => {
     for (const [key, value] of Object.entries(testDbEnv)) {
       vi.stubEnv(key, value);
@@ -29,29 +33,29 @@ describe("models/index.js", () => {
     vi.unstubAllEnvs();
   });
 
-  test("builds a Sequelize instance from the test config block, without connecting", () => {
-    const db = freshDb();
+  test("builds a Sequelize instance from the test config block, without connecting", async () => {
+    const db = await freshDb();
 
     expect(db.sequelize).toBeInstanceOf(db.Sequelize);
     expect(db.sequelize.getDatabaseName()).toBe("conduit_test");
     expect(db.sequelize.getDialect()).toBe("postgres");
   });
 
-  test("coerces a truthy DB_LOGGING string into a real logging function, not a string", () => {
+  test("coerces a truthy DB_LOGGING string into a real logging function, not a string", async () => {
     vi.stubEnv("TEST_DB_LOGGING", "true");
-    const db = freshDb();
+    const db = await freshDb();
 
     expect(db.sequelize.options.logging).toBe(console.log);
   });
 
-  test("coerces a falsy DB_LOGGING string into logging: false", () => {
-    const db = freshDb();
+  test("coerces a falsy DB_LOGGING string into logging: false", async () => {
+    const db = await freshDb();
 
     expect(db.sequelize.options.logging).toBe(false);
   });
 
-  test("exposes sequelize + Sequelize plus every model file alongside it", () => {
-    const db = freshDb();
+  test("exposes sequelize + Sequelize plus every model file alongside it", async () => {
+    const db = await freshDb();
 
     expect(Object.keys(db).sort()).toEqual([
       "Article",
@@ -63,8 +67,8 @@ describe("models/index.js", () => {
     ]);
   });
 
-  test("wires every model's associate() correctly end to end", () => {
-    const db = freshDb();
+  test("wires every model's associate() correctly end to end", async () => {
+    const db = await freshDb();
 
     expect(db.User.associations.Comments.foreignKey).toBe("userId");
     expect(db.User.associations.Articles.foreignKey).toBe("userId");

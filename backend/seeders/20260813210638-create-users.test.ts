@@ -1,6 +1,7 @@
 export {};
 
-const { buildTestDb } = require("../testUtils/testDb");
+import testDbModule from "../testUtils/testDb";
+const { buildTestDb } = testDbModule;
 const { bcryptCompare } = require("../helper/bcrypt");
 
 describe("seeders/20260813210638-create-users.ts", () => {

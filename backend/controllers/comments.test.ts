@@ -1,19 +1,22 @@
-const { buildTestDb, installTestDb } = require("../testUtils/testDb");
+export {};
 
-const loadCommentsController = (db) => {
+import testDbModule from "../testUtils/testDb";
+const { buildTestDb, installTestDb } = testDbModule;
+
+const loadCommentsController = async (db: any) => {
   installTestDb(db);
-  delete require.cache[require.resolve("./comments")];
-  return require("./comments");
+  vi.resetModules();
+  return (await import("./comments")).default;
 };
 
 const buildRes = () => {
-  const res = {};
+  const res: any = {};
   res.status = vi.fn().mockReturnValue(res);
   res.json = vi.fn().mockReturnValue(res);
   return res;
 };
 
-const createUser = async (db, overrides = {}) => {
+const createUser = async (db: any, overrides = {}) => {
   const user = await db.User.create({
     username: "jake",
     email: "jake@jake.jake",
@@ -24,7 +27,7 @@ const createUser = async (db, overrides = {}) => {
   return user;
 };
 
-const createArticle = async (db, author, overrides = {}) => {
+const createArticle = async (db: any, author: any, overrides = {}) => {
   const article = await db.Article.create({
     slug: "how-to-train-your-dragon",
     title: "How to train your dragon",
@@ -48,8 +51,8 @@ describe("controllers/comments.js", () => {
         userId: author.id,
       });
 
-      const { allComments } = loadCommentsController(db);
-      const req = {
+      const { allComments } = await loadCommentsController(db);
+      const req: any = {
         loggedUser: undefined,
         params: { slug: article.slug },
       };
@@ -70,8 +73,8 @@ describe("controllers/comments.js", () => {
 
     test("throws NotFoundError when the article slug doesn't exist", async () => {
       const db = await buildTestDb();
-      const { allComments } = loadCommentsController(db);
-      const req = { loggedUser: undefined, params: { slug: "ghost" } };
+      const { allComments } = await loadCommentsController(db);
+      const req: any = { loggedUser: undefined, params: { slug: "ghost" } };
       const res = buildRes();
       const next = vi.fn();
 
@@ -84,8 +87,8 @@ describe("controllers/comments.js", () => {
   describe("createComment", () => {
     test("throws UnauthorizedError when there's no logged-in user", async () => {
       const db = await buildTestDb();
-      const { createComment } = loadCommentsController(db);
-      const req = {
+      const { createComment } = await loadCommentsController(db);
+      const req: any = {
         loggedUser: undefined,
         params: { slug: "a" },
         body: { comment: { body: "hi" } },
@@ -101,8 +104,8 @@ describe("controllers/comments.js", () => {
     test("throws FieldRequiredError when body is missing", async () => {
       const db = await buildTestDb();
       const loggedUser = await createUser(db);
-      const { createComment } = loadCommentsController(db);
-      const req = {
+      const { createComment } = await loadCommentsController(db);
+      const req: any = {
         loggedUser,
         params: { slug: "a" },
         body: { comment: {} },
@@ -118,8 +121,8 @@ describe("controllers/comments.js", () => {
     test("throws NotFoundError when the article slug doesn't exist", async () => {
       const db = await buildTestDb();
       const loggedUser = await createUser(db);
-      const { createComment } = loadCommentsController(db);
-      const req = {
+      const { createComment } = await loadCommentsController(db);
+      const req: any = {
         loggedUser,
         params: { slug: "ghost" },
         body: { comment: { body: "hi" } },
@@ -136,8 +139,8 @@ describe("controllers/comments.js", () => {
       const db = await buildTestDb();
       const loggedUser = await createUser(db);
       const article = await createArticle(db, loggedUser);
-      const { createComment } = loadCommentsController(db);
-      const req = {
+      const { createComment } = await loadCommentsController(db);
+      const req: any = {
         loggedUser,
         params: { slug: article.slug },
         body: { comment: { body: "His name was my name too." } },
@@ -159,8 +162,8 @@ describe("controllers/comments.js", () => {
   describe("deleteComment", () => {
     test("throws UnauthorizedError when there's no logged-in user", async () => {
       const db = await buildTestDb();
-      const { deleteComment } = loadCommentsController(db);
-      const req = {
+      const { deleteComment } = await loadCommentsController(db);
+      const req: any = {
         loggedUser: undefined,
         params: { slug: "a", commentId: 1 },
       };
@@ -175,8 +178,8 @@ describe("controllers/comments.js", () => {
     test("throws NotFoundError when the article slug doesn't exist", async () => {
       const db = await buildTestDb();
       const loggedUser = await createUser(db);
-      const { deleteComment } = loadCommentsController(db);
-      const req = {
+      const { deleteComment } = await loadCommentsController(db);
+      const req: any = {
         loggedUser,
         params: { slug: "ghost", commentId: 1 },
       };
@@ -192,8 +195,8 @@ describe("controllers/comments.js", () => {
       const db = await buildTestDb();
       const loggedUser = await createUser(db);
       const article = await createArticle(db, loggedUser);
-      const { deleteComment } = loadCommentsController(db);
-      const req = {
+      const { deleteComment } = await loadCommentsController(db);
+      const req: any = {
         loggedUser,
         params: { slug: article.slug, commentId: 999 },
       };
@@ -222,8 +225,8 @@ describe("controllers/comments.js", () => {
         userId: loggedUser.id,
       });
 
-      const { deleteComment } = loadCommentsController(db);
-      const req = {
+      const { deleteComment } = await loadCommentsController(db);
+      const req: any = {
         loggedUser,
         params: { slug: article.slug, commentId: comment.id },
       };
@@ -256,8 +259,8 @@ describe("controllers/comments.js", () => {
         userId: author.id,
       });
 
-      const { deleteComment } = loadCommentsController(db);
-      const req = {
+      const { deleteComment } = await loadCommentsController(db);
+      const req: any = {
         loggedUser: other,
         params: { slug: article.slug, commentId: comment.id },
       };
@@ -279,8 +282,8 @@ describe("controllers/comments.js", () => {
         userId: author.id,
       });
 
-      const { deleteComment } = loadCommentsController(db);
-      const req = {
+      const { deleteComment } = await loadCommentsController(db);
+      const req: any = {
         loggedUser: author,
         params: { slug: article.slug, commentId: comment.id },
       };

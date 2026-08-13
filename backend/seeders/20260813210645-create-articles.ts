@@ -1,8 +1,9 @@
 "use strict";
 
 import type { QueryInterface } from "sequelize";
+import models from "../models";
 
-const { User } = require("../models");
+const { User } = models;
 
 export = {
   async up(queryInterface: QueryInterface) {
