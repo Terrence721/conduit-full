@@ -1,3 +1,5 @@
+export {};
+
 const { buildTestDb, installTestDb } = require("../testUtils/testDb");
 
 const loadProfilesController = async (db: any) => {
