@@ -1,6 +1,7 @@
 "use strict";
 
 import type { QueryInterface } from "sequelize";
+import { randomInt } from "crypto";
 import models from "../models";
 
 const { User } = models;
@@ -18,7 +19,7 @@ export = {
           index + 1
         } - Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
         body: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. In nec ante lacinia magna ultricies cursus nec non lacus. Praesent blandit sodales semper. Mauris eget leo non erat molestie faucibus luctus sed ex. Duis sollicitudin tellus vitae aliquam cursus. Integer ultricies ultricies erat. Vivamus egestas ac augue nec mattis. Duis posuere bibendum ex vitae placerat. Duis in odio vestibulum, pellentesque odio vitae, egestas nibh.`,
-        userId: users[Math.floor(Math.random() * users.length)].id,
+        userId: users[randomInt(users.length)].id,
         createdAt: new Date(),
         updatedAt: new Date(),
       }));

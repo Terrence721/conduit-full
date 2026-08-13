@@ -9,6 +9,7 @@ import profilesRoutes from "./routes/profiles";
 import tagsRoutes from "./routes/tags";
 import models from "./models";
 import errorHandler from "./middleware/errorHandler";
+import createRateLimiter from "./middleware/rateLimiter";
 
 const env = process.env.NODE_ENV || "development";
 const PORT = process.env.PORT || 3001;
@@ -17,6 +18,7 @@ const { sequelize } = models;
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use("/api", createRateLimiter());
 
 (async () => {
   try {
