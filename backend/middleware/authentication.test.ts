@@ -19,9 +19,9 @@ const buildReqResNext = (headers: any = {}) => ({
   next: vi.fn(),
 });
 
-const freshJwtHelper = () => {
-  delete require.cache[require.resolve("../helper/jwt")];
-  return require("../helper/jwt");
+const freshJwtHelper = async () => {
+  vi.resetModules();
+  return (await import("../helper/jwt")).default;
 };
 
 describe("middleware/authentication.ts", () => {
@@ -55,7 +55,7 @@ describe("middleware/authentication.ts", () => {
   });
 
   test("attaches req.loggedUser and the token when the JWT is valid and the user exists", async () => {
-    const { jwtSign } = freshJwtHelper();
+    const { jwtSign } = await freshJwtHelper();
     const token = await jwtSign({
       username: "jake",
       email: "jake@jake.jake",
@@ -77,7 +77,7 @@ describe("middleware/authentication.ts", () => {
   });
 
   test("calls next() exactly once when the verified user no longer exists (missing-return regression check)", async () => {
-    const { jwtSign } = freshJwtHelper();
+    const { jwtSign } = await freshJwtHelper();
     const token = await jwtSign({
       username: "ghost",
       email: "ghost@ghost.ghost",

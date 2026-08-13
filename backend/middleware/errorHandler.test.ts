@@ -1,25 +1,28 @@
-const errorHandler = require("./errorHandler");
+export {};
+
+import errorHandler from "./errorHandler";
+import customErrors from "../helper/customErrors";
 const {
   ForbiddenError,
   NotFoundError,
   UnauthorizedError,
   ValidationError,
   FieldRequiredError,
-} = require("../helper/customErrors");
+} = customErrors;
 
 const buildRes = () => {
-  const res = {};
+  const res: any = {};
   res.status = vi.fn().mockReturnValue(res);
   res.json = vi.fn().mockReturnValue(res);
   return res;
 };
 
-describe("middleware/errorHandler.js", () => {
+describe("middleware/errorHandler.ts", () => {
   test("responds 401 for UnauthorizedError", () => {
     const res = buildRes();
     const error = new UnauthorizedError();
 
-    errorHandler(error, {}, res, vi.fn());
+    errorHandler(error, {} as any, res, vi.fn());
 
     expect(res.status).toHaveBeenCalledWith(401);
     expect(res.json).toHaveBeenCalledWith({
@@ -31,7 +34,7 @@ describe("middleware/errorHandler.js", () => {
     const res = buildRes();
     const error = new ForbiddenError("article");
 
-    errorHandler(error, {}, res, vi.fn());
+    errorHandler(error, {} as any, res, vi.fn());
 
     expect(res.status).toHaveBeenCalledWith(403);
     expect(res.json).toHaveBeenCalledWith({
@@ -43,7 +46,7 @@ describe("middleware/errorHandler.js", () => {
     const res = buildRes();
     const error = new NotFoundError("Article");
 
-    errorHandler(error, {}, res, vi.fn());
+    errorHandler(error, {} as any, res, vi.fn());
 
     expect(res.status).toHaveBeenCalledWith(404);
     expect(res.json).toHaveBeenCalledWith({
@@ -55,7 +58,7 @@ describe("middleware/errorHandler.js", () => {
     const res = buildRes();
     const error = new ValidationError("bad input");
 
-    errorHandler(error, {}, res, vi.fn());
+    errorHandler(error, {} as any, res, vi.fn());
 
     expect(res.status).toHaveBeenCalledWith(422);
     expect(res.json).toHaveBeenCalledWith({
@@ -67,7 +70,7 @@ describe("middleware/errorHandler.js", () => {
     const res = buildRes();
     const error = new FieldRequiredError("email");
 
-    errorHandler(error, {}, res, vi.fn());
+    errorHandler(error, {} as any, res, vi.fn());
 
     expect(res.status).toHaveBeenCalledWith(422);
     expect(res.json).toHaveBeenCalledWith({
@@ -79,7 +82,7 @@ describe("middleware/errorHandler.js", () => {
     const res = buildRes();
     const error = new Error("connect ECONNREFUSED 127.0.0.1:5432");
 
-    errorHandler(error, {}, res, vi.fn());
+    errorHandler(error, {} as any, res, vi.fn());
 
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith({
@@ -91,7 +94,7 @@ describe("middleware/errorHandler.js", () => {
     const res = buildRes();
     const next = vi.fn();
 
-    errorHandler(new NotFoundError("Article"), {}, res, next);
+    errorHandler(new NotFoundError("Article"), {} as any, res, next);
 
     expect(next).not.toHaveBeenCalled();
   });

@@ -1,13 +1,14 @@
 "use strict";
-const { Model } = require("sequelize");
-module.exports = (sequelize, DataTypes) => {
+import { Model, Sequelize, DataTypes as DataTypesType } from "sequelize";
+
+export = (sequelize: Sequelize, DataTypes: typeof DataTypesType) => {
   class Tag extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate({ Article }) {
+    static associate({ Article }: any) {
       // define association here
 
       // Tag list

@@ -8,7 +8,6 @@ const { buildTestDb, installTestDb } = testDbModule;
 const loadApp = async (db: any) => {
   installTestDb(db);
   vi.resetModules();
-  delete require.cache[require.resolve("./helper/jwt")];
   return (await import("./index")).default;
 };
 

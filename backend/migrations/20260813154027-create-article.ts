@@ -1,27 +1,31 @@
 "use strict";
-module.exports = {
-  async up(queryInterface, Sequelize) {
+
+import type { QueryInterface } from "sequelize";
+import { DataTypes as DataTypesType } from "sequelize";
+
+export = {
+  async up(queryInterface: QueryInterface, DataTypes: typeof DataTypesType) {
     await queryInterface.createTable("Articles", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER,
+        type: DataTypes.INTEGER,
       },
       slug: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
       },
       title: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
       },
       description: {
-        type: Sequelize.TEXT,
+        type: DataTypes.TEXT,
       },
       body: {
-        type: Sequelize.TEXT,
+        type: DataTypes.TEXT,
       },
       userId: {
-        type: Sequelize.INTEGER,
+        type: DataTypes.INTEGER,
         references: {
           model: "Users",
           key: "id",
@@ -30,15 +34,15 @@ module.exports = {
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE,
+        type: DataTypes.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE,
+        type: DataTypes.DATE,
       },
     });
   },
-  async down(queryInterface, _Sequelize) {
+  async down(queryInterface: QueryInterface) {
     await queryInterface.dropTable("Articles");
   },
 };

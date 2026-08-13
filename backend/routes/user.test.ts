@@ -9,9 +9,8 @@ const { buildTestDb, installTestDb } = testDbModule;
 const loadApp = async (db: any) => {
   installTestDb(db);
   vi.resetModules();
-  delete require.cache[require.resolve("../helper/jwt")];
   const router = (await import("./user")).default;
-  const errorHandler = require("../middleware/errorHandler");
+  const errorHandler = (await import("../middleware/errorHandler")).default;
 
   const app = express();
   app.use(express.json());
@@ -30,7 +29,7 @@ const createUser = async (db: any, overrides = {}) => {
 };
 
 const tokenFor = async (user: any) => {
-  const { jwtSign } = require("../helper/jwt");
+  const { jwtSign } = (await import("../helper/jwt")).default;
   return jwtSign(user);
 };
 

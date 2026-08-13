@@ -1,5 +1,7 @@
-const { Sequelize } = require("sequelize");
-const defineUser = require("./User");
+export {};
+
+import { Sequelize, DataTypes } from "sequelize";
+import defineUser from "./User";
 
 const buildSequelize = () =>
   new Sequelize("test", "test", "test", {
@@ -9,7 +11,7 @@ const buildSequelize = () =>
 
 describe("models/User.js", () => {
   test("defines the expected fields", () => {
-    const User = defineUser(buildSequelize(), Sequelize.DataTypes);
+    const User = defineUser(buildSequelize(), DataTypes);
 
     expect(Object.keys(User.rawAttributes)).toEqual(
       expect.arrayContaining(["email", "username", "bio", "image", "password"]),
@@ -17,7 +19,7 @@ describe("models/User.js", () => {
   });
 
   test("toJSON hides id, password, and timestamps", () => {
-    const User = defineUser(buildSequelize(), Sequelize.DataTypes);
+    const User = defineUser(buildSequelize(), DataTypes);
     const user = User.build({
       id: 1,
       email: "jake@jake.jake",
@@ -45,7 +47,7 @@ describe("models/User.js", () => {
   describe("associate", () => {
     test("associates Comments through userId, not articleId", () => {
       const sequelize = buildSequelize();
-      const User = defineUser(sequelize, Sequelize.DataTypes);
+      const User = defineUser(sequelize, DataTypes);
       const Article = sequelize.define("Article", {});
       const Comment = sequelize.define("Comment", {});
 
@@ -56,14 +58,16 @@ describe("models/User.js", () => {
 
     test("associates Articles through userId with cascade delete", () => {
       const sequelize = buildSequelize();
-      const User = defineUser(sequelize, Sequelize.DataTypes);
+      const User = defineUser(sequelize, DataTypes);
       const Article = sequelize.define("Article", {});
       const Comment = sequelize.define("Comment", {});
 
       User.associate({ Article, Comment, User });
 
       expect(User.associations.Articles.foreignKey).toBe("userId");
-      expect(User.associations.Articles.options.onDelete).toBe("CASCADE");
+      expect((User.associations.Articles as any).options.onDelete).toBe(
+        "CASCADE",
+      );
     });
   });
 });

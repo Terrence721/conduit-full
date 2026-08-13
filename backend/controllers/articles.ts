@@ -1,5 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import models from "../models";
+import helpers from "../helper/helpers";
+import customErrors from "../helper/customErrors";
 
 const {
   AlreadyTakenError,
@@ -7,13 +9,8 @@ const {
   ForbiddenError,
   NotFoundError,
   UnauthorizedError,
-} = require("../helper/customErrors");
-const {
-  appendFollowers,
-  appendFavorites,
-  appendTagList,
-  slugify,
-} = require("../helper/helpers");
+} = customErrors;
+const { appendFollowers, appendFavorites, appendTagList, slugify } = helpers;
 const { Article, Tag, User } = models;
 
 const includeOptions = [

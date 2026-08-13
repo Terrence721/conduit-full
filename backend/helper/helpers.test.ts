@@ -1,4 +1,7 @@
-const { slugify } = require("./helpers");
+export {};
+
+import helpers from "./helpers";
+const { slugify } = helpers;
 
 describe("Slugify", () => {
   const stringsArray = [

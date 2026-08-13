@@ -1,17 +1,17 @@
 class MyError extends Error {
-  constructor(message) {
+  constructor(message?: string) {
     super(message);
     this.name = this.constructor.name;
   }
 }
 
 class ForbiddenError extends MyError {
-  constructor(message) {
+  constructor(message: string) {
     super(`You are not the author of this ${message}`);
   }
 }
 class NotFoundError extends MyError {
-  constructor(property, message = "") {
+  constructor(property: string, message = "") {
     super(`${property} not found${message ? `: ${message}` : ""}`);
   }
 }
@@ -24,18 +24,18 @@ class UnauthorizedError extends MyError {
 class ValidationError extends MyError {}
 
 class FieldRequiredError extends ValidationError {
-  constructor(field) {
+  constructor(field: string) {
     super(`${field} is required`);
   }
 }
 
 class AlreadyTakenError extends ValidationError {
-  constructor(property, message = "") {
+  constructor(property: string, message = "") {
     super(`${property} already exists${message ? `: ${message}` : ""}.`);
   }
 }
 
-module.exports = {
+export = {
   AlreadyTakenError,
   FieldRequiredError,
   ForbiddenError,

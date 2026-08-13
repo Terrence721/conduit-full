@@ -1,13 +1,11 @@
 import type { Request, Response, NextFunction } from "express";
 import models from "../models";
+import helpers from "../helper/helpers";
+import customErrors from "../helper/customErrors";
 
-const {
-  NotFoundError,
-  UnauthorizedError,
-  FieldRequiredError,
-  ForbiddenError,
-} = require("../helper/customErrors");
-const { appendFollowers } = require("../helper/helpers");
+const { NotFoundError, UnauthorizedError, FieldRequiredError, ForbiddenError } =
+  customErrors;
+const { appendFollowers } = helpers;
 const { Article, Comment, User } = models;
 
 //? All Comments for Article

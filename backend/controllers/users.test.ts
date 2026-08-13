@@ -1,7 +1,9 @@
 export {};
 
 import testDbModule from "../testUtils/testDb";
+import bcryptHelper from "../helper/bcrypt";
 const { buildTestDb, installTestDb } = testDbModule;
+const { bcryptHash } = bcryptHelper;
 
 const loadUsersController = async (db: any) => {
   installTestDb(db);
@@ -9,9 +11,9 @@ const loadUsersController = async (db: any) => {
   return import("./users");
 };
 
-const freshJwtHelper = () => {
-  delete require.cache[require.resolve("../helper/jwt")];
-  return require("../helper/jwt");
+const freshJwtHelper = async () => {
+  vi.resetModules();
+  return (await import("../helper/jwt")).default;
 };
 
 const buildRes = () => {
@@ -113,7 +115,7 @@ describe("controllers/users.ts", () => {
       const [{ user }] = res.json.mock.calls[0];
       expect(user.username).toBe("jake");
 
-      const { jwtVerify } = freshJwtHelper();
+      const { jwtVerify } = await freshJwtHelper();
       const decoded = await jwtVerify(user.dataValues.token);
       expect(decoded.username).toBe("jake");
       expect(decoded.email).toBe("jake@jake.jake");
@@ -122,7 +124,6 @@ describe("controllers/users.ts", () => {
 
   describe("signIn", () => {
     const createUser = async (db: any) => {
-      const { bcryptHash } = require("../helper/bcrypt");
       return db.User.create({
         username: "jake",
         email: "jake@jake.jake",
@@ -174,7 +175,7 @@ describe("controllers/users.ts", () => {
       expect(next).not.toHaveBeenCalled();
       const [{ user }] = res.json.mock.calls[0];
 
-      const { jwtVerify } = freshJwtHelper();
+      const { jwtVerify } = await freshJwtHelper();
       const decoded = await jwtVerify(user.dataValues.token);
       expect(decoded.username).toBe("jake");
       expect(decoded.email).toBe("jake@jake.jake");

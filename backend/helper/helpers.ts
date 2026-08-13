@@ -1,15 +1,15 @@
-const slugify = (string) => {
+const slugify = (string: string): string => {
   return string.trim().toLowerCase().replace(/\W|_/g, "-");
 };
 
-const appendTagList = (articleTags, article) => {
+const appendTagList = (articleTags: any[], article?: any) => {
   const tagList = articleTags.map((tag) => tag.name);
 
   if (!article) return tagList;
   article.dataValues.tagList = tagList;
 };
 
-const appendFavorites = async (loggedUser, article) => {
+const appendFavorites = async (loggedUser: any, article: any) => {
   const favorited = await article.hasUser(loggedUser ? loggedUser : null);
   article.dataValues.favorited = loggedUser ? favorited : false;
 
@@ -17,7 +17,7 @@ const appendFavorites = async (loggedUser, article) => {
   article.dataValues.favoritesCount = favoritesCount;
 };
 
-const appendFollowers = async (loggedUser, toAppend) => {
+const appendFollowers = async (loggedUser: any, toAppend: any) => {
   //
   if (toAppend?.author) {
     const author = await toAppend.getAuthor();
@@ -39,4 +39,4 @@ const appendFollowers = async (loggedUser, toAppend) => {
   }
 };
 
-module.exports = { slugify, appendTagList, appendFavorites, appendFollowers };
+export = { slugify, appendTagList, appendFavorites, appendFollowers };

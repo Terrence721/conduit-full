@@ -1,6 +1,9 @@
-const { bcryptHash, bcryptCompare } = require("./bcrypt");
+export {};
 
-describe("helper/bcrypt.js", () => {
+import bcryptHelper from "./bcrypt";
+const { bcryptHash, bcryptCompare } = bcryptHelper;
+
+describe("helper/bcrypt.ts", () => {
   test("bcryptHash produces a hash bcryptCompare verifies against the original password", async () => {
     const hash = await bcryptHash("correct horse battery staple");
 

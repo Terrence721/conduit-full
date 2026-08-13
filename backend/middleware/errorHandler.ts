@@ -1,11 +1,15 @@
-const {
-  ForbiddenError,
-  NotFoundError,
-  UnauthorizedError,
-  ValidationError,
-} = require("../helper/customErrors");
+import type { Request, Response, NextFunction } from "express";
+import customErrors from "../helper/customErrors";
 
-const errorHandler = (error, req, res, _next) => {
+const { ForbiddenError, NotFoundError, UnauthorizedError, ValidationError } =
+  customErrors;
+
+const errorHandler = (
+  error: any,
+  req: Request,
+  res: Response,
+  _next: NextFunction,
+) => {
   console.log("\x1b[31m%s\x1b[0m", "▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼");
   console.log(error);
 
@@ -24,4 +28,4 @@ const errorHandler = (error, req, res, _next) => {
   console.log("\x1b[31m%s\x1b[0m", "▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲");
 };
 
-module.exports = errorHandler;
+export = errorHandler;

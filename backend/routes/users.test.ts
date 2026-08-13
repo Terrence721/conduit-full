@@ -2,15 +2,17 @@ export {};
 
 import express from "express";
 import request from "supertest";
+import bcryptHelper from "../helper/bcrypt";
 
 import testDbModule from "../testUtils/testDb";
 const { buildTestDb, installTestDb } = testDbModule;
+const { bcryptHash } = bcryptHelper;
 
 const loadApp = async (db: any) => {
   installTestDb(db);
   vi.resetModules();
   const router = (await import("./users")).default;
-  const errorHandler = require("../middleware/errorHandler");
+  const errorHandler = (await import("../middleware/errorHandler")).default;
 
   const app = express();
   app.use(express.json());
@@ -56,7 +58,6 @@ describe("routes/users.ts", () => {
 
   test("POST /login signs in an existing user with a real token", async () => {
     const db = await buildTestDb();
-    const { bcryptHash } = require("../helper/bcrypt");
     await db.User.create({
       username: "jake",
       email: "jake@jake.jake",
@@ -71,8 +72,8 @@ describe("routes/users.ts", () => {
     expect(res.status).toBe(200);
     expect(res.body.user.username).toBe("jake");
 
-    const { jwtVerify } = require("../helper/jwt");
-    const decoded = await jwtVerify(res.body.user.token);
+    const { jwtVerify } = (await import("../helper/jwt")).default;
+    const decoded: any = await jwtVerify(res.body.user.token);
     expect(decoded.username).toBe("jake");
   });
 

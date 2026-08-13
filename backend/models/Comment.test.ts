@@ -1,5 +1,7 @@
-const { Sequelize } = require("sequelize");
-const defineComment = require("./Comment");
+export {};
+
+import { Sequelize, DataTypes } from "sequelize";
+import defineComment from "./Comment";
 
 const buildSequelize = () =>
   new Sequelize("test", "test", "test", {
@@ -9,7 +11,7 @@ const buildSequelize = () =>
 
 describe("models/Comment.js", () => {
   test("defines the expected fields", () => {
-    const Comment = defineComment(buildSequelize(), Sequelize.DataTypes);
+    const Comment = defineComment(buildSequelize(), DataTypes);
 
     expect(Object.keys(Comment.rawAttributes)).toEqual(
       expect.arrayContaining(["id", "body"]),
@@ -17,7 +19,7 @@ describe("models/Comment.js", () => {
   });
 
   test("toJSON hides articleId and userId, but keeps id", () => {
-    const Comment = defineComment(buildSequelize(), Sequelize.DataTypes);
+    const Comment = defineComment(buildSequelize(), DataTypes);
     const comment = Comment.build({
       id: 1,
       articleId: 2,
@@ -37,7 +39,7 @@ describe("models/Comment.js", () => {
   describe("associate", () => {
     const buildAssociatedComment = () => {
       const sequelize = buildSequelize();
-      const Comment = defineComment(sequelize, Sequelize.DataTypes);
+      const Comment = defineComment(sequelize, DataTypes);
       const User = sequelize.define("User", {});
       const Article = sequelize.define("Article", {});
 

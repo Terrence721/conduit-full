@@ -1,14 +1,11 @@
 // Shared test helper for controller tests: a real, in-memory SQLite
 // Sequelize instance running the actual models/associations, instead of
-// hand-stubbed mocks. Deliberately lives outside backend/models/ - if it
-// sat there, models/index.ts's dynamic file loader would try to require()
-// it as a model factory too.
+// hand-stubbed mocks.
 import { Sequelize, DataTypes } from "sequelize";
-
-const defineUser = require("../models/User");
-const defineArticle = require("../models/Article");
-const defineComment = require("../models/Comment");
-const defineTag = require("../models/Tag");
+import defineUser from "../models/User";
+import defineArticle from "../models/Article";
+import defineComment from "../models/Comment";
+import defineTag from "../models/Tag";
 
 const buildTestDb = async () => {
   const sequelize = new Sequelize({

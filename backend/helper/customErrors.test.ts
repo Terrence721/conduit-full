@@ -1,3 +1,6 @@
+export {};
+
+import customErrors from "./customErrors";
 const {
   AlreadyTakenError,
   FieldRequiredError,
@@ -5,9 +8,9 @@ const {
   NotFoundError,
   UnauthorizedError,
   ValidationError,
-} = require("./customErrors");
+} = customErrors;
 
-describe("helper/customErrors.js", () => {
+describe("helper/customErrors.ts", () => {
   test("ForbiddenError names the resource the caller isn't the author of", () => {
     const error = new ForbiddenError("article");
 

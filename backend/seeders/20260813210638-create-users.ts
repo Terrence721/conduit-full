@@ -1,8 +1,9 @@
 "use strict";
 
 import type { QueryInterface } from "sequelize";
+import bcryptHelper from "../helper/bcrypt";
 
-const { bcryptHash } = require("../helper/bcrypt");
+const { bcryptHash } = bcryptHelper;
 
 export = {
   async up(queryInterface: QueryInterface) {

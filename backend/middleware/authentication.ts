@@ -1,8 +1,10 @@
 import type { Request, Response, NextFunction } from "express";
 import models from "../models";
+import customErrors from "../helper/customErrors";
+import jwtHelper from "../helper/jwt";
 
-const { NotFoundError } = require("../helper/customErrors");
-const { jwtVerify } = require("../helper/jwt");
+const { NotFoundError } = customErrors;
+const { jwtVerify } = jwtHelper;
 const { User } = models;
 
 const verifyToken = async (req: Request, res: Response, next: NextFunction) => {

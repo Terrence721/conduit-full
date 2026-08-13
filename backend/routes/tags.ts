@@ -1,10 +1,11 @@
 import express from "express";
 import type { Request, Response, NextFunction } from "express";
 import models from "../models";
+import helpers from "../helper/helpers";
 
 const router = express.Router();
 const { Tag } = models;
-const { appendTagList } = require("../helper/helpers");
+const { appendTagList } = helpers;
 
 // All Tags
 router.get("/", async (req: Request, res: Response, next: NextFunction) => {

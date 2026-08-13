@@ -1,5 +1,7 @@
-const { Sequelize } = require("sequelize");
-const defineTag = require("./Tag");
+export {};
+
+import { Sequelize, DataTypes } from "sequelize";
+import defineTag from "./Tag";
 
 const buildSequelize = () =>
   new Sequelize("test", "test", "test", {
@@ -9,7 +11,7 @@ const buildSequelize = () =>
 
 describe("models/Tag.js", () => {
   test("defines name as its primary key, with no timestamps", () => {
-    const Tag = defineTag(buildSequelize(), Sequelize.DataTypes);
+    const Tag = defineTag(buildSequelize(), DataTypes);
 
     expect(Object.keys(Tag.rawAttributes)).toEqual(["name"]);
     expect(Tag.rawAttributes.name.primaryKey).toBe(true);
@@ -17,7 +19,7 @@ describe("models/Tag.js", () => {
   });
 
   test("toJSON only hides TagList, not id or userId (which don't exist on Tag)", () => {
-    const Tag = defineTag(buildSequelize(), Sequelize.DataTypes);
+    const Tag = defineTag(buildSequelize(), DataTypes);
     const tag = Tag.build({ name: "dragons" });
 
     const json = tag.toJSON();
@@ -33,7 +35,7 @@ describe("models/Tag.js", () => {
   describe("associate", () => {
     test("belongs to many Articles through tagName", () => {
       const sequelize = buildSequelize();
-      const Tag = defineTag(sequelize, Sequelize.DataTypes);
+      const Tag = defineTag(sequelize, DataTypes);
       const Article = sequelize.define("Article", {});
 
       Tag.associate({ Article });

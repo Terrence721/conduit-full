@@ -1,5 +1,7 @@
-const { Sequelize } = require("sequelize");
-const defineArticle = require("./Article");
+export {};
+
+import { Sequelize, DataTypes } from "sequelize";
+import defineArticle from "./Article";
 
 const buildSequelize = () =>
   new Sequelize("test", "test", "test", {
@@ -9,7 +11,7 @@ const buildSequelize = () =>
 
 describe("models/Article.js", () => {
   test("defines the expected fields", () => {
-    const Article = defineArticle(buildSequelize(), Sequelize.DataTypes);
+    const Article = defineArticle(buildSequelize(), DataTypes);
 
     expect(Object.keys(Article.rawAttributes)).toEqual(
       expect.arrayContaining(["slug", "title", "description", "body"]),
@@ -17,7 +19,7 @@ describe("models/Article.js", () => {
   });
 
   test("toJSON hides id and userId", () => {
-    const Article = defineArticle(buildSequelize(), Sequelize.DataTypes);
+    const Article = defineArticle(buildSequelize(), DataTypes);
     const article = Article.build({
       id: 1,
       userId: 2,
@@ -39,10 +41,10 @@ describe("models/Article.js", () => {
   describe("associate", () => {
     const buildAssociatedArticle = () => {
       const sequelize = buildSequelize();
-      const Article = defineArticle(sequelize, Sequelize.DataTypes);
+      const Article = defineArticle(sequelize, DataTypes);
       const User = sequelize.define("User", {});
       const Tag = sequelize.define("Tag", {
-        name: { type: Sequelize.DataTypes.STRING, primaryKey: true },
+        name: { type: DataTypes.STRING, primaryKey: true },
       });
       const Comment = sequelize.define("Comment", {});
 

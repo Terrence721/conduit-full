@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const privateKey = process.env.JWT_KEY;
 
-module.exports.jwtSign = async (payload) => {
+const jwtSign = async (payload: { username: string; email: string }) => {
   return jwt.sign(
     { username: payload.username, email: payload.email },
     privateKey,
@@ -9,6 +9,8 @@ module.exports.jwtSign = async (payload) => {
   );
 };
 
-module.exports.jwtVerify = async (token) => {
+const jwtVerify = async (token: string) => {
   return jwt.verify(token, privateKey, { algorithms: ["HS256"] });
 };
+
+export = { jwtSign, jwtVerify };

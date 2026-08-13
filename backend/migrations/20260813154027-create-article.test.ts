@@ -1,40 +1,42 @@
-const Sequelize = require("sequelize");
-const migration = require("./20260813154027-create-article");
-const defineArticle = require("../models/Article");
+export {};
+
+import { Sequelize, DataTypes } from "sequelize";
+import migration from "./20260813154027-create-article";
+import defineArticle from "../models/Article";
 
 describe("migrations/20260813154027-create-article", () => {
   test("up creates the Articles table, including the userId FK the model needs", async () => {
     const createTable = vi.fn();
 
-    await migration.up({ createTable }, Sequelize);
+    await migration.up({ createTable } as any, DataTypes);
 
     expect(createTable).toHaveBeenCalledWith("Articles", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER,
+        type: DataTypes.INTEGER,
       },
-      slug: { type: Sequelize.STRING },
-      title: { type: Sequelize.STRING },
-      description: { type: Sequelize.TEXT },
-      body: { type: Sequelize.TEXT },
+      slug: { type: DataTypes.STRING },
+      title: { type: DataTypes.STRING },
+      description: { type: DataTypes.TEXT },
+      body: { type: DataTypes.TEXT },
       userId: {
-        type: Sequelize.INTEGER,
+        type: DataTypes.INTEGER,
         references: { model: "Users", key: "id" },
         onDelete: "CASCADE",
       },
-      createdAt: { allowNull: false, type: Sequelize.DATE },
-      updatedAt: { allowNull: false, type: Sequelize.DATE },
+      createdAt: { allowNull: false, type: DataTypes.DATE },
+      updatedAt: { allowNull: false, type: DataTypes.DATE },
     });
   });
 
-  test("column set matches the real Article.js model, including its associated userId", () => {
+  test("column set matches the real Article.ts model, including its associated userId", () => {
     const sequelize = new Sequelize("test", "test", "test", {
       dialect: "postgres",
       logging: false,
     });
-    const Article = defineArticle(sequelize, Sequelize.DataTypes);
+    const Article = defineArticle(sequelize, DataTypes);
     const User = sequelize.define("User", {});
     const Tag = sequelize.define("Tag", {});
     const Comment = sequelize.define("Comment", {});
@@ -48,7 +50,7 @@ describe("migrations/20260813154027-create-article", () => {
   test("down drops the Articles table", async () => {
     const dropTable = vi.fn();
 
-    await migration.down({ dropTable }, Sequelize);
+    await migration.down({ dropTable } as any);
 
     expect(dropTable).toHaveBeenCalledWith("Articles");
   });

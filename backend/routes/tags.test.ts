@@ -10,7 +10,7 @@ const loadApp = async (db: any) => {
   installTestDb(db);
   vi.resetModules();
   const router = (await import("./tags")).default;
-  const errorHandler = require("../middleware/errorHandler");
+  const errorHandler = (await import("../middleware/errorHandler")).default;
 
   const app = express();
   app.use(express.json());

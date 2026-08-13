@@ -1,12 +1,10 @@
 import type { Request, Response, NextFunction } from "express";
 import models from "../models";
+import helpers from "../helper/helpers";
+import customErrors from "../helper/customErrors";
 
-const { UnauthorizedError, NotFoundError } = require("../helper/customErrors");
-const {
-  appendFollowers,
-  appendFavorites,
-  appendTagList,
-} = require("../helper/helpers");
+const { UnauthorizedError, NotFoundError } = customErrors;
+const { appendFollowers, appendFavorites, appendTagList } = helpers;
 const { Article, Tag, User } = models;
 
 //*  Favorite/Unfavorite Article

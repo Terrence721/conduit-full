@@ -1,15 +1,18 @@
 import type { Request, Response, NextFunction } from "express";
 import models from "../models";
+import jwtHelper from "../helper/jwt";
+import bcryptHelper from "../helper/bcrypt";
+import customErrors from "../helper/customErrors";
 
 const { User } = models;
-const { jwtSign } = require("../helper/jwt");
-const { bcryptHash, bcryptCompare } = require("../helper/bcrypt");
+const { jwtSign } = jwtHelper;
+const { bcryptHash, bcryptCompare } = bcryptHelper;
 const {
   ValidationError,
   FieldRequiredError,
   AlreadyTakenError,
   NotFoundError,
-} = require("../helper/customErrors");
+} = customErrors;
 
 // Register
 const signUp = async (req: Request, res: Response, next: NextFunction) => {

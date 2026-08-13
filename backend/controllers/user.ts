@@ -1,7 +1,9 @@
 import type { Request, Response, NextFunction } from "express";
+import customErrors from "../helper/customErrors";
+import bcryptHelper from "../helper/bcrypt";
 
-const { UnauthorizedError } = require("../helper/customErrors");
-const { bcryptHash } = require("../helper/bcrypt");
+const { UnauthorizedError } = customErrors;
+const { bcryptHash } = bcryptHelper;
 
 const UPDATABLE_FIELDS = ["username", "bio", "image", "email"] as const;
 
