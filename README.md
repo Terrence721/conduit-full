@@ -38,11 +38,15 @@ yarn install
    ```shell
    yarn sqlz db:create
    ```
-3. (Optional) seed it with dummy data:
+3. Run the migrations — the backend no longer auto-syncs the schema at boot, so this step is required:
+   ```shell
+   yarn sqlz db:migrate
+   ```
+4. (Optional) seed it with dummy data:
    ```shell
    yarn sqlz db:seed:all
    ```
-4. Start the dev servers:
+5. Start the dev servers:
    ```shell
    yarn dev
    ```
