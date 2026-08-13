@@ -5,9 +5,9 @@
 
 Last updated: August 13, 2026
 
-This repository is an independently modernized fork of the
-[RealWorld](https://realworld.io/) **Conduit** example app — a Medium-style
-publishing platform (CRUD, auth, pagination) built with
+This repository is an independently modernized fork of the RealWorld
+**Conduit** example app — a Medium-style publishing platform (CRUD, auth,
+pagination) built with
 **React / Vite + SWC / Express.js / Sequelize / PostgreSQL**. It's not
 affiliated with the RealWorld project or the original repo author.
 
