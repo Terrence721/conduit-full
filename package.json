@@ -1,0 +1,23 @@
+{
+  "name": "conduit-full",
+  "version": "1.0.0",
+  "description": "RealWorld example app, built with React / Express.js / Sequelize / PostgreSQL including CRUD operations, authentication, routing, pagination, and more.",
+  "private": true,
+  "license": "MIT",
+  "packageManager": "yarn@1.22.22",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "dev": "concurrently --names 'Node,Vite' -c 'green,blue' 'yarn workspace backend dev' 'yarn workspace frontend dev'",
+    "sqlz": "yarn workspace backend sqlz",
+    "start": "yarn workspace frontend build && yarn workspace backend start",
+    "test": "vitest"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react-swc": "^4.3.3",
+    "concurrently": "^10.0.4",
+    "vitest": "^4.1.10"
+  }
+}
