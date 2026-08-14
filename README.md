@@ -58,6 +58,7 @@ Work on this fork is tracked two ways:
 
 - **[`todo.md`](todo.md)** — the primary, detailed record: a phase-by-phase written log of everything done and everything still open, with dates and the reasoning behind each decision. This is the source of truth.
 - **[GitHub Project board](https://github.com/users/Terrence721/projects/4)** — a Scrum-style Backlog/Planned/In Progress/Verification & QA/Done view of the same work, for a quick at-a-glance status without reading the full log. Kept in sync with [`todo.md`](todo.md).
+- **[Wiki](https://github.com/Terrence721/conduit-full/wiki)** — short pointers per backend module (models, helpers, middleware, controllers, routes) plus the TypeScript migration, testing, and security-hardening stories, each linking back to the real source rather than repeating it.
 
 ## License
 
