@@ -10,6 +10,9 @@
     "backend",
     "frontend"
   ],
+  "resolutions": {
+    "uuid": "^11.1.1"
+  },
   "scripts": {
     "dev": "concurrently --names 'Node,Vite' -c 'green,blue' 'yarn workspace backend dev' 'yarn workspace frontend dev'",
     "sqlz": "yarn workspace backend sqlz",
