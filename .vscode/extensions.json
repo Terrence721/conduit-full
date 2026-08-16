@@ -114,6 +114,7 @@
     "ms-playwright.playwright",
     "ms-vscode-remote.remote-containers",
     "standard.vscode-standard",
-    "zuoez02.tslint-snippets"
+    "zuoez02.tslint-snippets",
+    "webhint.vscode-webhint"
   ]
 }
