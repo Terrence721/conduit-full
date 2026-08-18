@@ -16,7 +16,7 @@ one file at a time: each file is re-added deliberately, with dependencies and
 patterns brought up to their current latest versions along the way. See the
 commit history for a file-by-file record of that process.
 
-**Status:** backend complete (100% TypeScript) and independently runnable; frontend not yet started.
+**Status:** backend complete (100% TypeScript) and independently runnable; frontend in progress, being built one file at a time in TypeScript — see `todo.md` for exact status. Not yet runnable end-to-end.
 
 ## 🧩 Stack
 
@@ -27,8 +27,9 @@ commit history for a file-by-file record of that process.
 ## 🖥 Getting Started
 
 > Steps 1–4 (env, database, migrations, seed data) work today against the
-> backend alone. Step 5 (`yarn dev`) needs the frontend workspace, which
-> hasn't been added yet.
+> backend alone. Step 5 (`yarn dev`) won't render anything yet — the frontend
+> workspace exists, but its entry point (`main.tsx`) and every route/component
+> that depends on it are still being built.
 
 ```shell
 yarn install
