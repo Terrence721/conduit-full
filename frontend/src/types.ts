@@ -34,3 +34,9 @@ export interface User {
   email: string;
   token: string;
 }
+
+export interface AuthState {
+  headers: { Authorization: string } | null;
+  isAuth: boolean;
+  loggedUser: User;
+}
