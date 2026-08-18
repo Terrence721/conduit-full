@@ -68,13 +68,19 @@ export default [
       "@typescript-eslint/no-explicit-any": "warn",
     },
   },
+  ...tseslint.configs.recommended.map((config) => ({
+    ...config,
+    files: ["frontend/src/**/*.{ts,tsx}"],
+  })),
   {
-    files: ["frontend/src/**/*.{js,jsx}"],
+    files: ["frontend/src/**/*.{ts,tsx}"],
     languageOptions: {
       ecmaVersion: "latest",
       sourceType: "module",
       parserOptions: {
         ecmaFeatures: { jsx: true },
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
       },
       globals: {
         ...globals.browser,
@@ -94,7 +100,7 @@ export default [
       "react/react-in-jsx-scope": "off",
       "react/prop-types": "off",
       "react-refresh/only-export-components": "warn",
-      "no-unused-vars": [
+      "@typescript-eslint/no-unused-vars": [
         "warn",
         { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
       ],
@@ -106,7 +112,7 @@ export default [
     // from "vitest" - the "globals" package has no vitest set, so they're
     // listed explicitly here.
     files: [
-      "frontend/src/**/*.test.{js,jsx}",
+      "frontend/src/**/*.test.{ts,tsx}",
       "backend/**/*.test.js",
       "**/setupTests.js",
       "vitest.config.js",
