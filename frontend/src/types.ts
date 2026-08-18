@@ -26,3 +26,11 @@ export interface Comment {
   updatedAt: string;
   author: Profile;
 }
+
+export interface User {
+  username: string;
+  bio: string | null;
+  image: string | null;
+  email: string;
+  token: string;
+}
