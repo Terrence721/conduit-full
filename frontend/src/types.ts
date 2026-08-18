@@ -18,3 +18,11 @@ export interface Article {
   favoritesCount: number;
   author: Profile;
 }
+
+export interface Comment {
+  id: number;
+  body: string;
+  createdAt: string;
+  updatedAt: string;
+  author: Profile;
+}
