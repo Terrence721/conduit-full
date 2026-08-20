@@ -1,0 +1,419 @@
+<title>System Architecture — One Express App, One Database</title>
+<style>
+  :root {
+    --ink: #201d2b;
+    --ink-soft: #55506a;
+    --paper: #eeecf3;
+    --surface: #ffffff;
+    --line: #c3bfd1;
+    --client: #6a3fa0;
+    --client-bg: #ece4f5;
+    --api: #2456a6;
+    --api-bg: #e2eaf8;
+    --db: #1f7a5c;
+    --db-bg: #dcf0e6;
+    --shared: #4a4560;
+    --shared-bg: #ece9f2;
+    --mono:
+      ui-monospace, "SF Mono", "Cascadia Mono", "Consolas", "Liberation Mono",
+      monospace;
+    --sans: -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  }
+
+  :root[data-theme="dark"] {
+    --ink: #eae8f2;
+    --ink-soft: #ada7c4;
+    --paper: #17151f;
+    --surface: #201d2b;
+    --line: #3c384c;
+    --client: #b592e0;
+    --client-bg: #2a2038;
+    --api: #7fa8e0;
+    --api-bg: #1c2b42;
+    --db: #6dc9a3;
+    --db-bg: #16302680;
+    --shared: #c7c2dc;
+    --shared-bg: #262233;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ink: #eae8f2;
+      --ink-soft: #ada7c4;
+      --paper: #17151f;
+      --surface: #201d2b;
+      --line: #3c384c;
+      --client: #b592e0;
+      --client-bg: #2a2038;
+      --api: #7fa8e0;
+      --api-bg: #1c2b42;
+      --db: #6dc9a3;
+      --db-bg: #163026;
+      --shared: #c7c2dc;
+      --shared-bg: #262233;
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    padding: 2.5rem 1.5rem 4rem;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin: 0 0 0.6rem;
+  }
+
+  h1 {
+    font-size: clamp(1.6rem, 2.6vw, 2.15rem);
+    line-height: 1.15;
+    margin: 0 0 0.5rem;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+
+  .dek {
+    font-size: 1rem;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    max-width: 70ch;
+    margin: 0 0 2.2rem;
+  }
+
+  .dek code {
+    font-family: var(--mono);
+    font-size: 0.9em;
+    color: var(--ink);
+  }
+  .dek a {
+    color: var(--api);
+  }
+
+  h2 {
+    font-size: 0.72rem;
+    font-family: var(--mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin: 0 0 1rem;
+  }
+
+  .diagram {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 2.2rem;
+  }
+
+  .diagram-row {
+    display: flex;
+    justify-content: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+
+  .node {
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 0.6rem 1.1rem;
+    white-space: nowrap;
+  }
+
+  .node--client {
+    border-color: var(--client);
+    color: var(--client);
+    font-weight: 600;
+  }
+  .node--api {
+    border-color: var(--api);
+    color: var(--api);
+  }
+  .node--db {
+    border-color: var(--db);
+    color: var(--db);
+    font-weight: 600;
+  }
+
+  .diagram-arrow-v {
+    color: var(--ink-soft);
+    font-size: 0.78rem;
+    font-family: var(--mono);
+    text-align: center;
+  }
+
+  .spokes {
+    display: flex;
+    justify-content: center;
+    gap: 2.4rem;
+    flex-wrap: wrap;
+    margin-top: 0.3rem;
+  }
+
+  .spoke {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .spoke-note {
+    font-size: 0.76rem;
+    color: var(--ink-soft);
+    max-width: 20ch;
+    text-align: center;
+    line-height: 1.4;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.6rem;
+  }
+
+  .card {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface);
+    padding: 1.1rem 1.2rem 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .card-tag {
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-weight: 600;
+    width: fit-content;
+  }
+
+  .card--client .card-tag {
+    color: var(--client);
+    background: var(--client-bg);
+  }
+  .card--api .card-tag {
+    color: var(--api);
+    background: var(--api-bg);
+  }
+  .card--db .card-tag {
+    color: var(--db);
+    background: var(--db-bg);
+  }
+
+  .card-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin: 0;
+  }
+  .card-title code {
+    font-family: var(--mono);
+    font-size: 0.92em;
+  }
+
+  .card ul {
+    margin: 0;
+    padding-left: 1.1rem;
+    font-size: 0.82rem;
+    line-height: 1.6;
+    color: var(--ink-soft);
+  }
+  .card ul li::marker {
+    color: var(--line);
+  }
+
+  .card-link {
+    font-size: 0.78rem;
+    margin-top: auto;
+  }
+  .card-link a {
+    color: var(--ink);
+  }
+
+  .callout {
+    border: 1px solid var(--shared);
+    background: var(--shared-bg);
+    border-radius: 10px;
+    padding: 1rem 1.3rem;
+    display: flex;
+    align-items: baseline;
+    gap: 0.9rem;
+    margin-bottom: 2rem;
+  }
+
+  .callout-mark {
+    font-family: var(--mono);
+    font-size: 0.95rem;
+    color: var(--shared);
+    font-weight: 600;
+    flex: 0 0 auto;
+  }
+  .callout p {
+    margin: 0;
+    font-size: 0.88rem;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+  .callout code {
+    font-family: var(--mono);
+    font-size: 0.92em;
+  }
+  .callout a {
+    color: var(--api);
+  }
+
+  footer {
+    margin-top: 2.6rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid var(--line);
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--ink-soft);
+    letter-spacing: 0.02em;
+  }
+
+  @media (max-width: 720px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+    .spokes {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+</style>
+
+<div class="page">
+  <p class="eyebrow">conduit-full — system architecture</p>
+  <h1>
+    One Express app behind a dev proxy. No microservices — a monolith done
+    carefully.
+  </h1>
+  <p class="dek">
+    In production, Express serves the built frontend directly
+    (<code>express.static</code>). In development, Vite's dev server owns port
+    3000 and proxies every <code>/api</code> request to Express on port 3001 —
+    the frontend never talks to Postgres, and the backend never renders
+    anything. See <a href="auth-flow.html">Auth &amp; Request Flow</a> for how a
+    single request actually moves through the middleware chain.
+  </p>
+
+  <h2>Request Path</h2>
+  <div class="diagram">
+    <div class="diagram-row">
+      <span class="node node--client">Browser</span>
+    </div>
+    <span class="diagram-arrow-v">↓ HTTP</span>
+    <div class="diagram-row">
+      <span class="node node--client"
+        >Vite dev server (:3000) — proxies /api →</span
+      >
+    </div>
+    <span class="diagram-arrow-v">↓</span>
+    <div class="diagram-row">
+      <span class="node node--api"
+        >Express app (:3001) — cors → json → rate limiter on /api</span
+      >
+    </div>
+    <span class="diagram-arrow-v">↓ mounted in order</span>
+    <div class="spokes">
+      <div class="spoke">
+        <span class="node node--api">/api/users, /api/user</span>
+        <span class="spoke-note">register, login, current user</span>
+      </div>
+      <div class="spoke">
+        <span class="node node--api">/api/articles</span>
+        <span class="spoke-note">CRUD, comments, favorites, feed</span>
+      </div>
+      <div class="spoke">
+        <span class="node node--api">/api/profiles, /api/tags</span>
+        <span class="spoke-note">follow/unfollow, tag list</span>
+      </div>
+    </div>
+    <span class="diagram-arrow-v">↓ Sequelize</span>
+    <div class="diagram-row">
+      <span class="node node--db">PostgreSQL</span>
+    </div>
+  </div>
+
+  <h2>Layers</h2>
+  <div class="grid">
+    <div class="card card--client">
+      <span class="card-tag">In progress</span>
+      <p class="card-title">frontend/</p>
+      <ul>
+        <li>React 19, Vite + SWC, React Router</li>
+        <li>TypeScript from file one — no JS phase</li>
+        <li>12 of ~16 API service modules done</li>
+      </ul>
+    </div>
+
+    <div class="card card--api">
+      <span class="card-tag">Complete</span>
+      <p class="card-title">backend/routes + controllers</p>
+      <ul>
+        <li>5 route groups, all auth-guarded per-endpoint</li>
+        <li><code>verifyToken</code> is soft-auth by default</li>
+        <li>Global rate limiter on every <code>/api</code> route</li>
+      </ul>
+      <div class="card-link">
+        <a href="auth-flow.html">→ Auth &amp; request flow</a>
+      </div>
+    </div>
+
+    <div class="card card--db">
+      <span class="card-tag">Complete</span>
+      <p class="card-title">backend/models</p>
+      <ul>
+        <li>4 models, real migrations as schema source of truth</li>
+        <li>No <code>sequelize.sync({ alter: true })</code> at boot</li>
+      </ul>
+      <div class="card-link"><a href="data-model.html">→ Data model</a></div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <span class="callout-mark">i</span>
+    <p>
+      <code>verifyToken</code> is the one piece of middleware every route
+      touches, and it's deliberately permissive: no
+      <code>Authorization</code> header just means the request proceeds
+      anonymously, not a 401 — each controller decides for itself whether it
+      actually requires a logged-in user. That distinction is the source of a
+      real bug found while typing the frontend's
+      <code>getComments</code> service; see the
+      <a href="auth-flow.html">Auth &amp; Request Flow</a> diagram for the full
+      trace.
+    </p>
+  </div>
+
+  <footer>
+    conduit-full · Express 5 + Sequelize 6 + PostgreSQL · React 19 + Vite
+    frontend (in progress)
+  </footer>
+</div>
