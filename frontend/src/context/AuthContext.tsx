@@ -58,9 +58,7 @@ function AuthProvider({ children }: AuthProviderProps) {
     [headers, isAuth, loggedUser],
   );
 
-  return (
-    <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export default AuthProvider;
