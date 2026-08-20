@@ -1,5 +1,6 @@
 import axios from "axios";
 import errorHandler from "../helpers/errorHandler";
+import type { MessageResponse } from "../types";
 
 interface DeleteCommentParams {
   commentId: number;
@@ -7,17 +8,13 @@ interface DeleteCommentParams {
   slug: string;
 }
 
-interface DeleteCommentResponse {
-  message: { body: string[] };
-}
-
 async function deleteComment({
   commentId,
   headers,
   slug,
-}: DeleteCommentParams): Promise<DeleteCommentResponse | undefined> {
+}: DeleteCommentParams): Promise<MessageResponse | undefined> {
   try {
-    const { data } = await axios<DeleteCommentResponse>({
+    const { data } = await axios<MessageResponse>({
       headers,
       method: "DELETE",
       url: `/api/articles/${slug}/comments/${commentId}`,
