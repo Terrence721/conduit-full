@@ -1,0 +1,851 @@
+<title>Terrence Daniels — Full-Stack Engineer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta
+  name="description"
+  content="An independently modernized fork of the RealWorld Conduit example app — a Medium-style publishing platform (CRUD, JWT auth, pagination) rebuilt file by file in React 19 / Vite / Express 5 / Sequelize / PostgreSQL, with dependencies brought current and real bugs found and fixed along the way. Backend complete, frontend in progress."
+/>
+<link
+  rel="canonical"
+  href="https://terrence721.github.io/conduit-full/portfolio.html"
+/>
+
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Terrence Daniels — Portfolio" />
+<meta
+  property="og:url"
+  content="https://terrence721.github.io/conduit-full/portfolio.html"
+/>
+<meta
+  property="og:title"
+  content="conduit-full — a Medium clone rebuilt file by file, by Terrence Daniels"
+/>
+<meta
+  property="og:description"
+  content="An independently modernized fork of the RealWorld Conduit example app, rebuilt one file at a time — every dependency brought current, every real bug found via a real failing test, not read twice and assumed fine. Backend complete, frontend in progress."
+/>
+
+<meta name="twitter:card" content="summary" />
+<meta
+  name="twitter:title"
+  content="conduit-full — a Medium clone rebuilt file by file, by Terrence Daniels"
+/>
+<meta
+  name="twitter:description"
+  content="An independently modernized fork of RealWorld's Conduit example app — React/Vite frontend, Express/Sequelize/PostgreSQL backend, rebuilt file by file with dependencies brought current. Backend complete, frontend in progress."
+/>
+<style>
+  :root {
+    --paper: #ede9df;
+    --paper-2: #e2ddd0;
+    --ink: #1c2333;
+    --ink-soft: #4b5567;
+    --rule: #c7c0ac;
+    --accent: #a13d2b;
+    --accent-ink: #fff7ef;
+    --accent-2: #2e5266;
+    --font-display:
+      Georgia, "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
+    --font-body:
+      -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial,
+      sans-serif;
+    --font-mono:
+      ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono",
+      monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #14181f;
+      --paper-2: #1b212b;
+      --ink: #e8e4d9;
+      --ink-soft: #a3aabb;
+      --rule: #303748;
+      --accent: #dd7a4a;
+      --accent-ink: #1c1006;
+      --accent-2: #7fb2cc;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #14181f;
+    --paper-2: #1b212b;
+    --ink: #e8e4d9;
+    --ink-soft: #a3aabb;
+    --rule: #303748;
+    --accent: #dd7a4a;
+    --accent-ink: #1c1006;
+    --accent-2: #7fb2cc;
+  }
+  :root[data-theme="light"] {
+    --paper: #ede9df;
+    --paper-2: #e2ddd0;
+    --ink: #1c2333;
+    --ink-soft: #4b5567;
+    --rule: #c7c0ac;
+    --accent: #a13d2b;
+    --accent-ink: #fff7ef;
+    --accent-2: #2e5266;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+  html {
+    color-scheme: light dark;
+  }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-body);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  a {
+    color: var(--accent-2);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+  a:hover {
+    color: var(--accent);
+  }
+  a:focus-visible,
+  button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  .wrap {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 0 28px;
+  }
+
+  /* ---------- hero ---------- */
+  .hero {
+    position: relative;
+    padding: 72px 0 44px;
+    background-image: repeating-linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--ink) 4%, transparent) 0 2px,
+      transparent 2px 26px
+    );
+    border-bottom: 1px solid var(--rule);
+  }
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin: 0 0 18px;
+  }
+  .eyebrow::before {
+    content: "◆ ";
+    color: var(--accent);
+  }
+  h1.name {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(2.6rem, 6vw, 4.2rem);
+    letter-spacing: -0.01em;
+    line-height: 1.02;
+    margin: 0 0 10px;
+    text-wrap: balance;
+  }
+  .role {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: clamp(1.1rem, 2.4vw, 1.4rem);
+    color: var(--accent-2);
+    margin: 0 0 22px;
+  }
+  .thesis {
+    max-width: 62ch;
+    font-size: 1.05rem;
+    color: var(--ink-soft);
+    margin: 0 0 34px;
+  }
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    letter-spacing: 0.03em;
+    padding: 10px 16px;
+    border: 1px solid var(--ink);
+    color: var(--ink);
+    text-decoration: none;
+    background: transparent;
+  }
+  .btn:hover {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .btn.primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--accent-ink);
+  }
+  .btn.primary:hover {
+    background: var(--accent-2);
+    border-color: var(--accent-2);
+    color: var(--accent-ink);
+  }
+
+  .stamp {
+    position: absolute;
+    top: 58px;
+    right: 28px;
+    width: 128px;
+    height: 128px;
+    border: 2px solid var(--accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: rotate(-9deg);
+    opacity: 0.92;
+  }
+  .stamp::before {
+    content: "";
+    position: absolute;
+    inset: 8px;
+    border: 1px dashed var(--accent);
+    border-radius: 50%;
+  }
+  .stamp-inner {
+    text-align: center;
+    font-family: var(--font-mono);
+    color: var(--accent);
+  }
+  .stamp-inner .n {
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .stamp-inner .l {
+    display: block;
+    font-size: 0.55rem;
+    letter-spacing: 0.12em;
+    margin-top: 4px;
+  }
+  @media (max-width: 620px) {
+    .stamp {
+      display: none;
+    }
+  }
+
+  .manifest {
+    background: var(--paper-2);
+    border-bottom: 1px solid var(--rule);
+    overflow-x: auto;
+  }
+  .manifest-row {
+    display: flex;
+    min-width: max-content;
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+  .manifest-cell {
+    padding: 16px 24px;
+    border-right: 1px solid var(--rule);
+    white-space: nowrap;
+  }
+  .manifest-cell:last-child {
+    border-right: none;
+  }
+  .manifest-cell .v {
+    font-size: 1.15rem;
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .manifest-cell .k {
+    display: block;
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  section {
+    padding: 52px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  section:last-of-type {
+    border-bottom: none;
+  }
+  h2 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 1.7rem;
+    margin: 0 0 6px;
+    text-wrap: balance;
+  }
+  .h2-sub {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin: 0 0 22px;
+  }
+  p {
+    max-width: 68ch;
+  }
+  .lede {
+    font-size: 1.02rem;
+    color: var(--ink-soft);
+    max-width: 66ch;
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 18px 0 0;
+  }
+  .chip {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    border: 1px solid var(--rule);
+    color: var(--ink-soft);
+  }
+
+  .ledger {
+    border-top: 1px solid var(--rule);
+    margin-top: 24px;
+  }
+  .item {
+    display: grid;
+    grid-template-columns: 40px 1fr;
+    gap: 4px 18px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .item .no {
+    font-family: var(--font-mono);
+    color: var(--accent);
+    font-size: 0.9rem;
+    padding-top: 2px;
+  }
+  .item .file {
+    font-family: var(--font-mono);
+    font-size: 0.88rem;
+    color: var(--ink);
+  }
+  .item .desc {
+    color: var(--ink-soft);
+    font-size: 0.95rem;
+    margin: 4px 0 8px;
+  }
+  .item .meta {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--ink-soft);
+  }
+  .item .meta .tag {
+    color: var(--accent-2);
+  }
+  .item .meta a {
+    margin-left: 8px;
+  }
+
+  .note {
+    border-left: 2px solid var(--accent-2);
+    padding: 4px 0 4px 16px;
+    color: var(--ink-soft);
+    font-size: 0.92rem;
+    margin: 22px 0 0;
+    max-width: 62ch;
+  }
+  .note strong {
+    color: var(--ink);
+  }
+
+  .twocol {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+    margin-top: 20px;
+  }
+  @media (max-width: 640px) {
+    .twocol {
+      grid-template-columns: 1fr;
+    }
+  }
+  .card {
+    border: 1px solid var(--rule);
+    padding: 18px 20px;
+  }
+  .card h3 {
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin: 0 0 8px;
+  }
+  .card p {
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+    margin: 0;
+  }
+
+  footer {
+    padding: 44px 0 72px;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+  }
+  footer .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 22px;
+    margin-bottom: 22px;
+  }
+  footer .fine {
+    color: var(--ink-soft);
+    font-size: 0.78rem;
+    max-width: 62ch;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      transition: none !important;
+    }
+  }
+</style>
+
+<div class="hero">
+  <div class="wrap">
+    <p class="eyebrow">Portfolio Manifest — Prepared 2026-08-20</p>
+    <h1 class="name">Terrence&nbsp;Daniels</h1>
+    <p class="role">Full-Stack Engineer</p>
+    <p class="thesis">
+      An independently modernized fork of the RealWorld <strong>Conduit</strong>
+      example app — a Medium-style publishing platform (CRUD, JWT auth,
+      pagination) rebuilt one file at a time rather than copied over wholesale,
+      with every dependency brought up to its current latest and every real bug
+      found via a real failing test, not read twice and assumed fine. Backend
+      complete and independently runnable; frontend in progress.
+    </p>
+    <div class="hero-actions">
+      <a class="btn primary" href="https://github.com/Terrence721/conduit-full"
+        >View the repository →</a
+      >
+      <a
+        class="btn"
+        href="https://terrence721.github.io/conduit-full/diagrams/system-architecture.html"
+        >Architecture</a
+      >
+      <a
+        class="btn"
+        href="https://github.com/Terrence721/conduit-full/blob/main/todo.md"
+        >Build log</a
+      >
+    </div>
+  </div>
+  <div class="stamp" aria-hidden="true">
+    <div class="stamp-inner">
+      <span class="n">25</span>
+      <span class="l">REAL BUGS<br />FOUND &amp; FIXED</span>
+    </div>
+  </div>
+</div>
+
+<div class="manifest">
+  <div class="wrap">
+    <div class="manifest-row">
+      <div class="manifest-cell">
+        <span class="v">61</span><span class="k">phases shipped</span>
+      </div>
+      <div class="manifest-cell">
+        <span class="v">214/214</span
+        ><span class="k">backend tests passing</span>
+      </div>
+      <div class="manifest-cell">
+        <span class="v">12/16</span
+        ><span class="k">frontend services done</span>
+      </div>
+      <div class="manifest-cell">
+        <span class="v">25</span
+        ><span class="k">real bugs found &amp; fixed</span>
+      </div>
+      <div class="manifest-cell">
+        <span class="v">0</span><span class="k">open CodeQL alerts</span>
+      </div>
+      <div class="manifest-cell">
+        <span class="v">100%</span><span class="k">TypeScript, both sides</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <section>
+    <h2>Why this project</h2>
+    <p class="h2-sub">A dated example app, modernized for real</p>
+    <p class="lede">
+      RealWorld's Conduit is a well-known "same app, N stacks" demo — a useful
+      common ground, but the reference implementations age: pinned dependencies,
+      an unmaintained CommonJS backend, no TypeScript, no CI, no tests. Rather
+      than fork it wholesale, this repo rebuilds it file by file, upgrading
+      every dependency and pattern to current latest as each file goes in, with
+      the reasoning for every real decision written down as it happened — not
+      reconstructed afterward.
+    </p>
+    <div class="chips">
+      <span class="chip">React 19</span>
+      <span class="chip">Vite + SWC</span>
+      <span class="chip">TypeScript</span>
+      <span class="chip">Express 5</span>
+      <span class="chip">Sequelize 6</span>
+      <span class="chip">PostgreSQL</span>
+      <span class="chip">Vitest</span>
+      <span class="chip">GitHub Actions</span>
+      <span class="chip">CodeQL</span>
+    </div>
+  </section>
+
+  <section>
+    <h2>One backend, soft auth by default</h2>
+    <p class="h2-sub">
+      Five route groups, four models, one middleware that never rejects a
+      request for missing auth
+    </p>
+    <p class="lede">
+      <code>verifyToken</code> runs in front of nearly every route, but it's not
+      a gate: no <code>Authorization</code> header just means the request
+      proceeds anonymously — each controller decides for itself whether that's
+      acceptable. Real migrations are the only schema source of truth; nothing
+      patches the live schema at boot anymore.
+    </p>
+    <div class="twocol">
+      <div class="card">
+        <h3>Deliberate deviations, not defaults</h3>
+        <p>
+          bcrypt cost factor bumped 10→12 (current OWASP guidance). JWTs now
+          expire after 7 days and verification is pinned to
+          <code>algorithms: ["HS256"]</code> explicitly — the source issued
+          tokens that never expired. A global rate limiter now sits in front of
+          every <code>/api</code> route, closing 16 real CodeQL alerts at once
+          instead of patching each router individually.
+        </p>
+      </div>
+      <div class="card">
+        <h3>Real migrations, not sync-at-boot</h3>
+        <p>
+          The source relied on <code>sequelize.sync({ alter: true })</code>
+          at boot, which silently patched the live schema — exactly how two
+          missing foreign-key columns went unnoticed there. This repo's
+          migrations are authored from scratch and are the only thing that
+          creates schema now. See the
+          <a
+            href="https://terrence721.github.io/conduit-full/diagrams/data-model.html"
+            >data model</a
+          >.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Real bugs, not just features</h2>
+    <p class="h2-sub">
+      Found by a real failing test or a real CI run, not by reading the source
+      twice
+    </p>
+    <p class="lede">
+      Every entry below was caught by something that actually ran — a test
+      written to fail on the bug first, a CI job, or CodeQL — and every fix was
+      re-verified by reverting it and watching the test fail again before being
+      called done.
+    </p>
+    <div class="ledger">
+      <div class="item">
+        <div class="no">01</div>
+        <div>
+          <div class="file">models/User.js — wrong foreign key on Comments</div>
+          <div class="desc">
+            The <code>Comments</code> association was copy-pasted from
+            <code>Article.js</code> and never corrected to the right key. Caught
+            and proven by a test written to fail on the original bug and pass on
+            the fix.
+          </div>
+          <div class="meta"><span class="tag">high · correctness</span></div>
+        </div>
+      </div>
+      <div class="item">
+        <div class="no">02</div>
+        <div>
+          <div class="file">
+            migrations — missing FK columns, masked by sync-at-boot
+          </div>
+          <div class="desc">
+            <code>create-article</code>/<code>create-comment</code> never
+            created the <code>userId</code>/<code>articleId</code> columns their
+            models' associations need — only worked in the source because
+            <code>alter: true</code> patched the live schema at boot. Every
+            migration now cross-checks its column shape against the real model
+            in its own test.
+          </div>
+          <div class="meta">
+            <span class="tag">high · schema integrity</span>
+          </div>
+        </div>
+      </div>
+      <div class="item">
+        <div class="no">03</div>
+        <div>
+          <div class="file">helper/jwt.js — tokens that never expired</div>
+          <div class="desc">
+            No expiry was ever set, and <code>jwt.verify()</code> accepted any
+            algorithm the token claimed. Fixed to a 7-day expiry and
+            <code>algorithms: ["HS256"]</code> pinned explicitly — both proven
+            by deliberately reverting each and watching the test catch the
+            regression.
+          </div>
+          <div class="meta"><span class="tag">high · security</span></div>
+        </div>
+      </div>
+      <div class="item">
+        <div class="no">04</div>
+        <div>
+          <div class="file">
+            controllers/user.ts — always-true password guard
+          </div>
+          <div class="desc">
+            The password-hashing guard evaluated true on every profile update,
+            crashing any update that didn't touch the password field at all —
+            the single most severe bug found in the backend build.
+          </div>
+          <div class="meta"><span class="tag">high · correctness</span></div>
+        </div>
+      </div>
+      <div class="item">
+        <div class="no">05</div>
+        <div>
+          <div class="file">
+            controllers/users.ts — login issued tokens with username: undefined
+          </div>
+          <div class="desc">
+            The signed JWT payload never actually included the username it
+            claimed to — every logged-in session silently carried a broken claim
+            until this was caught and fixed.
+          </div>
+          <div class="meta"><span class="tag">high · correctness</span></div>
+        </div>
+      </div>
+      <div class="item">
+        <div class="no">06</div>
+        <div>
+          <div class="file">middleware/authentication.js — double next()</div>
+          <div class="desc">
+            A missing <code>return</code> let request handling fall through to a
+            second <code>next()</code> call after an error response had already
+            been sent. Fixed and proven by reverting the fix and watching the
+            regression reappear.
+          </div>
+          <div class="meta"><span class="tag">medium · correctness</span></div>
+        </div>
+      </div>
+      <div class="item">
+        <div class="no">07</div>
+        <div>
+          <div class="file">
+            middleware/errorHandler.js — raw error.message leaked to clients
+          </div>
+          <div class="desc">
+            The generic 500 handler forwarded the real
+            <code>error.message</code> straight to API clients on any unexpected
+            error — a real information-disclosure gap, masked behind a generic
+            message instead.
+          </div>
+          <div class="meta"><span class="tag">medium · security</span></div>
+        </div>
+      </div>
+      <div class="item">
+        <div class="no">08</div>
+        <div>
+          <div class="file">
+            controllers/comments.ts — deleteComment skipped an ownership check
+          </div>
+          <div class="desc">
+            Unlike its sibling functions in the same file,
+            <code>deleteComment</code> never checked that the comment being
+            deleted actually belonged to the article named in the URL slug.
+            Fixed to match the file's own established pattern.
+          </div>
+          <div class="meta"><span class="tag">medium · correctness</span></div>
+        </div>
+      </div>
+      <div class="item">
+        <div class="no">09</div>
+        <div>
+          <div class="file">index.ts — catch-all 404 only matched GET</div>
+          <div class="desc">
+            <code>app.get("/*any", ...)</code> meant an unmatched POST/PUT/
+            DELETE fell through to Express's default HTML 404 instead of this
+            API's own JSON shape. Fixed to <code>app.all(...)</code>, verified
+            by reverting and watching a POST come back with an empty body first.
+          </div>
+          <div class="meta">
+            <span class="tag">medium · API consistency</span>
+          </div>
+        </div>
+      </div>
+      <div class="item">
+        <div class="no">10</div>
+        <div>
+          <div class="file">
+            CodeQL — 16× missing rate limiting, 1× insecure randomness
+          </div>
+          <div class="desc">
+            Every authorizing route handler across 5 route files lacked a rate
+            limiter; the article seeder used <code>Math.random()</code>
+            to pick a random author. Fixed with one global
+            <code>express-rate-limit</code> instance ahead of every route mount,
+            and <code>crypto.randomInt()</code> in the seeder.
+          </div>
+          <div class="meta"><span class="tag">medium · security</span></div>
+        </div>
+      </div>
+      <div class="item">
+        <div class="no">11</div>
+        <div>
+          <div class="file">
+            frontend/errorHandler.test.ts — a mock that passed for the wrong
+            reason
+          </div>
+          <div class="desc">
+            The source's mock built <code>error.response</code> from the Fetch
+            API's <code>Response</code> class, which has no
+            <code>.data</code> field — its assertion passed because of an
+            unrelated crash, not the code path it claimed to test. Fixed with a
+            real axios-shaped mock; proven by deliberately breaking the
+            extraction and watching all 5 cases fail first.
+          </div>
+          <div class="meta">
+            <span class="tag">medium · test correctness</span>
+          </div>
+        </div>
+      </div>
+      <div class="item">
+        <div class="no">12</div>
+        <div>
+          <div class="file">
+            frontend/getComments.ts — missing headers, wrong data on every fetch
+          </div>
+          <div class="desc">
+            The service never accepted a <code>headers</code> param at all,
+            unlike its siblings, even though the backend's GET-comments route
+            changes response shape based on whether a token is sent — comments
+            were always fetched as if the user were logged out.
+          </div>
+          <div class="meta"><span class="tag">medium · correctness</span></div>
+        </div>
+      </div>
+    </div>
+    <p class="note">
+      <strong>13 more, smaller findings</strong> — a seeder that bypassed
+      <code>bcryptHash()</code> entirely, a missing
+      <code>tagList</code> default, a missing <code>await</code> on
+      <code>setAuthor</code>, two message-formatting bugs, and more — are logged
+      in full in
+      <a href="https://github.com/Terrence721/conduit-full/blob/main/todo.md"
+        >todo.md</a
+      >'s phase-by-phase record, not summarized away here.
+    </p>
+  </section>
+
+  <section>
+    <h2>Verifying it actually works</h2>
+    <p class="h2-sub">Live CI, not a static screenshot</p>
+    <p class="lede">
+      Every push runs the full suite — ESLint, Prettier, TypeScript, and Vitest
+      — plus a separate CodeQL security scan. The badges at the top of the
+      repository's README are live, not decorative.
+    </p>
+    <div class="twocol">
+      <div class="card">
+        <h3>214/214 backend, real SQLite behind it</h3>
+        <p>
+          Controller and route tests run against a genuine in-memory SQLite
+          Sequelize instance running the real models — not hand-stubbed mocks.
+          See the
+          <a
+            href="https://terrence721.github.io/conduit-full/diagrams/testing-strategy.html"
+            >testing strategy</a
+          >.
+        </p>
+      </div>
+      <div class="card">
+        <h3>Checkable, not asserted</h3>
+        <p>
+          Every number on this page is reproducible from the repository's own
+          <a
+            href="https://github.com/Terrence721/conduit-full/blob/main/todo.md"
+            >todo.md</a
+          >
+          phase log, commit history, and live CI runs.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Judgment calls</h2>
+    <p class="h2-sub">Where the interesting decisions actually happened</p>
+    <p class="lede">
+      The frontend is being built bottom-up, the same way the backend was — leaf
+      modules (helpers, shared types, API services) before anything that depends
+      on them, saving <code>AuthContext</code>, components, route pages, and the
+      app's own entry point for last, since that entry point alone pulls in
+      nearly everything else. Partway through the services layer, a process gap
+      surfaced: the backend's established convention of a real GitHub Issue and
+      board card per file had quietly stopped happening for the frontend —
+      caught, backfilled, and now enforced per file going forward instead of as
+      a periodic catch-up. Separately, a real architectural choice — TanStack
+      Query versus the source's hand-rolled fetch/loading/error pattern — is
+      deliberately left open on the project board rather than decided casually,
+      since retrofitting it after the components layer exists would mean
+      touching every consumer again.
+    </p>
+  </section>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="links">
+      <a href="https://github.com/Terrence721/conduit-full">Repository</a>
+      <a href="https://github.com/Terrence721/conduit-full/blob/main/todo.md"
+        >Build log</a
+      >
+      <a
+        href="https://terrence721.github.io/conduit-full/diagrams/system-architecture.html"
+        >Architecture</a
+      >
+      <a href="https://github.com/Terrence721/conduit-full/wiki">Wiki</a>
+      <a href="https://github.com/users/Terrence721/projects/4"
+        >Project board</a
+      >
+      <a href="https://terrence721.github.io/">Portfolio hub</a>
+    </div>
+    <p class="fine">
+      An independently modernized fork of RealWorld's Conduit example app — not
+      affiliated with the RealWorld project or the original repo author. Every
+      number on this page is reproducible from the repository's own
+      <code>todo.md</code> phase log, commit history, and CI runs — nothing here
+      is asserted without a link to check it against. The frontend is still in
+      progress: 12 of ~16 planned service modules done, no components, route
+      pages, or app entry point yet — see <code>todo.md</code> for the honest
+      current state.
+    </p>
+  </div>
+</footer>
