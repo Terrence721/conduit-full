@@ -1,0 +1,305 @@
+<title>Data Model — Four Models, Six Associations</title>
+<style>
+  :root {
+    --ink: #201d2b;
+    --ink-soft: #55506a;
+    --paper: #eeecf3;
+    --surface: #ffffff;
+    --line: #c3bfd1;
+    --warn: #a1481f;
+    --warn-bg: #f6e6dc;
+    --mono:
+      ui-monospace, "SF Mono", "Cascadia Mono", "Consolas", "Liberation Mono",
+      monospace;
+    --sans: -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  }
+
+  :root[data-theme="dark"] {
+    --ink: #eae8f2;
+    --ink-soft: #ada7c4;
+    --paper: #17151f;
+    --surface: #201d2b;
+    --line: #3c384c;
+    --warn: #e0a074;
+    --warn-bg: #332318;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ink: #eae8f2;
+      --ink-soft: #ada7c4;
+      --paper: #17151f;
+      --surface: #201d2b;
+      --line: #3c384c;
+      --warn: #e0a074;
+      --warn-bg: #332318;
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    padding: 2.5rem 1.5rem 4rem;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin: 0 0 0.6rem;
+  }
+
+  h1 {
+    font-size: clamp(1.6rem, 2.6vw, 2.15rem);
+    line-height: 1.15;
+    margin: 0 0 0.5rem;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+
+  .dek {
+    font-size: 1rem;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    max-width: 74ch;
+    margin: 0 0 2.2rem;
+  }
+
+  .dek code {
+    font-family: var(--mono);
+    font-size: 0.9em;
+    color: var(--ink);
+  }
+  .dek a {
+    color: var(--ink);
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface);
+    margin-bottom: 1.6rem;
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 0.82rem;
+  }
+
+  th,
+  td {
+    text-align: left;
+    padding: 0.7rem 0.85rem;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+    line-height: 1.5;
+  }
+
+  thead th {
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    background: var(--paper);
+    white-space: nowrap;
+  }
+
+  tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .model-name {
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  td code {
+    font-family: var(--mono);
+    font-size: 0.86em;
+    background: var(--paper);
+    border-radius: 3px;
+    padding: 0.05rem 0.3rem;
+  }
+
+  .none {
+    color: var(--ink-soft);
+  }
+
+  .callout {
+    border: 1px solid var(--warn);
+    background: var(--warn-bg);
+    border-radius: 10px;
+    padding: 1rem 1.3rem;
+    display: flex;
+    align-items: baseline;
+    gap: 0.9rem;
+    margin-bottom: 2rem;
+  }
+
+  .callout-mark {
+    font-family: var(--mono);
+    font-size: 0.95rem;
+    color: var(--warn);
+    font-weight: 600;
+    flex: 0 0 auto;
+  }
+  .callout p {
+    margin: 0;
+    font-size: 0.88rem;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+  .callout code {
+    font-family: var(--mono);
+    font-size: 0.92em;
+    background: var(--surface);
+    border-radius: 3px;
+    padding: 0.05rem 0.3rem;
+  }
+
+  footer {
+    margin-top: 2.6rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid var(--line);
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--ink-soft);
+    letter-spacing: 0.02em;
+  }
+</style>
+
+<div class="page">
+  <p class="eyebrow">conduit-full — data model</p>
+  <h1>
+    Four models, six associations, migrations as the only schema source of
+    truth.
+  </h1>
+  <p class="dek">
+    <code>sequelize.sync({ alter: true })</code> ran at boot in the source app,
+    silently patching the live schema to match whatever the models said — which
+    is exactly how two missing foreign-key columns went unnoticed there. This
+    repo's migrations were rewritten from scratch and are now the only thing
+    that creates schema; boot just calls <code>sequelize.authenticate()</code>,
+    a plain connectivity check with no side effects. See
+    <a href="system-architecture.html">System Architecture</a> for where these
+    models sit.
+  </p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Model</th>
+          <th>Association</th>
+          <th>Foreign key</th>
+          <th>Through</th>
+          <th>Worth knowing</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="model-name">User → Article</td>
+          <td><code>hasMany</code>, as <code>author</code></td>
+          <td><code>userId</code></td>
+          <td class="none">—</td>
+          <td>
+            <code>onDelete: CASCADE</code> — deleting a user deletes their
+            articles
+          </td>
+        </tr>
+        <tr>
+          <td class="model-name">User → Comment</td>
+          <td><code>hasMany</code>, as <code>author</code></td>
+          <td><code>userId</code></td>
+          <td class="none">—</td>
+          <td>
+            No cascade set here — comments outlive a deleted author's other data
+          </td>
+        </tr>
+        <tr>
+          <td class="model-name">Article → Comment</td>
+          <td><code>hasMany</code></td>
+          <td><code>articleId</code></td>
+          <td class="none">—</td>
+          <td>
+            <code>onDelete: cascade</code> — deleting an article deletes its
+            comments
+          </td>
+        </tr>
+        <tr>
+          <td class="model-name">Article ↔ Tag</td>
+          <td><code>belongsToMany</code>, as <code>tagList</code></td>
+          <td><code>articleId</code> / <code>tagId</code></td>
+          <td><code>TagList</code></td>
+          <td>
+            Response <code>tagList</code> is always re-derived from this join,
+            never stored on the model
+          </td>
+        </tr>
+        <tr>
+          <td class="model-name">Article ↔ User</td>
+          <td><code>belongsToMany</code>, as <code>favorites</code></td>
+          <td><code>articleId</code> / <code>userId</code></td>
+          <td><code>Favorites</code></td>
+          <td>
+            <code>timestamps: false</code> — a join table, not an entity with
+            its own history
+          </td>
+        </tr>
+        <tr>
+          <td class="model-name">User ↔ User</td>
+          <td>
+            <code>belongsToMany</code> (self), as <code>followers</code> /
+            <code>following</code>
+          </td>
+          <td><code>userId</code> / <code>followerId</code></td>
+          <td><code>Followers</code></td>
+          <td>
+            Same through table, two aliases — one association per direction, not
+            one bidirectional edge
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout">
+    <span class="callout-mark">!</span>
+    <p>
+      <strong>Real bug, caught by a test:</strong> <code>User</code>'s
+      <code>Comments</code> association originally used the wrong foreign key —
+      copy-pasted from the <code>Article</code> association above it and never
+      corrected. A test written to fail on the original bug and pass on the fix
+      caught it. Separately, the <code>create-article</code>/<code
+        >create-comment</code
+      >
+      migrations never created the <code>userId</code>/<code>articleId</code>
+      columns their models' associations need at all — invisible in the source
+      because <code>alter: true</code> patched the live schema at boot, so the
+      migrations were never actually exercised as the real schema source of
+      truth. Every migration in this repo now cross-checks its column shape
+      against the real model in its own test.
+    </p>
+  </div>
+
+  <footer>
+    conduit-full · 4 models · Sequelize 6 · migrations only, no sync at boot
+  </footer>
+</div>
