@@ -1,6 +1,6 @@
 import axios from "axios";
 import errorHandler from "../helpers/errorHandler";
-import type { Article } from "../types";
+import type { ArticleResponse } from "../types";
 
 interface SetArticleParams {
   body: string;
@@ -9,10 +9,6 @@ interface SetArticleParams {
   slug?: string;
   tagList?: string[];
   title: string;
-}
-
-interface ArticleResponse {
-  article: Article;
 }
 
 async function setArticle({
