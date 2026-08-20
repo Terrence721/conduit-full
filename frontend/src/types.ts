@@ -40,3 +40,7 @@ export interface AuthState {
   isAuth: boolean;
   loggedUser: User;
 }
+
+export interface MessageResponse {
+  message: { body: string[] };
+}
