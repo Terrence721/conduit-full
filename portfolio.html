@@ -453,7 +453,7 @@
   </div>
   <div class="stamp" aria-hidden="true">
     <div class="stamp-inner">
-      <span class="n">25</span>
+      <span class="n">27</span>
       <span class="l">REAL BUGS<br />FOUND &amp; FIXED</span>
     </div>
   </div>
@@ -463,18 +463,18 @@
   <div class="wrap">
     <div class="manifest-row">
       <div class="manifest-cell">
-        <span class="v">61</span><span class="k">phases shipped</span>
+        <span class="v">71</span><span class="k">phases shipped</span>
       </div>
       <div class="manifest-cell">
         <span class="v">214/214</span
         ><span class="k">backend tests passing</span>
       </div>
       <div class="manifest-cell">
-        <span class="v">12/16</span
-        ><span class="k">frontend services done</span>
+        <span class="v">16/16</span
+        ><span class="k">frontend services + context done</span>
       </div>
       <div class="manifest-cell">
-        <span class="v">25</span
+        <span class="v">27</span
         ><span class="k">real bugs found &amp; fixed</span>
       </div>
       <div class="manifest-cell">
@@ -751,13 +751,37 @@
           <div class="meta"><span class="tag">medium · correctness</span></div>
         </div>
       </div>
+      <div class="item">
+        <div class="no">13</div>
+        <div>
+          <div class="file">
+            frontend/AuthContext.tsx — a failed refresh could silently wipe the
+            logged-in user
+          </div>
+          <div class="desc">
+            <code
+              >getUser({ headers }).then((loggedUser) =>
+              setAuthState(...))</code
+            >
+            had no guard against an <code>undefined</code> resolution —
+            <code>errorHandler</code> can swallow certain errors and resolve
+            nothing, which would have overwritten a valid logged-in user with
+            <code>undefined</code>. TypeScript's
+            <code>User | undefined</code> return type on
+            <code>getUser</code> forced the fix.
+          </div>
+          <div class="meta"><span class="tag">medium · correctness</span></div>
+        </div>
+      </div>
     </div>
     <p class="note">
-      <strong>13 more, smaller findings</strong> — a seeder that bypassed
+      <strong>14 more, smaller findings</strong> — a seeder that bypassed
       <code>bcryptHash()</code> entirely, a missing
       <code>tagList</code> default, a missing <code>await</code> on
-      <code>setAuthor</code>, two message-formatting bugs, and more — are logged
-      in full in
+      <code>setAuthor</code>, two message-formatting bugs, a
+      <code>FeedContext.tsx</code> click handler reading
+      <code>e.target</code> instead of <code>e.currentTarget</code>, and more —
+      are logged in full in
       <a href="https://github.com/Terrence721/conduit-full/blob/main/todo.md"
         >todo.md</a
       >'s phase-by-phase record, not summarized away here.
@@ -805,17 +829,22 @@
     <p class="lede">
       The frontend is being built bottom-up, the same way the backend was — leaf
       modules (helpers, shared types, API services) before anything that depends
-      on them, saving <code>AuthContext</code>, components, route pages, and the
-      app's own entry point for last, since that entry point alone pulls in
-      nearly everything else. Partway through the services layer, a process gap
-      surfaced: the backend's established convention of a real GitHub Issue and
-      board card per file had quietly stopped happening for the frontend —
-      caught, backfilled, and now enforced per file going forward instead of as
-      a periodic catch-up. Separately, a real architectural choice — TanStack
-      Query versus the source's hand-rolled fetch/loading/error pattern — is
-      deliberately left open on the project board rather than decided casually,
-      since retrofitting it after the components layer exists would mean
-      touching every consumer again.
+      on them. That layer is done: all 16 service modules, then
+      <code>AuthContext</code>/<code>FeedContext</code>, both memoized only
+      after a review caught their Provider values causing unnecessary re-renders
+      on every consumer. The components layer is next, sequenced the same way —
+      a full dependency graph across the source's ~24 components was mapped up
+      front so zero-dependency leaves get built before anything that composes
+      them. One real architectural choice got decided rather than left open:
+      TanStack Query versus the source's hand-rolled fetch/loading/error
+      pattern, settled in favor of the latter after checking that the reference
+      app itself has no query-library dependency at all. A process gap surfaced
+      twice — the backend's convention of a real GitHub Issue and board card per
+      file quietly lapsed for a handful of frontend files, not once but twice —
+      caught both times from a stale sub-issue count, backfilled both times, and
+      now holding. A newer, still-open gap: the 20 frontend files built so far
+      have no behavioral tests, unlike the backend where every file has one —
+      disclosed and tracked on the board rather than quietly deferred.
     </p>
   </section>
 </div>
@@ -843,9 +872,10 @@
       number on this page is reproducible from the repository's own
       <code>todo.md</code> phase log, commit history, and CI runs — nothing here
       is asserted without a link to check it against. The frontend is still in
-      progress: 12 of ~16 planned service modules done, no components, route
-      pages, or app entry point yet — see <code>todo.md</code> for the honest
-      current state.
+      progress: all 16 planned service modules and both context files done, the
+      components layer just started (2 of ~24), no route pages or app entry
+      point yet, and 20 files still without behavioral tests — see
+      <code>todo.md</code> for the honest current state.
     </p>
   </div>
 </footer>
