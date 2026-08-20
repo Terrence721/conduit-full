@@ -1,8 +1,9 @@
 import {
   createContext,
+  useCallback,
   useContext,
+  useMemo,
   useState,
-  type MouseEvent,
   type ReactNode,
 } from "react";
 import { useAuth } from "./AuthContext";
@@ -13,7 +14,7 @@ interface FeedTab {
 }
 
 interface FeedContextValue extends FeedTab {
-  changeTab: (e: MouseEvent<HTMLElement>, tabName: string) => void;
+  changeTab: (tabName: string, tagName: string) => void;
 }
 
 const FeedContext = createContext<FeedContextValue | undefined>(undefined);
@@ -43,16 +44,16 @@ function FeedProvider({ children }: FeedProviderProps) {
     setTab((tab) => ({ ...tab, tabName: isAuth ? "feed" : "global" }));
   }
 
-  const changeTab = (e: MouseEvent<HTMLElement>, tabName: string) => {
-    const tagName = e.currentTarget.innerText.trim();
+  const changeTab = useCallback((tabName: string, tagName: string) => {
     setTab({ tabName, tagName });
-  };
+  }, []);
 
-  return (
-    <FeedContext.Provider value={{ changeTab, tabName, tagName }}>
-      {children}
-    </FeedContext.Provider>
+  const value = useMemo(
+    () => ({ changeTab, tabName, tagName }),
+    [changeTab, tabName, tagName],
   );
+
+  return <FeedContext.Provider value={value}>{children}</FeedContext.Provider>;
 }
 
 export default FeedProvider;
