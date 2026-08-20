@@ -19,6 +19,10 @@ export interface Article {
   author: Profile;
 }
 
+export interface ArticleResponse {
+  article: Article;
+}
+
 export interface Comment {
   id: number;
   body: string;
