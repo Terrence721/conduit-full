@@ -1,0 +1,405 @@
+<title>Auth &amp; Request Flow — One Middleware, Two Behaviors</title>
+<style>
+  :root {
+    --ink: #201d2b;
+    --ink-soft: #55506a;
+    --paper: #eeecf3;
+    --surface: #ffffff;
+    --line: #c3bfd1;
+    --client: #6a3fa0;
+    --client-bg: #ece4f5;
+    --api: #2456a6;
+    --api-bg: #e2eaf8;
+    --warn: #a1481f;
+    --warn-bg: #f6e6dc;
+    --shared: #4a4560;
+    --shared-bg: #ece9f2;
+    --mono:
+      ui-monospace, "SF Mono", "Cascadia Mono", "Consolas", "Liberation Mono",
+      monospace;
+    --sans: -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  }
+
+  :root[data-theme="dark"] {
+    --ink: #eae8f2;
+    --ink-soft: #ada7c4;
+    --paper: #17151f;
+    --surface: #201d2b;
+    --line: #3c384c;
+    --client: #b592e0;
+    --client-bg: #2a2038;
+    --api: #7fa8e0;
+    --api-bg: #1c2b42;
+    --warn: #e0a074;
+    --warn-bg: #332318;
+    --shared: #c7c2dc;
+    --shared-bg: #262233;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ink: #eae8f2;
+      --ink-soft: #ada7c4;
+      --paper: #17151f;
+      --surface: #201d2b;
+      --line: #3c384c;
+      --client: #b592e0;
+      --client-bg: #2a2038;
+      --api: #7fa8e0;
+      --api-bg: #1c2b42;
+      --warn: #e0a074;
+      --warn-bg: #332318;
+      --shared: #c7c2dc;
+      --shared-bg: #262233;
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    padding: 2.5rem 1.5rem 4rem;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin: 0 0 0.6rem;
+  }
+
+  h1 {
+    font-size: clamp(1.6rem, 2.6vw, 2.15rem);
+    line-height: 1.15;
+    margin: 0 0 0.5rem;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+
+  .dek {
+    font-size: 1rem;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    max-width: 70ch;
+    margin: 0 0 2.2rem;
+  }
+
+  .dek code {
+    font-family: var(--mono);
+    font-size: 0.9em;
+    color: var(--ink);
+  }
+  .dek a {
+    color: var(--api);
+  }
+
+  h2 {
+    font-size: 0.72rem;
+    font-family: var(--mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin: 0 0 1rem;
+  }
+
+  .diagram {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 2.2rem;
+  }
+
+  .diagram-row {
+    display: flex;
+    justify-content: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+
+  .node {
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 0.6rem 1.1rem;
+    white-space: nowrap;
+  }
+
+  .node--client {
+    border-color: var(--client);
+    color: var(--client);
+    font-weight: 600;
+  }
+  .node--api {
+    border-color: var(--api);
+    color: var(--api);
+  }
+
+  .diagram-arrow-v {
+    color: var(--ink-soft);
+    font-size: 0.78rem;
+    font-family: var(--mono);
+    text-align: center;
+  }
+
+  .fork {
+    display: flex;
+    justify-content: center;
+    gap: 1.6rem;
+    flex-wrap: wrap;
+    margin-top: 0.3rem;
+  }
+
+  .fork-branch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    border: 1px dashed var(--line);
+    border-radius: 10px;
+    padding: 0.9rem 1.1rem;
+    max-width: 21ch;
+  }
+
+  .fork-label {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  .fork-note {
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+    text-align: center;
+    line-height: 1.45;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.6rem;
+  }
+
+  .card {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface);
+    padding: 1.1rem 1.2rem 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .card-tag {
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-weight: 600;
+    width: fit-content;
+  }
+
+  .card--soft .card-tag {
+    color: var(--api);
+    background: var(--api-bg);
+  }
+  .card--hard .card-tag {
+    color: var(--warn);
+    background: var(--warn-bg);
+  }
+
+  .card-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin: 0;
+  }
+  .card-title code {
+    font-family: var(--mono);
+    font-size: 0.92em;
+  }
+
+  .card p {
+    margin: 0;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: var(--ink-soft);
+  }
+  .card code {
+    font-family: var(--mono);
+    font-size: 0.9em;
+    color: var(--ink);
+  }
+
+  .callout {
+    border: 1px solid var(--warn);
+    background: var(--warn-bg);
+    border-radius: 10px;
+    padding: 1rem 1.3rem;
+    display: flex;
+    align-items: baseline;
+    gap: 0.9rem;
+    margin-bottom: 2rem;
+  }
+
+  .callout-mark {
+    font-family: var(--mono);
+    font-size: 0.95rem;
+    color: var(--warn);
+    font-weight: 600;
+    flex: 0 0 auto;
+  }
+  .callout p {
+    margin: 0;
+    font-size: 0.88rem;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+  .callout code {
+    font-family: var(--mono);
+    font-size: 0.92em;
+  }
+  .callout a {
+    color: var(--api);
+  }
+
+  footer {
+    margin-top: 2.6rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid var(--line);
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--ink-soft);
+    letter-spacing: 0.02em;
+  }
+
+  @media (max-width: 720px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<div class="page">
+  <p class="eyebrow">conduit-full — auth &amp; request flow</p>
+  <h1>
+    One middleware, two behaviors: missing auth isn't rejected, it's just
+    anonymous.
+  </h1>
+  <p class="dek">
+    <code>verifyToken</code> runs in front of nearly every route, but it's not a
+    gate — no <code>Authorization</code> header just means the request proceeds
+    with <code>req.loggedUser</code> left unset. Each controller decides for
+    itself whether that's acceptable. See
+    <a href="system-architecture.html">System Architecture</a> for where this
+    sits in the request chain.
+  </p>
+
+  <h2>Token Issuance</h2>
+  <div class="diagram">
+    <div class="diagram-row">
+      <span class="node node--client"
+        >POST /api/users/login { email, password }</span
+      >
+    </div>
+    <span class="diagram-arrow-v"
+      >↓ bcryptCompare → jwtSign (7-day expiry, HS256 only)</span
+    >
+    <div class="diagram-row">
+      <span class="node node--api">{ user: { …, token } }</span>
+    </div>
+    <span class="diagram-arrow-v"
+      >↓ stored client-side, replayed as Authorization: Token &lt;jwt&gt;</span
+    >
+    <div class="diagram-row">
+      <span class="node node--api"
+        >verifyToken middleware, every subsequent request</span
+      >
+    </div>
+  </div>
+
+  <h2>What verifyToken Actually Does</h2>
+  <div class="fork">
+    <div class="fork-branch">
+      <span class="fork-label">no header</span>
+      <span class="fork-note"
+        ><code>next()</code> immediately — request continues anonymous, no
+        error</span
+      >
+    </div>
+    <div class="fork-branch">
+      <span class="fork-label">valid token</span>
+      <span class="fork-note"
+        ><code>req.loggedUser</code> set from the verified email, request
+        continues</span
+      >
+    </div>
+    <div class="fork-branch">
+      <span class="fork-label">malformed / invalid</span>
+      <span class="fork-note"
+        >throws, caught by <code>errorHandler</code>, request stops</span
+      >
+    </div>
+  </div>
+
+  <h2>Two Endpoints, Same Middleware, Different Contract</h2>
+  <div class="grid">
+    <div class="card card--soft">
+      <span class="card-tag">Soft auth</span>
+      <p class="card-title"><code>GET /api/articles/:slug</code></p>
+      <p>
+        Works with or without a token. If one's present, the response's
+        <code>favorited</code>/<code>following</code> fields reflect the real
+        logged-in user's state; if not, they're just <code>false</code>. No
+        <code>UnauthorizedError</code> either way.
+      </p>
+    </div>
+    <div class="card card--hard">
+      <span class="card-tag">Hard auth</span>
+      <p class="card-title"><code>POST /api/articles</code></p>
+      <p>
+        Same middleware, but the controller itself checks
+        <code>if (!loggedUser) throw new UnauthorizedError()</code> as its first
+        line — the gate is in application code, not the middleware.
+      </p>
+    </div>
+  </div>
+
+  <div class="callout">
+    <span class="callout-mark">!</span>
+    <p>
+      This exact distinction is what the frontend's
+      <code>getComments.ts</code> got wrong: the GET-comments route is
+      soft-auth, so whether a token is sent genuinely changes each comment
+      author's <code>following</code>/<code>followersCount</code> — but the
+      service never accepted a <code>headers</code> param at all, unlike its
+      siblings. Comments were always fetched as if anonymous, even when logged
+      in. Fixed in the service; see <code>todo.md</code> Phase 58 for the full
+      trace.
+    </p>
+  </div>
+
+  <footer>
+    conduit-full · JWT, HS256, 7-day expiry · verifyToken: soft by default, hard
+    per-controller
+  </footer>
+</div>
