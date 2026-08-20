@@ -6,6 +6,10 @@ export interface Profile {
   followersCount: number;
 }
 
+export interface ProfileResponse {
+  profile: Profile;
+}
+
 export interface Article {
   slug: string;
   title: string;
