@@ -3,26 +3,47 @@
 [![Quality](https://github.com/Terrence721/conduit-full/actions/workflows/quality.yml/badge.svg)](https://github.com/Terrence721/conduit-full/actions/workflows/quality.yml)
 [![CodeQL](https://github.com/Terrence721/conduit-full/actions/workflows/codeql.yml/badge.svg)](https://github.com/Terrence721/conduit-full/actions/workflows/codeql.yml)
 
-Last updated: August 13, 2026
+**[📜 View the portfolio page →](https://terrence721.github.io/conduit-full/portfolio.html)**
 
-This repository is an independently modernized fork of the RealWorld
-**Conduit** example app — a Medium-style publishing platform (CRUD, auth,
-pagination) built with
-**React / Vite + SWC / Express.js / Sequelize / PostgreSQL**. It's not
-affiliated with the RealWorld project or the original repo author.
+Last updated: August 20, 2026
 
-Rather than copying the source app over wholesale, this fork is being rebuilt
-one file at a time: each file is re-added deliberately, with dependencies and
-patterns brought up to their current latest versions along the way. See the
-commit history for a file-by-file record of that process.
+This repository is an independently modernized fork of the RealWorld **Conduit** example app — a Medium-style publishing platform (CRUD, JWT auth, pagination) built with **React 19 / Vite + SWC / Express 5 / Sequelize / PostgreSQL**. It's not affiliated with the RealWorld project or the original repo author.
 
-**Status:** backend complete (100% TypeScript) and independently runnable; frontend in progress, being built one file at a time in TypeScript — see `todo.md` for exact status. Not yet runnable end-to-end.
+Rather than copying the source app over wholesale, this fork is being rebuilt one file at a time: each file is re-added deliberately, with dependencies and patterns brought up to their current latest versions along the way, and every real bug fixed via a real failing test — not read twice and assumed fine.
 
-## 🧩 Stack
+**At a glance:** 214/214 backend tests passing, 6/6 frontend tests passing, 0 open CodeQL alerts, 25 real bugs found and fixed — see the Quality/CodeQL badges above for live CI status.
 
-- **Frontend:** React 19 (Vite + SWC), React Router
-- **Backend:** Express 5, Sequelize 6, PostgreSQL
-- **Tooling:** Yarn workspaces, Vitest
+## 🧭 Start Here
+
+- **[System Architecture](https://terrence721.github.io/conduit-full/diagrams/system-architecture.html)** — the dev-proxy → Express → Postgres request path, and where the (in-progress) frontend fits
+- **[Auth & Request Flow](https://terrence721.github.io/conduit-full/diagrams/auth-flow.html)** — how `verifyToken`'s soft-auth-by-default pattern actually works, and the real bug it's responsible for
+- **[Data Model](https://terrence721.github.io/conduit-full/diagrams/data-model.html)** — the 4 models and 6 associations, and the two real FK bugs migrations now catch
+- **[Testing Strategy](https://terrence721.github.io/conduit-full/diagrams/testing-strategy.html)** — the four test layers this repo runs, real in-memory SQLite instead of hand-stubbed mocks
+
+The rest of the [wiki](https://github.com/Terrence721/conduit-full/wiki) goes deeper per backend module.
+
+- **[`todo.md`](todo.md)** — the primary, detailed record: a phase-by-phase written log of everything done and everything still open, with dates and the reasoning behind each decision. This is the source of truth.
+- **[GitHub Project board](https://github.com/users/Terrence721/projects/4)** — a Scrum-style Backlog/Planned/In Progress/Verification & QA/Done view of the same work, for a quick at-a-glance status without reading the full log. Kept in sync with [`todo.md`](todo.md).
+
+## 🧭 Why This Matters
+
+RealWorld's Conduit is a well-known "same app, N stacks" demo, useful precisely because it's common ground — but reference implementations age: pinned dependencies, no TypeScript, no CI, no tests, a schema that only worked because `sequelize.sync({ alter: true })` quietly patched it at boot. The point of this repo is doing the unglamorous work of actually modernizing one, file by file, with the reasoning for every real decision written down as it happened.
+
+## 🏗 What's Here So Far
+
+```text
+  backend/            Express 5 + Sequelize 6 + PostgreSQL, 100% TypeScript   ✅ done
+  frontend/config     package.json, tsconfig, vite.config, index.html        ✅ done
+  frontend/helpers    dateFormatter, errorHandler                            ✅ done
+  frontend/types      Profile, Article, Comment, User, AuthState             ✅ done
+  frontend/services   12 of ~16 planned API service modules                  🚧 in progress
+  frontend/context    AuthContext, FeedContext                               ⏳ not started
+  frontend/components ~20 components                                        ⏳ not started
+  frontend/routes     ~10 route pages                                       ⏳ not started
+  frontend/App+main   entry point — last, once everything above exists      ⏳ not started
+```
+
+See [`todo.md`](todo.md) for the full file-by-file build-out plan.
 
 ## 🖥 Getting Started
 
@@ -52,14 +73,6 @@ yarn install
    ```shell
    yarn dev
    ```
-
-## 📋 Project Tracking
-
-Work on this fork is tracked two ways:
-
-- **[`todo.md`](todo.md)** — the primary, detailed record: a phase-by-phase written log of everything done and everything still open, with dates and the reasoning behind each decision. This is the source of truth.
-- **[GitHub Project board](https://github.com/users/Terrence721/projects/4)** — a Scrum-style Backlog/Planned/In Progress/Verification & QA/Done view of the same work, for a quick at-a-glance status without reading the full log. Kept in sync with [`todo.md`](todo.md).
-- **[Wiki](https://github.com/Terrence721/conduit-full/wiki)** — short pointers per backend module (models, helpers, middleware, controllers, routes) plus the TypeScript migration, testing, and security-hardening stories, each linking back to the real source rather than repeating it.
 
 ## License
 
