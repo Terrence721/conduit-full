@@ -9,7 +9,7 @@ import {
   type SetStateAction,
 } from "react";
 import getUser from "../services/getUser";
-import type { AuthState } from "../types";
+import { emptyAuthState, type AuthState } from "../types";
 
 interface AuthContextValue extends AuthState {
   setAuthState: Dispatch<SetStateAction<AuthState>>;
@@ -23,26 +23,14 @@ export function useAuth(): AuthContextValue {
   return context;
 }
 
-const initialAuthState: AuthState = {
-  headers: null,
-  isAuth: false,
-  loggedUser: {
-    username: "",
-    bio: null,
-    image: null,
-    email: "",
-    token: "",
-  },
-};
-
 function getStoredAuthState(): AuthState {
   const stored = localStorage.getItem("loggedUser");
-  if (!stored) return initialAuthState;
+  if (!stored) return emptyAuthState;
 
   try {
     return JSON.parse(stored) as AuthState;
   } catch {
-    return initialAuthState;
+    return emptyAuthState;
   }
 }
 
