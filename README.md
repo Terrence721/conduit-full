@@ -11,7 +11,7 @@ This repository is an independently modernized fork of the RealWorld **Conduit**
 
 Rather than copying the source app over wholesale, this fork is being rebuilt one file at a time: each file is re-added deliberately, with dependencies and patterns brought up to their current latest versions along the way, and every real bug fixed via a real failing test — not read twice and assumed fine.
 
-**At a glance:** 214/214 backend tests passing, 6/6 frontend tests passing, 0 open CodeQL alerts, 25 real bugs found and fixed — see the Quality/CodeQL badges above for live CI status.
+**At a glance:** 214/214 backend tests passing, 6/6 frontend tests passing, 0 open CodeQL alerts, 27 real bugs found and fixed — see the Quality/CodeQL badges above for live CI status. **Known gap:** the frontend's 20 files built so far have zero behavioral test coverage yet (typecheck+lint+`/simplify` only) — tracked openly as [issue #71](https://github.com/Terrence721/conduit-full/issues/71), not hidden.
 
 ## 🧭 Start Here
 
@@ -35,10 +35,10 @@ RealWorld's Conduit is a well-known "same app, N stacks" demo, useful precisely 
   backend/            Express 5 + Sequelize 6 + PostgreSQL, 100% TypeScript   ✅ done
   frontend/config     package.json, tsconfig, vite.config, index.html        ✅ done
   frontend/helpers    dateFormatter, errorHandler                            ✅ done
-  frontend/types      Profile, Article, Comment, User, AuthState             ✅ done
-  frontend/services   12 of ~16 planned API service modules                  🚧 in progress
-  frontend/context    AuthContext, FeedContext                               ⏳ not started
-  frontend/components ~20 components                                        ⏳ not started
+  frontend/types      Profile, Article, Comment, User, AuthState, + more     ✅ done
+  frontend/services   all 16 planned API service modules                    ✅ done
+  frontend/context    AuthContext, FeedContext                              ✅ done
+  frontend/components 2 of ~24 (FormFieldset, ArticleTags)                  🚧 in progress
   frontend/routes     ~10 route pages                                       ⏳ not started
   frontend/App+main   entry point — last, once everything above exists      ⏳ not started
 ```
