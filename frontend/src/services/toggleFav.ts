@@ -1,15 +1,11 @@
 import axios from "axios";
 import errorHandler from "../helpers/errorHandler";
-import type { Article } from "../types";
+import type { Article, ArticleResponse } from "../types";
 
 interface ToggleFavParams {
   favorited: boolean;
   headers: { Authorization: string };
   slug: string;
-}
-
-interface ArticleResponse {
-  article: Article;
 }
 
 async function toggleFav({
