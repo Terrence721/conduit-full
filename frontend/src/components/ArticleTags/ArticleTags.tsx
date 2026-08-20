@@ -1,6 +1,6 @@
-interface ArticleTagsProps {
-  tagList: string[];
-}
+import type { Article } from "../../types";
+
+type ArticleTagsProps = Pick<Article, "tagList">;
 
 function ArticleTags({ tagList }: ArticleTagsProps) {
   return (
