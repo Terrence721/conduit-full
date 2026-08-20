@@ -2,11 +2,11 @@
   "name": "backend",
   "version": "1.0.0",
   "private": true,
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
-    "dev": "node --watch index.js",
+    "dev": "tsx watch index.ts",
     "sqlz": "sequelize-cli",
-    "start": "node index.js",
+    "start": "tsx index.ts",
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
