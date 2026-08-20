@@ -2,6 +2,7 @@ import {
   createContext,
   useContext,
   useEffect,
+  useMemo,
   useState,
   type Dispatch,
   type ReactNode,
@@ -64,10 +65,13 @@ function AuthProvider({ children }: AuthProviderProps) {
       .catch(console.error);
   }, [headers]);
 
+  const value = useMemo(
+    () => ({ headers, isAuth, loggedUser, setAuthState }),
+    [headers, isAuth, loggedUser],
+  );
+
   return (
-    <AuthContext.Provider value={{ headers, isAuth, loggedUser, setAuthState }}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
   );
 }
 
