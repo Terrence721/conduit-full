@@ -1,14 +1,10 @@
 import axios from "axios";
 import errorHandler from "../helpers/errorHandler";
-import type { Profile } from "../types";
+import type { Profile, ProfileResponse } from "../types";
 
 interface GetProfileParams {
   headers?: Record<string, string>;
   username: string;
-}
-
-interface ProfileResponse {
-  profile: Profile;
 }
 
 async function getProfile({
