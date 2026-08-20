@@ -1,15 +1,11 @@
 import axios from "axios";
 import errorHandler from "../helpers/errorHandler";
-import type { Profile } from "../types";
+import type { Profile, ProfileResponse } from "../types";
 
 interface ToggleFollowParams {
   following: boolean;
   headers: { Authorization: string };
   username: string;
-}
-
-interface ProfileResponse {
-  profile: Profile;
 }
 
 async function toggleFollow({
