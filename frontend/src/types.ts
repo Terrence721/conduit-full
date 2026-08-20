@@ -49,6 +49,18 @@ export interface AuthState {
   loggedUser: User;
 }
 
+export const emptyAuthState: AuthState = {
+  headers: null,
+  isAuth: false,
+  loggedUser: {
+    username: "",
+    bio: null,
+    image: null,
+    email: "",
+    token: "",
+  },
+};
+
 export interface MessageResponse {
   message: { body: string[] };
 }
