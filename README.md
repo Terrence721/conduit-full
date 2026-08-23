@@ -25,6 +25,8 @@ The rest of the [wiki](https://github.com/Terrence721/conduit-full/wiki) goes de
 - **[`todo.md`](todo.md)** — the primary, detailed record: a phase-by-phase written log of everything done and everything still open, with dates and the reasoning behind each decision. This is the source of truth.
 - **[GitHub Project board](https://github.com/users/Terrence721/projects/4)** — a Scrum-style Backlog/Planned/In Progress/Verification & QA/Done view of the same work, for a quick at-a-glance status without reading the full log. Kept in sync with [`todo.md`](todo.md).
 
+On AI-assisted development: Commits co-authored as Claude are AI-assisted implementations directed, reviewed, and merged by Terrence Daniels — same process as every other change, documented in docs/code-review.md.
+
 ## 🧭 Why This Matters
 
 RealWorld's Conduit is a well-known "same app, N stacks" demo, useful precisely because it's common ground — but reference implementations age: pinned dependencies, no TypeScript, no CI, no tests, a schema that only worked because `sequelize.sync({ alter: true })` quietly patched it at boot. The point of this repo is doing the unglamorous work of actually modernizing one, file by file, with the reasoning for every real decision written down as it happened.
