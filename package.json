@@ -18,7 +18,7 @@
     "sqlz": "yarn workspace backend sqlz",
     "start": "yarn workspace frontend build && yarn workspace backend start",
     "test": "vitest",
-    "typecheck": "yarn workspace backend typecheck",
+    "typecheck": "yarn workspace backend typecheck && yarn workspace frontend typecheck",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
