@@ -21,9 +21,8 @@ function FavButton({
   text,
 }: FavButtonProps) {
   const [loading, setLoading] = useState(false);
-  const { headers, isAuth } = useAuth();
+  const auth = useAuth();
 
-  const buttonText = text ? "Favorite" : "";
   const className = [
     "btn",
     "btn-sm",
@@ -35,11 +34,11 @@ function FavButton({
     .join(" ");
 
   const handleClick = () => {
-    if (!isAuth || !headers) return alert("You need to login first");
+    if (!auth.isAuth) return alert("You need to login first");
 
     setLoading(true);
 
-    toggleFav({ favorited, headers, slug })
+    toggleFav({ favorited, headers: auth.headers, slug })
       .then(handler)
       .catch(console.error)
       .finally(() => setLoading(false));
@@ -47,7 +46,7 @@ function FavButton({
 
   return (
     <button className={className} disabled={loading} onClick={handleClick}>
-      <i className="ion-heart"></i> {buttonText}
+      <i className="ion-heart"></i> {text && "Favorite"}
       <span className="counter"> ( {favoritesCount} )</span>
     </button>
   );
