@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
+import requireAuth from "../../helpers/requireAuth";
 import toggleFollow from "../../services/toggleFollow";
 import type { Profile } from "../../types";
 
@@ -23,11 +24,12 @@ function FollowButton({
   const text = !auth.isAuth ? "Followers" : following ? "Unfollow" : "Follow";
 
   const handleClick = () => {
-    if (!auth.isAuth) return alert("You need to login first");
+    const authed = requireAuth(auth);
+    if (!authed) return;
 
     setLoading(true);
 
-    toggleFollow({ following, headers: auth.headers, username })
+    toggleFollow({ following, headers: authed.headers, username })
       .then(handler)
       .catch(console.error)
       .finally(() => setLoading(false));
