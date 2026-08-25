@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
+import requireAuth from "../../helpers/requireAuth";
 import toggleFav from "../../services/toggleFav";
 import type { Article } from "../../types";
 
@@ -34,11 +35,12 @@ function FavButton({
     .join(" ");
 
   const handleClick = () => {
-    if (!auth.isAuth) return alert("You need to login first");
+    const authed = requireAuth(auth);
+    if (!authed) return;
 
     setLoading(true);
 
-    toggleFav({ favorited, headers: auth.headers, slug })
+    toggleFav({ favorited, headers: authed.headers, slug })
       .then(handler)
       .catch(console.error)
       .finally(() => setLoading(false));
