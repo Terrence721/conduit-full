@@ -1,21 +1,26 @@
-import { NavLink } from "react-router-dom";
-import type { NavLinkRenderProps } from "react-router-dom";
+import { NavLink, type NavLinkRenderProps } from "react-router-dom";
 
 interface NavItemProps {
   icon?: string;
+  state?: unknown;
   text: string;
   url: string;
-  state?: unknown;
 }
 
-function NavItem({ icon, text, url, state }: NavItemProps) {
-  const activeClass = ({ isActive }: NavLinkRenderProps) =>
-    `nav-link${isActive ? " active" : ""}`;
+const activeClass = ({ isActive }: NavLinkRenderProps) =>
+  `nav-link${isActive ? " active" : ""}`;
 
+function NavItem({ icon, state, text, url }: NavItemProps) {
   return (
     <li className="nav-item">
       <NavLink className={activeClass} end state={state} to={url}>
-        {icon && <i className={icon}></i>} {text}
+        {icon ? (
+          <>
+            <i className={icon}></i> {text}
+          </>
+        ) : (
+          text
+        )}
       </NavLink>
     </li>
   );
