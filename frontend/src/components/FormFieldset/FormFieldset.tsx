@@ -29,7 +29,7 @@ function FormFieldset({
     <fieldset className="form-group">
       <input
         autoFocus={autoFocus}
-        className={`form-control ${normal ? "" : "form-control-lg"}`}
+        className={`form-control${normal ? "" : " form-control-lg"}`}
         minLength={minLength}
         name={name}
         onChange={handler}
