@@ -43,11 +43,9 @@ export interface User {
   token: string;
 }
 
-export interface AuthState {
-  headers: { Authorization: string } | null;
-  isAuth: boolean;
-  loggedUser: User;
-}
+export type AuthState =
+  | { headers: { Authorization: string }; isAuth: true; loggedUser: User }
+  | { headers: null; isAuth: false; loggedUser: User };
 
 export const emptyAuthState: AuthState = {
   headers: null,
