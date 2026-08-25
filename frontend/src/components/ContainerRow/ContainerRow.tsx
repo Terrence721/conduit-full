@@ -2,12 +2,12 @@ import type { ReactNode } from "react";
 
 interface ContainerRowProps {
   children: ReactNode;
-  type?: "page";
+  page?: boolean;
 }
 
-function ContainerRow({ children, type }: ContainerRowProps) {
+function ContainerRow({ children, page }: ContainerRowProps) {
   return (
-    <div className={`container ${type || ""}`}>
+    <div className={`container${page ? " page" : ""}`}>
       <div className="row">{children}</div>
     </div>
   );
