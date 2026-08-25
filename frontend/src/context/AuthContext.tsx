@@ -11,9 +11,9 @@ import {
 import getUser from "../services/getUser";
 import { emptyAuthState, type AuthState } from "../types";
 
-interface AuthContextValue extends AuthState {
+type AuthContextValue = AuthState & {
   setAuthState: Dispatch<SetStateAction<AuthState>>;
-}
+};
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
@@ -39,8 +39,8 @@ interface AuthProviderProps {
 }
 
 function AuthProvider({ children }: AuthProviderProps) {
-  const [{ headers, isAuth, loggedUser }, setAuthState] =
-    useState<AuthState>(getStoredAuthState);
+  const [authState, setAuthState] = useState<AuthState>(getStoredAuthState);
+  const { headers } = authState;
 
   useEffect(() => {
     if (!headers) return;
@@ -53,10 +53,7 @@ function AuthProvider({ children }: AuthProviderProps) {
       .catch(console.error);
   }, [headers]);
 
-  const value = useMemo(
-    () => ({ headers, isAuth, loggedUser, setAuthState }),
-    [headers, isAuth, loggedUser],
-  );
+  const value = useMemo(() => ({ ...authState, setAuthState }), [authState]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
