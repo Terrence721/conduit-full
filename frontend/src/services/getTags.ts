@@ -5,7 +5,7 @@ interface TagsResponse {
   tags: string[];
 }
 
-async function getTags(): Promise<string[] | undefined> {
+async function getTags(): Promise<string[]> {
   try {
     const { data } = await axios<TagsResponse>({ url: "/api/tags" });
 
@@ -14,6 +14,8 @@ async function getTags(): Promise<string[] | undefined> {
     if (axios.isAxiosError<{ errors: { body: string[] } }>(error)) {
       errorHandler(error);
     }
+
+    return [];
   }
 }
 
