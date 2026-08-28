@@ -1,16 +1,17 @@
-import { useFeedContext } from "../../context/FeedContext";
+import { useFeedContext, type FeedTabName } from "../../context/FeedContext";
 
 interface FeedNavLinkProps {
   icon?: boolean;
-  name: string;
+  name: FeedTabName;
+  tagName?: string;
   text: string;
 }
 
-function FeedNavLink({ icon, name, text }: FeedNavLinkProps) {
+function FeedNavLink({ icon, name, tagName = "", text }: FeedNavLinkProps) {
   const { tabName, changeTab } = useFeedContext();
 
   const handleClick = () => {
-    changeTab(name, name === "tag" ? text : "");
+    changeTab(name, tagName);
   };
 
   return (
