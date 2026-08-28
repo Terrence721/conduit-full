@@ -23,8 +23,7 @@ function ArticleAuthorButtons({
     const authed = requireAuth(auth);
     if (!authed) return;
 
-    const confirmation = window.confirm("Want to delete the article?");
-    if (!confirmation) return;
+    if (!window.confirm("Want to delete the article?")) return;
 
     deleteArticle({ headers: authed.headers, slug })
       .then(() => navigate("/"))
@@ -40,15 +39,14 @@ function ArticleAuthorButtons({
       >
         <i className="ion-trash-a"></i> Delete Article
       </button>{" "}
-      <button className="btn btn-sm" style={{ color: "#777" }}>
-        <Link
-          className="nav-link"
-          state={{ body, description, tagList, title }}
-          to={`/editor/${slug}`}
-        >
-          <i className="ion-edit"></i> Edit Article
-        </Link>
-      </button>{" "}
+      <Link
+        className="btn btn-sm nav-link"
+        state={{ body, description, tagList, title }}
+        style={{ color: "#777" }}
+        to={`/editor/${slug}`}
+      >
+        <i className="ion-edit"></i> Edit Article
+      </Link>{" "}
     </>
   );
 }
