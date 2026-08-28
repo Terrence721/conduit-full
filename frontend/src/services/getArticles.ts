@@ -1,8 +1,6 @@
 import axios from "axios";
 import errorHandler from "../helpers/errorHandler";
-import type { Article } from "../types";
-
-type ArticleLocation = "favorites" | "feed" | "global" | "profile" | "tag";
+import type { ArticleLocation, ArticlesResponse } from "../types";
 
 interface GetArticlesParams {
   headers?: Record<string, string>;
@@ -11,11 +9,6 @@ interface GetArticlesParams {
   page?: number;
   tagName?: string;
   username?: string;
-}
-
-interface ArticlesResponse {
-  articles: Article[];
-  articlesCount: number;
 }
 
 async function getArticles({
