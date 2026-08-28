@@ -1,6 +1,7 @@
 export { default as ArticleAuthorButtons } from "./ArticleAuthorButtons/ArticleAuthorButtons";
 export { default as ArticlesPagination } from "./ArticlesPagination/ArticlesPagination";
 export { default as ArticleTags } from "./ArticleTags/ArticleTags";
+export { default as Avatar } from "./Avatar/Avatar";
 export { default as BannerContainer } from "./BannerContainer/BannerContainer";
 export { default as ContainerRow } from "./ContainerRow/ContainerRow";
 export { default as FavButton } from "./FavButton/FavButton";
