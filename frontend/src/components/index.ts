@@ -4,6 +4,7 @@ export { default as ArticleTags } from "./ArticleTags/ArticleTags";
 export { default as BannerContainer } from "./BannerContainer/BannerContainer";
 export { default as ContainerRow } from "./ContainerRow/ContainerRow";
 export { default as FavButton } from "./FavButton/FavButton";
+export { default as FeedToggler } from "./FeedToggler/FeedToggler";
 export { default as FollowButton } from "./FollowButton/FollowButton";
 export { default as FormFieldset } from "./FormFieldset/FormFieldset";
 export { default as NavItem } from "./NavItem/NavItem";
