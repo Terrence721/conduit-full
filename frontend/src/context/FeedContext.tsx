@@ -8,13 +8,15 @@ import {
 } from "react";
 import { useAuth } from "./AuthContext";
 
+export type FeedTabName = "feed" | "global" | "tag";
+
 interface FeedTab {
-  tabName: string;
+  tabName: FeedTabName;
   tagName: string;
 }
 
 interface FeedContextValue extends FeedTab {
-  changeTab: (tabName: string, tagName: string) => void;
+  changeTab: (tabName: FeedTabName, tagName: string) => void;
 }
 
 const FeedContext = createContext<FeedContextValue | undefined>(undefined);
@@ -44,7 +46,7 @@ function FeedProvider({ children }: FeedProviderProps) {
     setTab((tab) => ({ ...tab, tabName: isAuth ? "feed" : "global" }));
   }
 
-  const changeTab = useCallback((tabName: string, tagName: string) => {
+  const changeTab = useCallback((tabName: FeedTabName, tagName: string) => {
     setTab({ tabName, tagName });
   }, []);
 
