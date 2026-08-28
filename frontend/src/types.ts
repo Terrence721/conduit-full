@@ -45,10 +45,10 @@ export interface User {
 
 export type AuthState =
   | { headers: { Authorization: string }; isAuth: true; loggedUser: User }
-  | { headers: null; isAuth: false; loggedUser: User };
+  | { headers: undefined; isAuth: false; loggedUser: User };
 
 export const emptyAuthState: AuthState = {
-  headers: null,
+  headers: undefined,
   isAuth: false,
   loggedUser: {
     username: "",
@@ -61,4 +61,12 @@ export const emptyAuthState: AuthState = {
 
 export interface MessageResponse {
   message: { body: string[] };
+}
+
+export type ArticleLocation =
+  "favorites" | "feed" | "global" | "profile" | "tag";
+
+export interface ArticlesResponse {
+  articles: Article[];
+  articlesCount: number;
 }
