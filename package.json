@@ -14,11 +14,14 @@
     "uuid": "^11.1.1"
   },
   "scripts": {
+    "predev": "yarn clean:logs",
     "dev": "concurrently --names 'Node,Vite' -c 'green,blue' 'yarn workspace backend dev' 'yarn workspace frontend dev'",
     "sqlz": "yarn workspace backend sqlz",
+    "prestart": "yarn clean:logs",
     "start": "yarn workspace frontend build && yarn workspace backend start",
+    "clean:logs": "tsx scripts/clean-logs.ts",
     "test": "vitest",
-    "typecheck": "yarn workspace backend typecheck && yarn workspace frontend typecheck",
+    "typecheck": "tsc --noEmit -p scripts/tsconfig.json && yarn workspace backend typecheck && yarn workspace frontend typecheck",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
