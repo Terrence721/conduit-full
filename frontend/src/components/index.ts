@@ -8,4 +8,5 @@ export { default as FeedToggler } from "./FeedToggler/FeedToggler";
 export { default as FollowButton } from "./FollowButton/FollowButton";
 export { default as FormFieldset } from "./FormFieldset/FormFieldset";
 export { default as NavItem } from "./NavItem/NavItem";
+export { default as PopularTags } from "./PopularTags/PopularTags";
 export { default as SourceCodeLink } from "./SourceCodeLink/SourceCodeLink";
