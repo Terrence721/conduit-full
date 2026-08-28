@@ -9,8 +9,8 @@ interface AvatarProps {
 function Avatar({ alt, className, src }: AvatarProps) {
   return (
     <img
-      alt={alt ?? "placeholder"}
-      className={className ?? ""}
+      alt={alt || "placeholder"}
+      className={className || ""}
       src={src || avatar}
     />
   );
