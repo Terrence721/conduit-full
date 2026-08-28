@@ -3,14 +3,15 @@ import getTags from "../../services/getTags";
 import TagButton from "./TagButton";
 
 function PopularTags() {
-  const [tags, setTags] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [tags, setTags] = useState<string[] | null>(null);
 
   useEffect(() => {
     getTags()
-      .then((fetched) => setTags(fetched ?? []))
-      .catch(console.error)
-      .finally(() => setLoading(false));
+      .then(setTags)
+      .catch((error: unknown) => {
+        console.error(error);
+        setTags([]);
+      });
   }, []);
 
   return (
@@ -18,10 +19,10 @@ function PopularTags() {
       <div className="sidebar">
         <h6>Popular Tags</h6>
         <div className="tag-list">
-          {tags.length > 0 ? (
-            <TagButton tagsList={tags} />
-          ) : loading ? (
+          {tags === null ? (
             <p>Loading tags...</p>
+          ) : tags.length > 0 ? (
+            <TagButton tagsList={tags} />
           ) : (
             <p>Tags list not available</p>
           )}
