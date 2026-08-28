@@ -35,6 +35,30 @@ export default [
   },
   ...tseslint.configs.recommended.map((config) => ({
     ...config,
+    files: ["scripts/**/*.ts"],
+  })),
+  {
+    files: ["scripts/**/*.ts"],
+    languageOptions: {
+      ecmaVersion: "latest",
+      sourceType: "module",
+      globals: {
+        ...globals.node,
+      },
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+    rules: {
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
+      ],
+    },
+  },
+  ...tseslint.configs.recommended.map((config) => ({
+    ...config,
     files: ["backend/**/*.ts"],
   })),
   {
