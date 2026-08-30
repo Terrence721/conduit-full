@@ -14,7 +14,7 @@ interface CommentsResponse {
 async function getComments({
   headers,
   slug,
-}: GetCommentsParams): Promise<Comment[] | undefined> {
+}: GetCommentsParams): Promise<Comment[]> {
   try {
     const { data } = await axios<CommentsResponse>({
       headers,
@@ -26,6 +26,8 @@ async function getComments({
     if (axios.isAxiosError<{ errors: { body: string[] } }>(error)) {
       errorHandler(error);
     }
+
+    return [];
   }
 }
 
