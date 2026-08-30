@@ -2,32 +2,23 @@ import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import dateFormatter from "../../helpers/dateFormatter";
 import Avatar from "../Avatar/Avatar";
-import type { Article, Profile } from "../../types";
+import type { Article } from "../../types";
 
 type ArticleMetaProps = Pick<Article, "author" | "createdAt"> & {
   children: ReactNode;
 };
 
 function ArticleMeta({ author, children, createdAt }: ArticleMetaProps) {
-  const { bio, followersCount, following, image, username } = author;
-  const profileState: Omit<Profile, "username"> = {
-    bio,
-    followersCount,
-    following,
-    image,
-  };
+  const { username, ...profileState } = author;
+  const profileUrl = `/profile/${username}`;
 
   return (
     <div className="article-meta">
-      <Link state={profileState} to={`/profile/${username}`}>
-        <Avatar alt={username} src={image} />
+      <Link state={profileState} to={profileUrl}>
+        <Avatar alt={username} src={profileState.image} />
       </Link>
       <div className="info">
-        <Link
-          className="author"
-          state={profileState}
-          to={`/profile/${username}`}
-        >
+        <Link className="author" state={profileState} to={profileUrl}>
           {username}
         </Link>
         <span className="date">{dateFormatter(createdAt)}</span>
