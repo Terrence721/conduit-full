@@ -19,7 +19,11 @@ function LoginForm({ onError }: LoginFormProps) {
 
     userLogin({ email, password })
       .then((authState) => {
-        if (!authState) return;
+        if (!authState) {
+          onError("Something went wrong. Please try again.");
+          return;
+        }
+
         setAuthState(authState);
         navigate("/");
       })
