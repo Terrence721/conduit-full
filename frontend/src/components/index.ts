@@ -13,6 +13,7 @@ export { default as CommentAuthor } from "./CommentAuthor/CommentAuthor";
 export { default as CommentEditor } from "./CommentEditor/CommentEditor";
 export { default as CommentList } from "./CommentList/CommentList";
 export { default as ContainerRow } from "./ContainerRow/ContainerRow";
+export { default as DropdownItem } from "./DropdownItem/DropdownItem";
 export { default as FavButton } from "./FavButton/FavButton";
 export { default as FeedToggler } from "./FeedToggler/FeedToggler";
 export { default as FollowButton } from "./FollowButton/FollowButton";
