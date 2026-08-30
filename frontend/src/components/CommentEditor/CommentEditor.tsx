@@ -1,4 +1,4 @@
-import { useState, type ChangeEventHandler, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import requireAuth from "../../helpers/requireAuth";
@@ -7,11 +7,11 @@ import Avatar from "../Avatar/Avatar";
 import type { Comment } from "../../types";
 
 interface CommentEditorProps {
-  updateComments: (comment: Comment | undefined) => void;
+  updateComments: (comment: Comment) => void;
 }
 
 function CommentEditor({ updateComments }: CommentEditorProps) {
-  const [{ body }, setForm] = useState({ body: "" });
+  const [body, setBody] = useState("");
   const auth = useAuth();
   const { slug } = useParams();
 
@@ -26,13 +26,9 @@ function CommentEditor({ updateComments }: CommentEditorProps) {
       .then((comment) => {
         if (!comment) return;
         updateComments(comment);
-        setForm({ body: "" });
+        setBody("");
       })
       .catch(console.error);
-  };
-
-  const handleChange: ChangeEventHandler<HTMLTextAreaElement> = (e) => {
-    setForm({ body: e.target.value });
   };
 
   return auth.isAuth ? (
@@ -40,7 +36,7 @@ function CommentEditor({ updateComments }: CommentEditorProps) {
       <div className="card-block">
         <textarea
           className="form-control"
-          onChange={handleChange}
+          onChange={(e) => setBody(e.target.value)}
           placeholder="Write a comment..."
           rows={3}
           value={body}
