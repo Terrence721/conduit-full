@@ -16,6 +16,7 @@ export { default as ContainerRow } from "./ContainerRow/ContainerRow";
 export { default as FavButton } from "./FavButton/FavButton";
 export { default as FeedToggler } from "./FeedToggler/FeedToggler";
 export { default as FollowButton } from "./FollowButton/FollowButton";
+export { default as Footer } from "./Footer/Footer";
 export { default as FormFieldset } from "./FormFieldset/FormFieldset";
 export { default as NavItem } from "./NavItem/NavItem";
 export { default as PopularTags } from "./PopularTags/PopularTags";
