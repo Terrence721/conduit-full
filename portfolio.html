@@ -804,12 +804,11 @@
       components, an <code>&lt;a&gt;</code> nested inside a
       <code>&lt;button&gt;</code> in <code>ArticleAuthorButtons.tsx</code>, a
       missing <code>return</code> that let an unauthenticated comment-delete
-      request through with <code>headers: undefined</code>, a stale-closure
-      bug in a list's optimistic favorite-toggle update, a
-      <code>Link</code> passed an entirely wrong-shaped
-      <code>state</code> object, three separate components that navigated a
-      user home on a silently-failed request as if it had succeeded, and
-      more — are logged in full in
+      request through with <code>headers: undefined</code>, a stale-closure bug
+      in a list's optimistic favorite-toggle update, a <code>Link</code> passed
+      an entirely wrong-shaped <code>state</code> object, three separate
+      components that navigated a user home on a silently-failed request as if
+      it had succeeded, and more — are logged in full in
       <a href="https://github.com/Terrence721/conduit-full/blob/main/todo.md"
         >todo.md</a
       >'s phase-by-phase record, not summarized away here.
@@ -872,10 +871,10 @@
       <code>headers</code> disagree got redefined as a discriminated union, with
       the duplicated guard itself extracted to a plain helper rather than a
       custom hook — a hook would have to fire its alert on every render for a
-      logged-out visitor instead of only on click. That same
-      helper-not-a-hook reasoning held up through the whole rest of the
-      components layer: when the identical "resolve or fail" auth-callback
-      logic showed up a second time in the very last two components
+      logged-out visitor instead of only on click. That same helper-not-a-hook
+      reasoning held up through the whole rest of the components layer: when the
+      identical "resolve or fail" auth-callback logic showed up a second time in
+      the very last two components
       (<code>LoginForm</code>/<code>SignUpForm</code>), it was extracted the
       same way rather than left duplicated, precisely because no third
       occurrence was ever coming. A third early call: a component's
@@ -897,8 +896,8 @@
       caught both times from a stale sub-issue count, backfilled both times, and
       held for the rest of the components layer with zero further lapses. The
       still-open gap: the 50 files tracked by issue #71 have no behavioral
-      tests, unlike the backend where every file has one — disclosed and
-      tracked on the board rather than quietly deferred.
+      tests, unlike the backend where every file has one — disclosed and tracked
+      on the board rather than quietly deferred.
     </p>
   </section>
 </div>
@@ -927,9 +926,9 @@
       <code>todo.md</code> phase log, commit history, and CI runs — nothing here
       is asserted without a link to check it against. The frontend is still in
       progress: all 16 planned service modules, both context files, and all 31
-      components done, no route pages or app entry point yet, and
-      50 tracked files still without behavioral tests — see
-      <code>todo.md</code> for the honest current state.
+      components done, no route pages or app entry point yet, and 50 tracked
+      files still without behavioral tests — see <code>todo.md</code> for the
+      honest current state.
     </p>
   </div>
 </footer>
