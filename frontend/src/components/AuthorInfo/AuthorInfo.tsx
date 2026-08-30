@@ -24,7 +24,7 @@ function AuthorInfo() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (state || !username) return;
+    if (!username) return;
 
     getProfile({ headers, username })
       .then((profile) => {
@@ -35,7 +35,7 @@ function AuthorInfo() {
         console.error(error);
         navigate("/not-found", { replace: true });
       });
-  }, [username, headers, state, navigate]);
+  }, [username, headers, navigate]);
 
   const followHandler = (updated: Profile | undefined) => {
     if (!updated) return;
