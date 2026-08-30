@@ -1,6 +1,7 @@
 import { useState, type SubmitEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import handleAuthResult from "../../helpers/handleAuthResult";
 import userSignUp from "../../services/userSignUp";
 import FormFieldset from "../FormFieldset/FormFieldset";
 
@@ -19,15 +20,9 @@ function SignUpForm({ onError }: SignUpFormProps) {
     e.preventDefault();
 
     userSignUp({ username, email, password })
-      .then((authState) => {
-        if (!authState) {
-          onError("Something went wrong. Please try again.");
-          return;
-        }
-
-        setAuthState(authState);
-        navigate("/");
-      })
+      .then((authState) =>
+        handleAuthResult(authState, setAuthState, navigate, onError),
+      )
       .catch(onError);
   };
 
