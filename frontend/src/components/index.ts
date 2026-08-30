@@ -9,6 +9,7 @@ export { default as AuthorInfo } from "./AuthorInfo/AuthorInfo";
 export { default as AuthPageContainer } from "./AuthPageContainer/AuthPageContainer";
 export { default as Avatar } from "./Avatar/Avatar";
 export { default as BannerContainer } from "./BannerContainer/BannerContainer";
+export { default as CommentAuthor } from "./CommentAuthor/CommentAuthor";
 export { default as CommentEditor } from "./CommentEditor/CommentEditor";
 export { default as ContainerRow } from "./ContainerRow/ContainerRow";
 export { default as FavButton } from "./FavButton/FavButton";
