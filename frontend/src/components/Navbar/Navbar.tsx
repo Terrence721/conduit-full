@@ -19,14 +19,12 @@ function Navbar() {
         <ul className="nav navbar-nav pull-xs-right">
           <NavItem text="Home" icon="ion-compose" url="/" />
 
-          {isAuth && (
+          {isAuth ? (
             <>
               <NavItem text="New Article" icon="ion-compose" url="/editor" />
               <DropdownMenu />
             </>
-          )}
-
-          {!isAuth && (
+          ) : (
             <>
               <NavItem text="Login" icon="ion-log-in" url="/login" />
               <NavItem text="Sign up" url="/register" />
