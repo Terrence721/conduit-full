@@ -21,6 +21,7 @@ export { default as FollowButton } from "./FollowButton/FollowButton";
 export { default as Footer } from "./Footer/Footer";
 export { default as FormFieldset } from "./FormFieldset/FormFieldset";
 export { default as LoginForm } from "./LoginForm/LoginForm";
+export { default as Navbar } from "./Navbar/Navbar";
 export { default as NavItem } from "./NavItem/NavItem";
 export { default as PopularTags } from "./PopularTags/PopularTags";
 export { default as SourceCodeLink } from "./SourceCodeLink/SourceCodeLink";
