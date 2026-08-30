@@ -12,16 +12,17 @@ function DropdownMenu() {
     setAuthState(userLogout());
   };
 
-  const handleClick = () => {
+  const toggle = () => {
     setDropdown((prev) => !prev);
+  };
+
+  const close = () => {
+    setDropdown(false);
   };
 
   return (
     <li className="nav-item dropdown">
-      <div
-        className="nav-link dropdown-toggle cursor-pointer"
-        onClick={handleClick}
-      >
+      <div className="nav-link dropdown-toggle cursor-pointer" onClick={toggle}>
         <Avatar
           alt={loggedUser.username}
           className="user-pic"
@@ -30,20 +31,18 @@ function DropdownMenu() {
         {loggedUser.username}
       </div>
 
-      <div
-        className="dropdown-menu"
-        style={{ display: dropdown ? "block" : "none" }}
-        onMouseLeave={handleClick}
-      >
-        <DropdownItem
-          icon="ion-person"
-          text="Profile"
-          url={`/profile/${loggedUser.username}`}
-        />
-        <DropdownItem icon="ion-gear-a" text="Settings" url="/settings" />
-        <div className="dropdown-divider"></div>
-        <DropdownItem icon="ion-log-out" text="Logout" handler={logout} />
-      </div>
+      {dropdown && (
+        <div className="dropdown-menu" onMouseLeave={close}>
+          <DropdownItem
+            icon="ion-person"
+            text="Profile"
+            url={`/profile/${loggedUser.username}`}
+          />
+          <DropdownItem icon="ion-gear-a" text="Settings" url="/settings" />
+          <div className="dropdown-divider"></div>
+          <DropdownItem icon="ion-log-out" text="Logout" handler={logout} />
+        </div>
+      )}
     </li>
   );
 }
