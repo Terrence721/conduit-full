@@ -1,6 +1,7 @@
 export { default as ArticleAuthorButtons } from "./ArticleAuthorButtons/ArticleAuthorButtons";
 export { default as ArticleEditorForm } from "./ArticleEditorForm/ArticleEditorForm";
 export { default as ArticleMeta } from "./ArticleMeta/ArticleMeta";
+export { default as ArticlesButtons } from "./ArticlesButtons/ArticlesButtons";
 export { default as ArticlesPagination } from "./ArticlesPagination/ArticlesPagination";
 export { default as ArticleTags } from "./ArticleTags/ArticleTags";
 export { default as Avatar } from "./Avatar/Avatar";
