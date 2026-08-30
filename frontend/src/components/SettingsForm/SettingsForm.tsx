@@ -34,7 +34,7 @@ function SettingsForm() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!auth.isAuth) navigate("/");
+    if (!auth.isAuth) navigate("/", { replace: true, state: null });
   }, [auth.isAuth, navigate]);
 
   function fieldHandler<K extends keyof SettingsFormState>(field: K) {
@@ -65,66 +65,64 @@ function SettingsForm() {
       .finally(() => setSubmitting(false));
   };
 
+  if (!auth.isAuth) return null;
+
   return (
-    auth.isAuth && (
-      <form onSubmit={formSubmit}>
-        <fieldset>
-          {errorMessage && (
-            <span className="error-messages">{errorMessage}</span>
-          )}
+    <form onSubmit={formSubmit}>
+      <fieldset>
+        {errorMessage && <span className="error-messages">{errorMessage}</span>}
 
-          <FormFieldset
-            placeholder="URL of profile picture"
-            name="image"
-            value={form.image}
-            handler={fieldHandler("image")}
-          ></FormFieldset>
+        <FormFieldset
+          placeholder="URL of profile picture"
+          name="image"
+          value={form.image}
+          handler={fieldHandler("image")}
+        ></FormFieldset>
 
-          <FormFieldset
-            placeholder="Your Name"
-            name="username"
-            required
-            value={form.username}
-            handler={fieldHandler("username")}
-          ></FormFieldset>
+        <FormFieldset
+          placeholder="Your Name"
+          name="username"
+          required
+          value={form.username}
+          handler={fieldHandler("username")}
+        ></FormFieldset>
 
-          <fieldset className="form-group">
-            <textarea
-              className="form-control form-control-lg"
-              rows={8}
-              placeholder="Short bio about you"
-              name="bio"
-              value={form.bio}
-              onChange={fieldHandler("bio")}
-            ></textarea>
-          </fieldset>
-
-          <FormFieldset
-            placeholder="Email"
-            name="email"
-            required
-            value={form.email}
-            handler={fieldHandler("email")}
-          ></FormFieldset>
-
-          <FormFieldset
-            type="password"
-            name="password"
-            value={form.password}
-            placeholder="Password"
-            handler={fieldHandler("password")}
-          ></FormFieldset>
-
-          <button
-            type="submit"
-            className="btn btn-lg btn-primary pull-xs-right"
-            disabled={submitting}
-          >
-            Update Settings
-          </button>
+        <fieldset className="form-group">
+          <textarea
+            className="form-control form-control-lg"
+            rows={8}
+            placeholder="Short bio about you"
+            name="bio"
+            value={form.bio}
+            onChange={fieldHandler("bio")}
+          ></textarea>
         </fieldset>
-      </form>
-    )
+
+        <FormFieldset
+          placeholder="Email"
+          name="email"
+          required
+          value={form.email}
+          handler={fieldHandler("email")}
+        ></FormFieldset>
+
+        <FormFieldset
+          type="password"
+          name="password"
+          value={form.password}
+          placeholder="Password"
+          handler={fieldHandler("password")}
+        ></FormFieldset>
+
+        <button
+          type="submit"
+          className="btn btn-lg btn-primary pull-xs-right"
+          disabled={submitting}
+        >
+          Update Settings
+        </button>
+      </fieldset>
+    </form>
   );
 }
 
