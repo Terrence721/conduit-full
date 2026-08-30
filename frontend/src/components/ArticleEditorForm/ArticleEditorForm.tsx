@@ -1,11 +1,13 @@
 import {
   useEffect,
   useState,
+  type ChangeEvent,
   type ChangeEventHandler,
   type FormEvent,
 } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import requireAuth from "../../helpers/requireAuth";
 import getArticle from "../../services/getArticle";
 import setArticle from "../../services/setArticle";
 import FormFieldset from "../FormFieldset/FormFieldset";
@@ -25,9 +27,10 @@ const emptyForm: ArticleFormState = {
 
 function ArticleEditorForm() {
   const { state }: { state: ArticleFormState | null } = useLocation();
-  const [form, setForm] = useState<ArticleFormState>(state ?? emptyForm);
-  const [tagsInput, setTagsInput] = useState(
-    (state ?? emptyForm).tagList.join(" "),
+  const initialForm = state ?? emptyForm;
+  const [form, setForm] = useState<ArticleFormState>(initialForm);
+  const [tagsInput, setTagsInput] = useState(() =>
+    initialForm.tagList.join(" "),
   );
   const [errorMessage, setErrorMessage] = useState("");
   const auth = useAuth();
@@ -57,19 +60,24 @@ function ArticleEditorForm() {
       .catch(console.error);
 
     return () => setForm(emptyForm);
-  }, [auth, navigate, slug, state]);
+  }, [
+    auth.isAuth,
+    auth.headers,
+    auth.loggedUser.username,
+    navigate,
+    slug,
+    state,
+  ]);
 
-  const titleHandler: ChangeEventHandler<HTMLInputElement> = (e) => {
-    setForm((f) => ({ ...f, title: e.target.value }));
-  };
+  function fieldHandler<K extends "title" | "description" | "body">(field: K) {
+    return (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      setForm((f) => ({ ...f, [field]: e.target.value }));
+    };
+  }
 
-  const descriptionHandler: ChangeEventHandler<HTMLInputElement> = (e) => {
-    setForm((f) => ({ ...f, description: e.target.value }));
-  };
-
-  const bodyHandler: ChangeEventHandler<HTMLTextAreaElement> = (e) => {
-    setForm((f) => ({ ...f, body: e.target.value }));
-  };
+  const titleHandler = fieldHandler("title");
+  const descriptionHandler = fieldHandler("description");
+  const bodyHandler = fieldHandler("body");
 
   const tagsInputHandler: ChangeEventHandler<HTMLInputElement> = (e) => {
     setTagsInput(e.target.value);
@@ -77,12 +85,13 @@ function ArticleEditorForm() {
 
   const formSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!auth.isAuth) return;
+    const authed = requireAuth(auth);
+    if (!authed) return;
 
     setArticle({
       body: form.body,
       description: form.description,
-      headers: auth.headers,
+      headers: authed.headers,
       slug,
       tagList: tagsInput.split(/,| /).filter(Boolean),
       title: form.title,
