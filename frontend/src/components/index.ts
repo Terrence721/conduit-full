@@ -3,6 +3,7 @@ export { default as ArticleEditorForm } from "./ArticleEditorForm/ArticleEditorF
 export { default as ArticleMeta } from "./ArticleMeta/ArticleMeta";
 export { default as ArticlesButtons } from "./ArticlesButtons/ArticlesButtons";
 export { default as ArticlesPagination } from "./ArticlesPagination/ArticlesPagination";
+export { default as ArticlesPreview } from "./ArticlesPreview/ArticlesPreview";
 export { default as ArticleTags } from "./ArticleTags/ArticleTags";
 export { default as Avatar } from "./Avatar/Avatar";
 export { default as BannerContainer } from "./BannerContainer/BannerContainer";
