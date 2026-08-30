@@ -9,7 +9,7 @@ interface FormFieldsetProps {
   normal?: boolean;
   placeholder?: string;
   required?: boolean;
-  type: string;
+  type?: string;
   value: string;
 }
 
@@ -22,7 +22,7 @@ function FormFieldset({
   normal,
   placeholder,
   required,
-  type,
+  type = "text",
   value,
 }: FormFieldsetProps) {
   return (
