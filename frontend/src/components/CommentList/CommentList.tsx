@@ -49,7 +49,7 @@ function CommentList({ triggerUpdate, updateComments }: CommentListProps) {
         <div className="card-footer">
           <CommentAuthor {...author} />
           <span className="date-posted">{dateFormatter(createdAt)}</span>
-          {auth.isAuth && auth.loggedUser.username === author.username && (
+          {auth.loggedUser.username === author.username && (
             <button
               className="btn btn-sm btn-outline-secondary pull-xs-right"
               onClick={() => handleClick(id)}
