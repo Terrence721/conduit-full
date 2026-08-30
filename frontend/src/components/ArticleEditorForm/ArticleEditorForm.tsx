@@ -3,7 +3,7 @@ import {
   useState,
   type ChangeEvent,
   type ChangeEventHandler,
-  type FormEvent,
+  type SubmitEvent,
 } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
@@ -83,7 +83,7 @@ function ArticleEditorForm() {
     setTagsInput(e.target.value);
   };
 
-  const formSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const formSubmit = (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     const authed = requireAuth(auth);
     if (!authed) return;

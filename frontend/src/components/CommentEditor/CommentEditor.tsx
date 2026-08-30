@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useState, type SubmitEvent } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import requireAuth from "../../helpers/requireAuth";
@@ -15,7 +15,7 @@ function CommentEditor({ updateComments }: CommentEditorProps) {
   const auth = useAuth();
   const { slug } = useParams();
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (body.trim() === "") return;
 
