@@ -25,4 +25,5 @@ export { default as Navbar } from "./Navbar/Navbar";
 export { default as NavItem } from "./NavItem/NavItem";
 export { default as PopularTags } from "./PopularTags/PopularTags";
 export { default as SettingsForm } from "./SettingsForm/SettingsForm";
+export { default as SignUpForm } from "./SignUpForm/SignUpForm";
 export { default as SourceCodeLink } from "./SourceCodeLink/SourceCodeLink";
