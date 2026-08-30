@@ -5,13 +5,13 @@
 
 **[📜 View the portfolio page →](https://terrence721.github.io/conduit-full/portfolio.html)**
 
-Last updated: August 28, 2026
+Last updated: August 30, 2026
 
 This repository is an independently modernized fork of the RealWorld **Conduit** example app — a Medium-style publishing platform (CRUD, JWT auth, pagination) built with **React 19 / Vite + SWC / Express 5 / Sequelize / PostgreSQL**. It's not affiliated with the RealWorld project or the original repo author.
 
 Rather than copying the source app over wholesale, this fork is being rebuilt one file at a time: each file is re-added deliberately, with dependencies and patterns brought up to their current latest versions along the way, and every real bug fixed via a real failing test — not read twice and assumed fine.
 
-**At a glance:** 214/214 backend tests passing, 8/8 frontend tests passing, 0 open CodeQL alerts, 41 real bugs found and fixed — see the Quality/CodeQL badges above for live CI status. **Known gap:** the 33 files tracked by [issue #71](https://github.com/Terrence721/conduit-full/issues/71) have zero behavioral test coverage yet (typecheck+lint+`/simplify` only) — tracked openly, not hidden.
+**At a glance:** 214/214 backend tests passing, 8/8 frontend tests passing, 0 open CodeQL alerts, 61 real bugs found and fixed — see the Quality/CodeQL badges above for live CI status. **Known gap:** the 50 files tracked by [issue #71](https://github.com/Terrence721/conduit-full/issues/71) have zero behavioral test coverage yet (typecheck+lint+`/simplify` only) — tracked openly, not hidden.
 
 ## 🧭 Start Here
 
@@ -40,7 +40,7 @@ RealWorld's Conduit is a well-known "same app, N stacks" demo, useful precisely 
   frontend/types      Profile, Article, Comment, User, AuthState, + more     ✅ done
   frontend/services   all 16 planned API service modules                    ✅ done
   frontend/context    AuthContext, FeedContext                              ✅ done
-  frontend/components 15 of 31, see todo.md for the list                    🚧 in progress
+  frontend/components 31 of 31, see todo.md for the list                    ✅ done
   frontend/routes     ~10 route pages                                       ⏳ not started
   frontend/App+main   entry point — last, once everything above exists      ⏳ not started
 ```
@@ -51,8 +51,9 @@ See [`todo.md`](todo.md) for the full file-by-file build-out plan.
 
 > Steps 1–4 (env, database, migrations, seed data) work today against the
 > backend alone. Step 5 (`yarn dev`) won't render anything yet — the frontend
-> workspace exists, but its entry point (`main.tsx`) and every route/component
-> that depends on it are still being built.
+> workspace exists and every component is built, but its entry point
+> (`main.tsx`) and every route page that wires those components together
+> are still being built.
 
 ```shell
 yarn install
