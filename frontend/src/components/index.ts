@@ -5,6 +5,7 @@ export { default as ArticlesButtons } from "./ArticlesButtons/ArticlesButtons";
 export { default as ArticlesPagination } from "./ArticlesPagination/ArticlesPagination";
 export { default as ArticlesPreview } from "./ArticlesPreview/ArticlesPreview";
 export { default as ArticleTags } from "./ArticleTags/ArticleTags";
+export { default as AuthorInfo } from "./AuthorInfo/AuthorInfo";
 export { default as AuthPageContainer } from "./AuthPageContainer/AuthPageContainer";
 export { default as Avatar } from "./Avatar/Avatar";
 export { default as BannerContainer } from "./BannerContainer/BannerContainer";
