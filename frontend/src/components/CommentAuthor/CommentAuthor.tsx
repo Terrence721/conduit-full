@@ -2,21 +2,28 @@ import { Link } from "react-router-dom";
 import Avatar from "../Avatar/Avatar";
 import type { Profile } from "../../types";
 
-function CommentAuthor({ username, ...profileState }: Profile) {
-  const profileUrl = `/profile/${username}`;
+type CommentAuthorProps = Pick<
+  Profile,
+  "username" | "bio" | "image" | "following" | "followersCount"
+>;
+
+function CommentAuthor({ username, ...profileState }: CommentAuthorProps) {
+  const linkProps = {
+    className: "comment-author",
+    state: profileState,
+    to: `/profile/${username}`,
+  };
 
   return (
     <>
-      <Link className="comment-author" state={profileState} to={profileUrl}>
+      <Link {...linkProps}>
         <Avatar
           alt={username}
           className="comment-author-img"
           src={profileState.image}
         />
       </Link>{" "}
-      <Link className="comment-author" state={profileState} to={profileUrl}>
-        {username}
-      </Link>
+      <Link {...linkProps}>{username}</Link>
     </>
   );
 }
