@@ -5,17 +5,17 @@
 
 **[📜 View the portfolio page →](https://terrence721.github.io/conduit-full/portfolio.html)**
 
-Last updated: August 30, 2026
+Last updated: September 1, 2026
 
 This repository is an independently modernized fork of the RealWorld **Conduit** example app — a Medium-style publishing platform (CRUD, JWT auth, pagination) built with **React 19 / Vite + SWC / Express 5 / Sequelize / PostgreSQL**. It's not affiliated with the RealWorld project or the original repo author.
 
 Rather than copying the source app over wholesale, this fork is being rebuilt one file at a time: each file is re-added deliberately, with dependencies and patterns brought up to their current latest versions along the way, and every real bug fixed via a real failing test — not read twice and assumed fine.
 
-**At a glance:** 214/214 backend tests passing, 8/8 frontend tests passing, 0 open CodeQL alerts, 61 real bugs found and fixed — see the Quality/CodeQL badges above for live CI status. **Known gap:** the 50 files tracked by [issue #71](https://github.com/Terrence721/conduit-full/issues/71) have zero behavioral test coverage yet (typecheck+lint+`/simplify` only) — tracked openly, not hidden.
+**At a glance:** 214/214 backend tests passing, 8/8 frontend tests passing, 0 open CodeQL alerts, 61 real bugs found and fixed — see the Quality/CodeQL badges above for live CI status. **Milestone: the full stack runs end to end.** Every planned frontend layer (services → context → components → route pages → `App.tsx`/`main.tsx`) is now built and wired, and the whole thing has been verified live — a real Postgres database, migrated and seeded, backing a running `yarn dev` session with actual articles, profiles, and comments rendering in a browser. **Known gap:** the 50 files tracked by [issue #71](https://github.com/Terrence721/conduit-full/issues/71) have zero behavioral test coverage yet (typecheck+lint+`/simplify` only) — tracked openly, not hidden.
 
 ## 🧭 Start Here
 
-- **[System Architecture](https://terrence721.github.io/conduit-full/diagrams/system-architecture.html)** — the dev-proxy → Express → Postgres request path, and where the (in-progress) frontend fits
+- **[System Architecture](https://terrence721.github.io/conduit-full/diagrams/system-architecture.html)** — the dev-proxy → Express → Postgres request path, and where the frontend fits
 - **[Auth & Request Flow](https://terrence721.github.io/conduit-full/diagrams/auth-flow.html)** — how `verifyToken`'s soft-auth-by-default pattern actually works, and the real bug it's responsible for
 - **[Data Model](https://terrence721.github.io/conduit-full/diagrams/data-model.html)** — the 4 models and 6 associations, and the two real FK bugs migrations now catch
 - **[Testing Strategy](https://terrence721.github.io/conduit-full/diagrams/testing-strategy.html)** — the four test layers this repo runs, real in-memory SQLite instead of hand-stubbed mocks
@@ -41,9 +41,11 @@ RealWorld's Conduit is a well-known "same app, N stacks" demo, useful precisely 
   frontend/services   all 16 planned API service modules                    ✅ done
   frontend/context    AuthContext, FeedContext                              ✅ done
   frontend/components 31 of 31, see todo.md for the list                    ✅ done
-  frontend/routes     ~10 route pages                                       ⏳ not started
-  frontend/App+main   entry point — last, once everything above exists      ⏳ not started
+  frontend/routes     10 of 10 route pages                                  ✅ done
+  frontend/App+main   entry point, wires the router and every route         ✅ done
 ```
+
+**The frontend build is complete — every planned layer, done.**
 
 See [`todo.md`](todo.md) for the full file-by-file build-out plan.
 
