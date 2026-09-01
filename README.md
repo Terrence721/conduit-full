@@ -49,33 +49,37 @@ See [`todo.md`](todo.md) for the full file-by-file build-out plan.
 
 ## 🖥 Getting Started
 
-> Steps 1–4 (env, database, migrations, seed data) work today against the
-> backend alone. Step 5 (`yarn dev`) won't render anything yet — the frontend
-> workspace exists and every component is built, but its entry point
-> (`main.tsx`) and every route page that wires those components together
-> are still being built.
-
 ```shell
 yarn install
 ```
 
-1. Create a `.env` file in `backend/` per `backend/.env.example`.
-2. Create the database:
+1. Start a local Postgres — a `docker-compose.yml` is included:
+   ```shell
+   docker compose up -d
+   ```
+   Already have Postgres running elsewhere, or another container on port 5432?
+   Point at your own instance, or override the published port:
+   `POSTGRES_PORT=5434 docker compose up -d`.
+2. Create a `.env` file in `backend/` per `backend/.env.example` (match
+   `DEV_DB_PORT`/`TEST_DB_PORT` to whatever port you used above).
+3. Create the database:
    ```shell
    yarn sqlz db:create
    ```
-3. Run the migrations — the backend no longer auto-syncs the schema at boot, so this step is required:
+4. Run the migrations — the backend no longer auto-syncs the schema at boot, so this step is required:
    ```shell
    yarn sqlz db:migrate
    ```
-4. (Optional) seed it with dummy data:
+5. (Optional) seed it with dummy data:
    ```shell
    yarn sqlz db:seed:all
    ```
-5. Start the dev servers:
+6. Start the dev servers:
    ```shell
    yarn dev
    ```
+   The frontend is fully wired now — `main.tsx`, `App.tsx`, and all 10 route
+   pages exist — so this renders the real app at `http://localhost:3000`.
 
 ## License
 
