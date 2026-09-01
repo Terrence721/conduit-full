@@ -5,7 +5,7 @@
   "main": "index.ts",
   "scripts": {
     "dev": "tsx watch index.ts",
-    "sqlz": "sequelize-cli",
+    "sqlz": "tsx ../node_modules/sequelize-cli/lib/sequelize",
     "start": "tsx index.ts",
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
