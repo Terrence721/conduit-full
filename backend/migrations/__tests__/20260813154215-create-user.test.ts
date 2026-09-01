@@ -1,8 +1,8 @@
 export {};
 
 import { Sequelize, DataTypes } from "sequelize";
-import migration from "./20260813154215-create-user";
-import defineUser from "../models/User";
+import migration from "../20260813154215-create-user";
+import defineUser from "../../models/User";
 
 describe("migrations/20260813154215-create-user", () => {
   test("up creates the Users table matching User.ts's field shape", async () => {
