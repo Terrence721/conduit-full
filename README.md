@@ -11,7 +11,7 @@ This repository is an independently modernized fork of the RealWorld **Conduit**
 
 Rather than copying the source app over wholesale, this fork is being rebuilt one file at a time: each file is re-added deliberately, with dependencies and patterns brought up to their current latest versions along the way, and every real bug fixed via a real failing test — not read twice and assumed fine.
 
-**At a glance:** 214/214 backend tests passing, 8/8 frontend tests passing, 0 open CodeQL alerts, 61 real bugs found and fixed — see the Quality/CodeQL badges above for live CI status. **Milestone: the full stack runs end to end.** Every planned frontend layer (services → context → components → route pages → `App.tsx`/`main.tsx`) is now built and wired, and the whole thing has been verified live — a real Postgres database, migrated and seeded, backing a running `yarn dev` session with actual articles, profiles, and comments rendering in a browser. **Known gap:** the 50 files tracked by [issue #71](https://github.com/Terrence721/conduit-full/issues/71) have zero behavioral test coverage yet (typecheck+lint+`/simplify` only) — tracked openly, not hidden.
+**At a glance:** 214/214 backend tests passing, 8/8 frontend tests passing, 0 open CodeQL alerts, 61 real bugs found and fixed — see the Quality/CodeQL badges above for live CI status. **Milestone: the full stack runs end to end.** Every planned frontend layer (services → context → components → route pages → `App.tsx`/`main.tsx`) is now built and wired, and the whole thing has been verified live — a real Postgres database, migrated and seeded, backing a running `yarn dev` session with actual articles, profiles, and comments rendering in a browser. **Known gap:** the 65 files tracked by [issue #71](https://github.com/Terrence721/conduit-full/issues/71) have zero behavioral test coverage yet (typecheck+lint+`/simplify` only) — tracked openly, not hidden.
 
 ## 🧭 Start Here
 
@@ -41,7 +41,7 @@ RealWorld's Conduit is a well-known "same app, N stacks" demo, useful precisely 
   frontend/services   all 16 planned API service modules                    ✅ done
   frontend/context    AuthContext, FeedContext                              ✅ done
   frontend/components 31 of 31, see todo.md for the list                    ✅ done
-  frontend/routes     10 of 10 route pages                                  ✅ done
+  frontend/routes     12 of 12 route pages                                  ✅ done
   frontend/App+main   entry point, wires the router and every route         ✅ done
 ```
 
@@ -80,7 +80,7 @@ yarn install
    ```shell
    yarn dev
    ```
-   The frontend is fully wired now — `main.tsx`, `App.tsx`, and all 10 route
+   The frontend is fully wired now — `main.tsx`, `App.tsx`, and all 12 route
    pages exist — so this renders the real app at `http://localhost:3000`.
 
 ## License
