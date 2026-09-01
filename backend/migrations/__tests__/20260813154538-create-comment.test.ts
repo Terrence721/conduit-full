@@ -1,8 +1,8 @@
 export {};
 
 import { Sequelize, DataTypes } from "sequelize";
-import migration from "./20260813154538-create-comment";
-import defineComment from "../models/Comment";
+import migration from "../20260813154538-create-comment";
+import defineComment from "../../models/Comment";
 
 describe("migrations/20260813154538-create-comment", () => {
   test("up creates the Comments table, including the articleId/userId FKs the model needs", async () => {
