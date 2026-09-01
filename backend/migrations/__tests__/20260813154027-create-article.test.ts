@@ -1,8 +1,8 @@
 export {};
 
 import { Sequelize, DataTypes } from "sequelize";
-import migration from "./20260813154027-create-article";
-import defineArticle from "../models/Article";
+import migration from "../20260813154027-create-article";
+import defineArticle from "../../models/Article";
 
 describe("migrations/20260813154027-create-article", () => {
   test("up creates the Articles table, including the userId FK the model needs", async () => {
