@@ -1,8 +1,8 @@
 export {};
 
 import { Sequelize, DataTypes } from "sequelize";
-import migration from "./20260813153749-create-tag";
-import defineTag from "../models/Tag";
+import migration from "../20260813153749-create-tag";
+import defineTag from "../../models/Tag";
 
 describe("migrations/20260813153749-create-tag", () => {
   test("up creates the Tags table matching Tag.ts's field shape", async () => {
