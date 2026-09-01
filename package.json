@@ -15,7 +15,7 @@
   },
   "scripts": {
     "predev": "yarn clean:logs",
-    "dev": "concurrently --names 'Node,Vite' -c 'green,blue' 'yarn workspace backend dev' 'yarn workspace frontend dev'",
+    "dev": "concurrently --names 'Node,Vite' -c 'green,blue' \"yarn workspace backend dev\" \"yarn workspace frontend dev\"",
     "sqlz": "yarn workspace backend sqlz",
     "prestart": "yarn clean:logs",
     "start": "yarn workspace frontend build && yarn workspace backend start",
