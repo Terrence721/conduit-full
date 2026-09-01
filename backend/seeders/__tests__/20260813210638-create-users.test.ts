@@ -1,14 +1,14 @@
 export {};
 
-import testDbModule from "../testUtils/testDb";
-import bcryptHelper from "../helper/bcrypt";
+import testDbModule from "../../testUtils/testDb";
+import bcryptHelper from "../../helper/bcrypt";
 const { buildTestDb } = testDbModule;
 const { bcryptCompare } = bcryptHelper;
 
 describe("seeders/20260813210638-create-users.ts", () => {
   test("up() inserts 5 users with real bcrypt-hashed passwords, not plain text", async () => {
     const db = await buildTestDb();
-    const seeder = (await import("./20260813210638-create-users")).default;
+    const seeder = (await import("../20260813210638-create-users")).default;
     const queryInterface = db.sequelize.getQueryInterface();
 
     await seeder.up(queryInterface);
@@ -27,7 +27,7 @@ describe("seeders/20260813210638-create-users.ts", () => {
 
   test("down() removes all seeded users", async () => {
     const db = await buildTestDb();
-    const seeder = (await import("./20260813210638-create-users")).default;
+    const seeder = (await import("../20260813210638-create-users")).default;
     const queryInterface = db.sequelize.getQueryInterface();
 
     await seeder.up(queryInterface);
