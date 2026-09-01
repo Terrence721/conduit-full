@@ -1,7 +1,15 @@
-import ReactPaginate from "react-paginate";
+import ReactPaginateImport from "react-paginate";
 import { useAuth } from "../../context/AuthContext";
 import getArticles from "../../services/getArticles";
 import type { ArticleLocation, ArticlesResponse } from "../../types";
+
+// react-paginate's own UMD build nests its component under `.default` even on
+// the CJS branch, which Vite's dependency pre-bundling doesn't unwrap for a
+// plain default import -- explicitly unwrapping avoids a runtime "Element
+// type is invalid" crash despite this typechecking fine either way.
+const ReactPaginate =
+  (ReactPaginateImport as unknown as { default: typeof ReactPaginateImport })
+    .default ?? ReactPaginateImport;
 
 interface ArticlesPaginationProps {
   articlesCount: number;
