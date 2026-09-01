@@ -28,6 +28,10 @@ dist
 !.vscode/launch.json
 !.vscode/extensions.json
 .history/*
+*.code-workspace
+
+# spell-check config (local)
+cspell.json
 
 # misc
 .DS_Store
