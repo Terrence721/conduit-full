@@ -1,16 +1,16 @@
 export {};
 
-import testDbModule from "../testUtils/testDb";
+import testDbModule from "../../testUtils/testDb";
 const { buildTestDb, installTestDb } = testDbModule;
 
 const loadSeeder = async (db: any) => {
   installTestDb(db);
   vi.resetModules();
-  return (await import("./20260813210645-create-articles")).default;
+  return (await import("../20260813210645-create-articles")).default;
 };
 
 describe("seeders/20260813210645-create-articles.ts", () => {
-  test("up() inserts 55 articles, each assigned to a real existing user", async () => {
+  test("up() inserts 65 articles, each assigned to a real existing user", async () => {
     const db = await buildTestDb();
     await db.User.bulkCreate([
       { username: "jake", email: "jake@jake.jake", password: "hashed" },
@@ -22,7 +22,7 @@ describe("seeders/20260813210645-create-articles.ts", () => {
     await seeder.up(queryInterface);
 
     const articles = await db.Article.findAll();
-    expect(articles).toHaveLength(55);
+    expect(articles).toHaveLength(65);
 
     const userIds = (await db.User.findAll()).map((u: any) => u.id);
     for (const article of articles) {
@@ -41,7 +41,7 @@ describe("seeders/20260813210645-create-articles.ts", () => {
     const queryInterface = db.sequelize.getQueryInterface();
 
     await seeder.up(queryInterface);
-    expect(await db.Article.count()).toBe(55);
+    expect(await db.Article.count()).toBe(65);
 
     await seeder.down(queryInterface);
     expect(await db.Article.count()).toBe(0);
