@@ -10,7 +10,7 @@ export = {
   async up(queryInterface: QueryInterface) {
     const users = await User.findAll();
 
-    const articles = Array(55)
+    const articles = Array(65)
       .fill(null)
       .map((_, index) => ({
         slug: `lorem-ipsum-${index + 1}`,
