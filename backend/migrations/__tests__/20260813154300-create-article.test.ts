@@ -1,10 +1,10 @@
 export {};
 
 import { Sequelize, DataTypes } from "sequelize";
-import migration from "../20260813154027-create-article";
+import migration from "../20260813154300-create-article";
 import defineArticle from "../../models/Article";
 
-describe("migrations/20260813154027-create-article", () => {
+describe("migrations/20260813154300-create-article", () => {
   test("up creates the Articles table, including the userId FK the model needs", async () => {
     const createTable = vi.fn();
 
