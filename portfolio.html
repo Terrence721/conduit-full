@@ -2,7 +2,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta
   name="description"
-  content="An independently modernized fork of the RealWorld Conduit example app — a Medium-style publishing platform (CRUD, JWT auth, pagination) rebuilt file by file in React 19 / Vite / Express 5 / Sequelize / PostgreSQL, with dependencies brought current and real bugs found and fixed along the way. Backend complete, frontend in progress."
+  content="An independently modernized fork of the RealWorld Conduit example app — a Medium-style publishing platform (CRUD, JWT auth, pagination) rebuilt file by file in React 19 / Vite / Express 5 / Sequelize / PostgreSQL, with dependencies brought current and real bugs found and fixed along the way. Backend and frontend both complete, full stack verified running end to end."
 />
 <link
   rel="canonical"
@@ -21,7 +21,7 @@
 />
 <meta
   property="og:description"
-  content="An independently modernized fork of the RealWorld Conduit example app, rebuilt one file at a time — every dependency brought current, every real bug found via a real failing test, not read twice and assumed fine. Backend complete, frontend in progress."
+  content="An independently modernized fork of the RealWorld Conduit example app, rebuilt one file at a time — every dependency brought current, every real bug found via a real failing test, not read twice and assumed fine. Backend and frontend both complete, full stack verified running end to end."
 />
 
 <meta name="twitter:card" content="summary" />
@@ -31,7 +31,7 @@
 />
 <meta
   name="twitter:description"
-  content="An independently modernized fork of RealWorld's Conduit example app — React/Vite frontend, Express/Sequelize/PostgreSQL backend, rebuilt file by file with dependencies brought current. Backend complete, frontend in progress."
+  content="An independently modernized fork of RealWorld's Conduit example app — React/Vite frontend, Express/Sequelize/PostgreSQL backend, rebuilt file by file with dependencies brought current. Backend and frontend both complete, full stack verified running end to end."
 />
 <style>
   :root {
@@ -424,7 +424,7 @@
 
 <div class="hero">
   <div class="wrap">
-    <p class="eyebrow">Portfolio Manifest — Prepared 2026-08-30</p>
+    <p class="eyebrow">Portfolio Manifest — Prepared 2026-09-01</p>
     <h1 class="name">Terrence&nbsp;Daniels</h1>
     <p class="role">Full-Stack Engineer</p>
     <p class="thesis">
@@ -433,7 +433,13 @@
       pagination) rebuilt one file at a time rather than copied over wholesale,
       with every dependency brought up to its current latest and every real bug
       found via a real failing test, not read twice and assumed fine. Backend
-      complete and independently runnable; frontend in progress.
+      and frontend both complete — the full stack runs end to end, verified live
+      against a real Postgres database. This includes a chain of real,
+      previously-invisible backend bugs found only by actually running it: three
+      missing database tables for favoriting, following, and tagging, a
+      Node-version incompatibility in the migration tooling, and a migration
+      ordering bug — none caught by 214+ passing tests, since none of them
+      exercise the real database path.
     </p>
     <div class="hero-actions">
       <a class="btn primary" href="https://github.com/Terrence721/conduit-full"
@@ -463,15 +469,15 @@
   <div class="wrap">
     <div class="manifest-row">
       <div class="manifest-cell">
-        <span class="v">112</span><span class="k">phases shipped</span>
+        <span class="v">114</span><span class="k">phases shipped</span>
       </div>
       <div class="manifest-cell">
         <span class="v">214/214</span
         ><span class="k">backend tests passing</span>
       </div>
       <div class="manifest-cell">
-        <span class="v">31/31</span
-        ><span class="k">frontend components done</span>
+        <span class="v">10/10</span
+        ><span class="k">frontend route pages done</span>
       </div>
       <div class="manifest-cell">
         <span class="v">61</span
@@ -894,10 +900,38 @@
       backend's convention of a real GitHub Issue and board card per file
       quietly lapsed for a handful of frontend files, not once but twice —
       caught both times from a stale sub-issue count, backfilled both times, and
-      held for the rest of the components layer with zero further lapses. The
-      still-open gap: the 50 files tracked by issue #71 have no behavioral
-      tests, unlike the backend where every file has one — disclosed and tracked
-      on the board rather than quietly deferred.
+      held for the rest of the components layer — until it lapsed a third time
+      during the route-pages and local-dev-setup work that followed, this time
+      across 12 consecutive commits during a long debugging stretch, caught by
+      re-reading the session's own commit history rather than assuming every
+      commit had been tracked, and backfilled the same way as the first two
+      lapses. Same standard, same discipline of fixing it in the open rather
+      than quietly moving on.
+    </p>
+    <p class="lede">
+      The route pages layer surfaced its own real finds:
+      <code>Article.tsx</code>
+      needed an empty-sentinel pattern for its article state, the third use of
+      the same technique first established for auth and settings forms;
+      <code>main.tsx</code>'s router choice (hash-based, not path-based) was
+      verified rather than assumed, by actually reading how the Express backend
+      serves the built frontend and confirming it has no server-side fallback
+      route — the "wrong" router choice would have looked identical in
+      development and only broken on a production deep link; and the reference's
+      dead <code>reportWebVitals</code> boilerplate was deliberately not ported
+      after confirming, not assuming, that it was both inert as invoked and
+      incompatible with the pinned dependency version. Getting the whole stack
+      running for the first time was its own exercise in verifying rather than
+      guessing: a <code>react-paginate</code> crash was root-caused by reading
+      the package's actual minified build output, not just its type
+      declarations; three missing database tables were confirmed by inspecting
+      real Sequelize association metadata at runtime, not by trusting the model
+      source alone; and the new Docker Postgres setup deliberately defaults to
+      the standard port for anyone else cloning the repo, rather than hardcoding
+      this machine's own port conflict into a committed file. The still-open
+      gap: the 50 files tracked by issue #71 have no behavioral tests, unlike
+      the backend where every file has one — disclosed and tracked on the board
+      rather than quietly deferred.
     </p>
   </section>
 </div>
@@ -924,11 +958,12 @@
       affiliated with the RealWorld project or the original repo author. Every
       number on this page is reproducible from the repository's own
       <code>todo.md</code> phase log, commit history, and CI runs — nothing here
-      is asserted without a link to check it against. The frontend is still in
-      progress: all 16 planned service modules, both context files, and all 31
-      components done, no route pages or app entry point yet, and 50 tracked
-      files still without behavioral tests — see <code>todo.md</code> for the
-      honest current state.
+      is asserted without a link to check it against. The frontend build is
+      complete: all 16 planned service modules, both context files, all 31
+      components, all 10 route pages, and the app entry point are done, and the
+      full stack has been verified running end to end against a real database.
+      One honest gap remains: 50 tracked files still without behavioral tests —
+      see <code>todo.md</code> for the current state.
     </p>
   </div>
 </footer>
