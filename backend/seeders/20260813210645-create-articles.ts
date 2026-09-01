@@ -10,6 +10,9 @@ export = {
   async up(queryInterface: QueryInterface) {
     const users = await User.findAll();
 
+    // "Lorem ipsum..." is Latin, not any modern language -- standard
+    // scrambled-text filler used throughout publishing/design since the
+    // 16th century, chosen so dummy content doesn't read as real prose.
     const articles = Array(65)
       .fill(null)
       .map((_, index) => ({
