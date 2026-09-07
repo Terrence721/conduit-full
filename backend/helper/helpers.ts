@@ -64,10 +64,12 @@ const appendTagList = (articleTags: any[], article?: any) => {
 };
 
 const appendFavorites = async (loggedUser: any, article: any) => {
-  const favorited = await article.hasUser(loggedUser ? loggedUser : null);
+  const favorited = await article.hasFavoritingUser(
+    loggedUser ? loggedUser : null,
+  );
   article.dataValues.favorited = loggedUser ? favorited : false;
 
-  const favoritesCount = await article.countUsers();
+  const favoritesCount = await article.countFavoritingUsers();
   article.dataValues.favoritesCount = favoritesCount;
 };
 

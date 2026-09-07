@@ -30,8 +30,8 @@ const favoriteToggler = async (
       },
     ]);
 
-    if (req.method === "POST") await article.addUser(loggedUser);
-    if (req.method === "DELETE") await article.removeUser(loggedUser);
+    if (req.method === "POST") await article.addFavoritingUser(loggedUser);
+    if (req.method === "DELETE") await article.removeFavoritingUser(loggedUser);
 
     await decorateArticle(loggedUser, article);
 
