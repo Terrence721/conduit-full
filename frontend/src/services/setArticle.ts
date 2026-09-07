@@ -29,9 +29,7 @@ async function setArticle({
 
     return data.article.slug;
   } catch (error) {
-    if (axios.isAxiosError<{ errors: { body: string[] } }>(error)) {
-      errorHandler(error);
-    }
+    errorHandler(error);
   }
 }
 
