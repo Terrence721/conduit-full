@@ -5,7 +5,7 @@ import customErrors from "../helper/customErrors";
 
 const { NotFoundError, UnauthorizedError, FieldRequiredError, ForbiddenError } =
   customErrors;
-const { appendFollowers } = helpers;
+const { appendFollowers, findArticleBySlugOrFail } = helpers;
 const { Article, Comment, User } = models;
 
 //? All Comments for Article
@@ -14,8 +14,7 @@ const allComments = async (req: Request, res: Response, next: NextFunction) => {
     const { loggedUser } = req;
     const { slug } = req.params;
 
-    const article = await Article.findOne({ where: { slug: slug } });
-    if (!article) throw new NotFoundError("Article");
+    const article = await findArticleBySlugOrFail(Article, slug as string);
 
     const comments = await article.getComments({
       include: [
@@ -47,8 +46,7 @@ const createComment = async (
     if (!body) throw new FieldRequiredError("Comment body");
 
     const { slug } = req.params;
-    const article = await Article.findOne({ where: { slug: slug } });
-    if (!article) throw new NotFoundError("Article");
+    const article = await findArticleBySlugOrFail(Article, slug as string);
 
     const comment = await Comment.create({
       body: body,
@@ -78,8 +76,7 @@ const deleteComment = async (
 
     const { slug, commentId } = req.params;
 
-    const article = await Article.findOne({ where: { slug: slug } });
-    if (!article) throw new NotFoundError("Article");
+    const article = await findArticleBySlugOrFail(Article, slug as string);
 
     const comment = await Comment.findByPk(commentId);
     if (!comment || comment.articleId !== article.id) {
