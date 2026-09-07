@@ -22,9 +22,7 @@ async function toggleFollow({
 
     return data.profile;
   } catch (error) {
-    if (axios.isAxiosError<{ errors: { body: string[] } }>(error)) {
-      errorHandler(error);
-    }
+    errorHandler(error);
   }
 }
 
