@@ -9,7 +9,6 @@ function HomeArticles() {
       emptyText="Articles not available."
       loadingText="Loading articles list..."
       location={tabName}
-      tabName={tabName}
       tagName={tagName}
     />
   );

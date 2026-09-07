@@ -1,24 +1,17 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import type { FeedTabName } from "../context/FeedContext";
 import getArticles from "../services/getArticles";
 import type { ArticleLocation, ArticlesResponse } from "../types";
 
-interface UseArticlesParams {
+export interface UseArticlesParams {
   location: ArticleLocation;
-  tabName?: FeedTabName;
   tagName?: string;
   username?: string;
 }
 
 const emptyArticlesData: ArticlesResponse = { articles: [], articlesCount: 0 };
 
-function useArticles({
-  location,
-  tabName,
-  tagName,
-  username,
-}: UseArticlesParams) {
+function useArticles({ location, tagName, username }: UseArticlesParams) {
   const [data, setArticlesData] = useState<ArticlesResponse | undefined>(
     emptyArticlesData,
   );
@@ -32,13 +25,13 @@ function useArticles({
   });
 
   useEffect(() => {
-    if (!headers && tabName === "feed") return;
+    if (!headers && location === "feed") return;
 
     getArticles({ headers, location, tagName, username })
       .then((result) => setArticlesData(result ?? emptyArticlesData))
       .catch(console.error)
       .finally(() => setLoadedKey(requestKey));
-  }, [headers, location, tabName, tagName, username, requestKey]);
+  }, [headers, location, tagName, username, requestKey]);
 
   const { articles, articlesCount } = data ?? emptyArticlesData;
 

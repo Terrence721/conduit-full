@@ -7,13 +7,17 @@ import type { Article, ArticlesResponse } from "../../types";
 
 interface ArticlesPreviewProps {
   articles: Article[] | undefined;
+  emptyText: string;
   loading: boolean;
+  loadingText: string;
   updateArticles: Dispatch<SetStateAction<ArticlesResponse | undefined>>;
 }
 
 function ArticlesPreview({
   articles,
+  emptyText,
   loading,
+  loadingText,
   updateArticles,
 }: ArticlesPreviewProps) {
   const handleFav = (updated: Article | undefined) => {
@@ -30,12 +34,16 @@ function ArticlesPreview({
     );
   };
 
-  if (!articles || articles.length === 0) {
+  if (loading) {
     return (
       <div className="article-preview">
-        {loading ? "Loading article..." : "No articles available."}
+        <em>{loadingText}</em>
       </div>
     );
+  }
+
+  if (!articles || articles.length === 0) {
+    return <div className="article-preview">{emptyText}</div>;
   }
 
   return articles.map((article) => (
