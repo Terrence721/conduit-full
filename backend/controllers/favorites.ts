@@ -4,12 +4,8 @@ import helpers from "../helper/helpers";
 import customErrors from "../helper/customErrors";
 
 const { UnauthorizedError } = customErrors;
-const {
-  appendFollowers,
-  appendFavorites,
-  appendTagList,
-  findArticleBySlugOrFail,
-} = helpers;
+const { findArticleBySlugOrFail, decorateArticle, PUBLIC_USER_ATTRIBUTES } =
+  helpers;
 const { Article, Tag, User } = models;
 
 //*  Favorite/Unfavorite Article
@@ -33,16 +29,14 @@ const favoriteToggler = async (
       {
         model: User,
         as: "author",
-        attributes: ["username", "bio", "image" /* "following" */],
+        attributes: PUBLIC_USER_ATTRIBUTES,
       },
     ]);
 
     if (req.method === "POST") await article.addUser(loggedUser);
     if (req.method === "DELETE") await article.removeUser(loggedUser);
 
-    appendTagList(article.tagList, article);
-    await appendFollowers(loggedUser, article);
-    await appendFavorites(loggedUser, article);
+    await decorateArticle(loggedUser, article);
 
     res.json({ article });
   } catch (error) {

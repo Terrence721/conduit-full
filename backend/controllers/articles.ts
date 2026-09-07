@@ -17,12 +17,13 @@ const {
   decorateArticle,
   decorateArticles,
   slugify,
+  PUBLIC_USER_ATTRIBUTES,
 } = helpers;
 const { Article, Tag, User } = models;
 
 const includeOptions = [
   { model: Tag, as: "tagList", attributes: ["name"] },
-  { model: User, as: "author", attributes: { exclude: ["email"] } },
+  { model: User, as: "author", attributes: PUBLIC_USER_ATTRIBUTES },
 ];
 
 //? All Articles - by Author/by Tag/Favorited by user
@@ -42,7 +43,7 @@ const allArticles = async (req: Request, res: Response, next: NextFunction) => {
         {
           model: User,
           as: "author",
-          attributes: { exclude: ["email"] },
+          attributes: PUBLIC_USER_ATTRIBUTES,
           ...(author && { where: { username: author } }),
         },
       ],

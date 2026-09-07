@@ -4,7 +4,7 @@ import helpers from "../helper/helpers";
 import customErrors from "../helper/customErrors";
 
 const { UnauthorizedError, NotFoundError } = customErrors;
-const { appendFollowers } = helpers;
+const { appendFollowers, PUBLIC_USER_ATTRIBUTES } = helpers;
 const { User } = models;
 
 //? Profile
@@ -15,7 +15,7 @@ const getProfile = async (req: Request, res: Response, next: NextFunction) => {
 
     const profile = await User.findOne({
       where: { username: username },
-      attributes: { exclude: ["email"] },
+      attributes: PUBLIC_USER_ATTRIBUTES,
     });
     if (!profile) throw new NotFoundError("User profile");
 
@@ -41,7 +41,7 @@ const followToggler = async (
 
     const profile = await User.findOne({
       where: { username: username },
-      attributes: { exclude: ["email"] },
+      attributes: PUBLIC_USER_ATTRIBUTES,
     });
     if (!profile) throw new NotFoundError("User profile");
 
