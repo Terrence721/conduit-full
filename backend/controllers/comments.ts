@@ -5,7 +5,8 @@ import customErrors from "../helper/customErrors";
 
 const { NotFoundError, UnauthorizedError, FieldRequiredError, ForbiddenError } =
   customErrors;
-const { appendFollowers, findArticleBySlugOrFail } = helpers;
+const { appendFollowers, findArticleBySlugOrFail, PUBLIC_USER_ATTRIBUTES } =
+  helpers;
 const { Article, Comment, User } = models;
 
 //? All Comments for Article
@@ -18,7 +19,7 @@ const allComments = async (req: Request, res: Response, next: NextFunction) => {
 
     const comments = await article.getComments({
       include: [
-        { model: User, as: "author", attributes: { exclude: ["email"] } },
+        { model: User, as: "author", attributes: PUBLIC_USER_ATTRIBUTES },
       ],
     });
 

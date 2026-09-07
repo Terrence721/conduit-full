@@ -2,6 +2,21 @@ import customErrors from "./customErrors";
 
 const { NotFoundError } = customErrors;
 
+// The public-safe projection of a User shown as someone else's profile or
+// article/comment author -- an allowlist rather than an `exclude: ["email"]`
+// list, so a sensitive column never gets fetched into memory in the first
+// place instead of relying on it being stripped later. "id" has to stay
+// listed even though it's not shown on the wire (User.toJSON strips it):
+// Sequelize does NOT implicitly include the primary key when an explicit
+// attributes array is given, and both ownership checks (article.author.id)
+// and association instance methods (hasFollower/addFollower/getFollowing,
+// etc.) need it internally -- confirmed the hard way, by a real test
+// failure, not assumed. "following"/"followersCount" are computed
+// separately by appendFollowers, not real columns. Not used for
+// `req.loggedUser` itself, which legitimately needs to remain settable
+// across every field for profile updates.
+const PUBLIC_USER_ATTRIBUTES = ["id", "username", "bio", "image"];
+
 const slugify = (string: string): string => {
   return string.trim().toLowerCase().replace(/\W|_/g, "-");
 };
@@ -74,6 +89,7 @@ const decorateArticles = async (loggedUser: any, articles: any[]) => {
 };
 
 export = {
+  PUBLIC_USER_ATTRIBUTES,
   slugify,
   findArticleBySlugOrFail,
   appendTagList,
