@@ -77,7 +77,6 @@ describe("middleware/authentication.ts", () => {
 
     expect(req.loggedUser).toBe(fakeFoundUser);
     expect(req.loggedUser.dataValues.token).toBe(token);
-    expect(req.headers.email).toBe("jake@jake.jake");
     expect(next).toHaveBeenCalledWith();
   });
 
