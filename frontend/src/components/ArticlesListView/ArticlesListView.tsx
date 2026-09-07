@@ -1,43 +1,33 @@
-import type { ReactNode } from "react";
 import ArticlesPagination from "../ArticlesPagination/ArticlesPagination";
 import ArticlesPreview from "../ArticlesPreview/ArticlesPreview";
-import type { FeedTabName } from "../../context/FeedContext";
 import useArticles from "../../hooks/useArticles";
-import type { ArticleLocation } from "../../types";
+import type { UseArticlesParams } from "../../hooks/useArticles";
 
-interface ArticlesListViewProps {
-  emptyText: ReactNode;
-  loadingText: ReactNode;
-  location: ArticleLocation;
-  tabName?: FeedTabName;
-  tagName?: string;
-  username?: string;
+interface ArticlesListViewProps extends UseArticlesParams {
+  emptyText: string;
+  loadingText: string;
 }
 
 function ArticlesListView({
   emptyText,
   loadingText,
   location,
-  tabName,
   tagName,
   username,
 }: ArticlesListViewProps) {
   const { articles, articlesCount, loading, setArticlesData } = useArticles({
     location,
-    tabName,
     tagName,
     username,
   });
 
-  return loading ? (
-    <div className="article-preview">
-      <em>{loadingText}</em>
-    </div>
-  ) : articles.length > 0 ? (
+  return (
     <>
       <ArticlesPreview
         articles={articles}
+        emptyText={emptyText}
         loading={loading}
+        loadingText={loadingText}
         updateArticles={setArticlesData}
       />
 
@@ -49,8 +39,6 @@ function ArticlesListView({
         username={username}
       />
     </>
-  ) : (
-    <div className="article-preview">{emptyText}</div>
   );
 }
 
