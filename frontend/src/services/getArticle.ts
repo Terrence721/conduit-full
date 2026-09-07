@@ -23,9 +23,7 @@ async function getArticle({
 
     return data.article;
   } catch (error) {
-    if (axios.isAxiosError<{ errors: { body: string[] } }>(error)) {
-      errorHandler(error);
-    }
+    errorHandler(error);
   }
 }
 
