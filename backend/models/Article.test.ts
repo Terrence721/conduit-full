@@ -71,10 +71,10 @@ describe("models/Article.js", () => {
       expect(Article.associations.tagList.foreignKey).toBe("articleId");
     });
 
-    test("has many favoriting Users through articleId", () => {
+    test("has many favoriting Users (as favoritingUsers) through articleId", () => {
       const Article = buildAssociatedArticle();
 
-      expect(Article.associations.Users.foreignKey).toBe("articleId");
+      expect(Article.associations.favoritingUsers.foreignKey).toBe("articleId");
     });
   });
 });

@@ -99,7 +99,7 @@ describe("routes/articles/favorites.ts", () => {
     const persisted = await db.Article.findOne({
       where: { slug: article.slug },
     });
-    expect(await persisted.hasUser(fan)).toBe(true);
+    expect(await persisted.hasFavoritingUser(fan)).toBe(true);
   });
 
   test("DELETE /:slug/favorite unfavorites the article and persists it", async () => {
@@ -125,6 +125,6 @@ describe("routes/articles/favorites.ts", () => {
     const persisted = await db.Article.findOne({
       where: { slug: article.slug },
     });
-    expect(await persisted.hasUser(fan)).toBe(false);
+    expect(await persisted.hasFavoritingUser(fan)).toBe(false);
   });
 });

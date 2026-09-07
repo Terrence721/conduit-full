@@ -26,9 +26,16 @@ export = (sequelize: Sequelize, DataTypes: typeof DataTypesType) => {
         onDelete: "cascade", // FIXME: delete tags
       });
 
-      // Favorites
+      // Favorites -- aliased to match User's own "favorites" alias for this
+      // same relation, instead of leaving this side unaliased (which
+      // generated a different, harder-to-guess method vocabulary --
+      // hasUser/addUser/removeUser/countUsers -- for one logical
+      // relationship). Verified the generated accessor names directly
+      // (Sequelize's pluralization doesn't handle every alias predictably)
+      // before picking this one.
       this.belongsToMany(User, {
         through: "Favorites",
+        as: "favoritingUsers",
         foreignKey: "articleId",
         timestamps: false,
       });
