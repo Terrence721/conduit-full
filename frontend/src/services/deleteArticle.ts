@@ -1,5 +1,4 @@
-import axios from "axios";
-import errorHandler from "../helpers/errorHandler";
+import apiRequest from "../helpers/apiRequest";
 import type { MessageResponse } from "../types";
 
 interface DeleteArticleParams {
@@ -11,17 +10,11 @@ async function deleteArticle({
   slug,
   headers,
 }: DeleteArticleParams): Promise<MessageResponse | undefined> {
-  try {
-    const { data } = await axios<MessageResponse>({
-      headers,
-      method: "DELETE",
-      url: `/api/articles/${slug}`,
-    });
-
-    return data;
-  } catch (error) {
-    errorHandler(error);
-  }
+  return apiRequest<MessageResponse>({
+    headers,
+    method: "DELETE",
+    url: `/api/articles/${slug}`,
+  });
 }
 
 export default deleteArticle;
