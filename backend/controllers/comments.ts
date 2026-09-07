@@ -5,9 +5,9 @@ import customErrors from "../helper/customErrors";
 
 const { NotFoundError, FieldRequiredError, ForbiddenError } = customErrors;
 const {
-  appendFollowers,
   appendAuthorFollowers,
   findArticleBySlugOrFail,
+  stampAuthor,
   PUBLIC_USER_ATTRIBUTES,
 } = helpers;
 const { Article, Comment, User } = models;
@@ -57,9 +57,7 @@ const createComment = async (
       userId: loggedUser.id,
     });
 
-    delete loggedUser.dataValues.token;
-    comment.dataValues.author = loggedUser;
-    await appendFollowers(loggedUser, loggedUser);
+    await stampAuthor(loggedUser, comment);
 
     res.status(201).json({ comment });
   } catch (error) {
