@@ -11,6 +11,7 @@ const {
   findArticleBySlugOrFail,
   decorateArticle,
   decorateArticles,
+  parsePagination,
   slugify,
   PUBLIC_USER_ATTRIBUTES,
 } = helpers;
@@ -26,7 +27,7 @@ const allArticles = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { loggedUser } = req;
 
-    const { author, tag, favorited, limit = 3, offset = 0 } = req.query as any;
+    const { author, tag, favorited } = req.query as any;
     const searchOptions = {
       include: [
         {
@@ -42,8 +43,7 @@ const allArticles = async (req: Request, res: Response, next: NextFunction) => {
           ...(author && { where: { username: author } }),
         },
       ],
-      limit: parseInt(limit),
-      offset: offset * limit,
+      ...parsePagination(req.query),
       order: [["createdAt", "DESC"]] as [string, string][],
     };
 
@@ -126,13 +126,11 @@ const articlesFeed = async (
   try {
     const { loggedUser } = req;
 
-    const { limit = 3, offset = 0 } = req.query as any;
     const authors = await loggedUser.getFollowing();
 
     const articles = await Article.findAndCountAll({
       include: includeOptions,
-      limit: parseInt(limit),
-      offset: offset * limit,
+      ...parsePagination(req.query),
       order: [["createdAt", "DESC"]],
       where: { userId: authors.map((author: any) => author.id) },
     });

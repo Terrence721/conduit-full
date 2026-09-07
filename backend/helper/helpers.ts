@@ -43,6 +43,19 @@ const findProfileByUsernameOrFail = async (User: any, username: string) => {
   return profile;
 };
 
+// `offset` in the query string is a page INDEX (0-based), not a raw row
+// offset -- the frontend sends `offset=<page>` (see ArticlesPagination.tsx /
+// getArticles.ts) and Sequelize needs the actual row offset, page * limit.
+// Falls back to sane defaults instead of letting an unparseable value (e.g.
+// ?limit=abc) become NaN and silently propagate into the Sequelize query.
+const parsePagination = (query: any) => {
+  const parsedLimit = parseInt(query.limit ?? "3", 10);
+  const parsedPage = parseInt(query.offset ?? "0", 10);
+  const limit = Number.isNaN(parsedLimit) ? 3 : parsedLimit;
+  const page = Number.isNaN(parsedPage) ? 0 : parsedPage;
+  return { limit, offset: page * limit };
+};
+
 const appendTagList = (articleTags: any[], article?: any) => {
   const tagList = articleTags.map((tag) => tag.name);
 
@@ -102,6 +115,7 @@ export = {
   slugify,
   findArticleBySlugOrFail,
   findProfileByUsernameOrFail,
+  parsePagination,
   appendTagList,
   appendFavorites,
   appendFollowers,
