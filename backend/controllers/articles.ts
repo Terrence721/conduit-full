@@ -13,8 +13,9 @@ const {
 const {
   appendFollowers,
   appendFavorites,
-  appendTagList,
   findArticleBySlugOrFail,
+  decorateArticle,
+  decorateArticles,
   slugify,
 } = helpers;
 const { Article, Tag, User } = models;
@@ -61,15 +62,7 @@ const allArticles = async (req: Request, res: Response, next: NextFunction) => {
       articles = await Article.findAndCountAll(searchOptions);
     }
 
-    for (const article of articles.rows) {
-      const articleTags = await article.getTagList();
-
-      appendTagList(articleTags, article);
-      await appendFollowers(loggedUser, article);
-      await appendFavorites(loggedUser, article);
-
-      delete article.dataValues.Favorites;
-    }
+    await decorateArticles(loggedUser, articles.rows);
 
     res.json({ articles: articles.rows, articlesCount: articles.count });
   } catch (error) {
@@ -150,13 +143,7 @@ const articlesFeed = async (
       where: { userId: authors.map((author: any) => author.id) },
     });
 
-    for (const article of articles.rows) {
-      const articleTags = await article.getTagList();
-
-      appendTagList(articleTags, article);
-      await appendFollowers(loggedUser, article);
-      await appendFavorites(loggedUser, article);
-    }
+    await decorateArticles(loggedUser, articles.rows);
 
     res.json({ articles: articles.rows, articlesCount: articles.count });
   } catch (error) {
@@ -180,9 +167,7 @@ const singleArticle = async (
       includeOptions,
     );
 
-    appendTagList(article.tagList, article);
-    await appendFollowers(loggedUser, article);
-    await appendFavorites(loggedUser, article);
+    await decorateArticle(loggedUser, article);
 
     res.json({ article });
   } catch (error) {
@@ -220,9 +205,7 @@ const updateArticle = async (
     if (body) article.body = body;
     await article.save();
 
-    appendTagList(article.tagList, article);
-    await appendFollowers(loggedUser, article);
-    await appendFavorites(loggedUser, article);
+    await decorateArticle(loggedUser, article);
 
     res.json({ article });
   } catch (error) {
