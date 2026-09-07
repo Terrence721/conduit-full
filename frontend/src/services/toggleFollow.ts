@@ -1,5 +1,4 @@
-import axios from "axios";
-import errorHandler from "../helpers/errorHandler";
+import apiRequest from "../helpers/apiRequest";
 import type { Profile, ProfileResponse } from "../types";
 
 interface ToggleFollowParams {
@@ -13,17 +12,13 @@ async function toggleFollow({
   headers,
   username,
 }: ToggleFollowParams): Promise<Profile | undefined> {
-  try {
-    const { data } = await axios<ProfileResponse>({
-      headers,
-      method: following ? "DELETE" : "POST",
-      url: `/api/profiles/${username}/follow`,
-    });
+  const data = await apiRequest<ProfileResponse>({
+    headers,
+    method: following ? "DELETE" : "POST",
+    url: `/api/profiles/${username}/follow`,
+  });
 
-    return data.profile;
-  } catch (error) {
-    errorHandler(error);
-  }
+  return data?.profile;
 }
 
 export default toggleFollow;
