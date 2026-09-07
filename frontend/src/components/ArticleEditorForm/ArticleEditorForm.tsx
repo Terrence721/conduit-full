@@ -69,9 +69,10 @@ function ArticleEditorForm() {
     state,
   ]);
 
-  const titleHandler = fieldHandler(setForm, "title");
-  const descriptionHandler = fieldHandler(setForm, "description");
-  const bodyHandler = fieldHandler(setForm, "body");
+  const handleField = fieldHandler(setForm);
+  const titleHandler = handleField("title");
+  const descriptionHandler = handleField("description");
+  const bodyHandler = handleField("body");
 
   const tagsInputHandler: ChangeEventHandler<HTMLInputElement> = (e) => {
     setTagsInput(e.target.value);

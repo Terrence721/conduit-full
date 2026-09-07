@@ -38,6 +38,8 @@ function SettingsForm() {
     if (!auth.isAuth) navigate("/", { replace: true, state: null });
   }, [auth.isAuth, navigate]);
 
+  const handleField = fieldHandler(setForm);
+
   const formSubmit = (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (submitting) return;
@@ -71,7 +73,7 @@ function SettingsForm() {
           placeholder="URL of profile picture"
           name="image"
           value={form.image}
-          handler={fieldHandler(setForm, "image")}
+          handler={handleField("image")}
         ></FormFieldset>
 
         <FormFieldset
@@ -79,7 +81,7 @@ function SettingsForm() {
           name="username"
           required
           value={form.username}
-          handler={fieldHandler(setForm, "username")}
+          handler={handleField("username")}
         ></FormFieldset>
 
         <fieldset className="form-group">
@@ -89,7 +91,7 @@ function SettingsForm() {
             placeholder="Short bio about you"
             name="bio"
             value={form.bio}
-            onChange={fieldHandler(setForm, "bio")}
+            onChange={handleField("bio")}
           ></textarea>
         </fieldset>
 
@@ -98,7 +100,7 @@ function SettingsForm() {
           name="email"
           required
           value={form.email}
-          handler={fieldHandler(setForm, "email")}
+          handler={handleField("email")}
         ></FormFieldset>
 
         <FormFieldset
@@ -106,7 +108,7 @@ function SettingsForm() {
           name="password"
           value={form.password}
           placeholder="Password"
-          handler={fieldHandler(setForm, "password")}
+          handler={handleField("password")}
         ></FormFieldset>
 
         <button
