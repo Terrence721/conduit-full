@@ -20,9 +20,7 @@ async function deleteArticle({
 
     return data;
   } catch (error) {
-    if (axios.isAxiosError<{ errors: { body: string[] } }>(error)) {
-      errorHandler(error);
-    }
+    errorHandler(error);
   }
 }
 
