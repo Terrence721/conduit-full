@@ -115,6 +115,19 @@
     "ms-vscode-remote.remote-containers",
     "standard.vscode-standard",
     "zuoez02.tslint-snippets",
-    "webhint.vscode-webhint"
+    "webhint.vscode-webhint",
+    "aaron-bond.better-comments",
+    "codezombiech.gitignore",
+    "donjayamanne.git-extension-pack",
+    "editorconfig.editorconfig",
+    "fwcd.kotlin",
+    "johnpapa.vscode-peacock",
+    "johnpapa.winteriscoming",
+    "pkief.material-icon-theme",
+    "quicktype.quicktype",
+    "recca0120.vscode-phpunit",
+    "shengchen.vscode-checkstyle",
+    "vue.volar",
+    "wayou.vscode-todo-highlight"
   ]
 }
