@@ -10,7 +10,13 @@ const {
   NotFoundError,
   UnauthorizedError,
 } = customErrors;
-const { appendFollowers, appendFavorites, appendTagList, slugify } = helpers;
+const {
+  appendFollowers,
+  appendFavorites,
+  appendTagList,
+  findArticleBySlugOrFail,
+  slugify,
+} = helpers;
 const { Article, Tag, User } = models;
 
 const includeOptions = [
@@ -168,11 +174,11 @@ const singleArticle = async (
     const { loggedUser } = req;
 
     const { slug } = req.params;
-    const article = await Article.findOne({
-      where: { slug: slug },
-      include: includeOptions,
-    });
-    if (!article) throw new NotFoundError("Article");
+    const article = await findArticleBySlugOrFail(
+      Article,
+      slug as string,
+      includeOptions,
+    );
 
     appendTagList(article.tagList, article);
     await appendFollowers(loggedUser, article);
@@ -195,11 +201,11 @@ const updateArticle = async (
     if (!loggedUser) throw new UnauthorizedError();
 
     const { slug } = req.params;
-    const article = await Article.findOne({
-      where: { slug: slug },
-      include: includeOptions,
-    });
-    if (!article) throw new NotFoundError("Article");
+    const article = await findArticleBySlugOrFail(
+      Article,
+      slug as string,
+      includeOptions,
+    );
 
     if (loggedUser.id !== article.author.id) {
       throw new ForbiddenError("article");
@@ -235,11 +241,11 @@ const deleteArticle = async (
     if (!loggedUser) throw new UnauthorizedError();
 
     const { slug } = req.params;
-    const article = await Article.findOne({
-      where: { slug: slug },
-      include: includeOptions,
-    });
-    if (!article) throw new NotFoundError("Article");
+    const article = await findArticleBySlugOrFail(
+      Article,
+      slug as string,
+      includeOptions,
+    );
 
     if (loggedUser.id !== article.author.id) {
       throw new ForbiddenError("article");
