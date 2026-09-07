@@ -1,5 +1,4 @@
-import axios from "axios";
-import errorHandler from "../helpers/errorHandler";
+import apiRequest from "../helpers/apiRequest";
 import type { Comment } from "../types";
 
 interface GetCommentsParams {
@@ -15,17 +14,12 @@ async function getComments({
   headers,
   slug,
 }: GetCommentsParams): Promise<Comment[]> {
-  try {
-    const { data } = await axios<CommentsResponse>({
-      headers,
-      url: `/api/articles/${slug}/comments`,
-    });
+  const data = await apiRequest<CommentsResponse>({
+    headers,
+    url: `/api/articles/${slug}/comments`,
+  });
 
-    return data.comments;
-  } catch (error) {
-    errorHandler(error);
-    return [];
-  }
+  return data?.comments ?? [];
 }
 
 export default getComments;
