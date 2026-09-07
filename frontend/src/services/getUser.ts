@@ -19,9 +19,7 @@ async function getUser({ headers }: GetUserParams): Promise<User | undefined> {
 
     return data.user;
   } catch (error) {
-    if (axios.isAxiosError<{ errors: { body: string[] } }>(error)) {
-      errorHandler(error);
-    }
+    errorHandler(error);
   }
 }
 
