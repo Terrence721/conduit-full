@@ -3,8 +3,13 @@ import models from "../models";
 import helpers from "../helper/helpers";
 import customErrors from "../helper/customErrors";
 
-const { UnauthorizedError, NotFoundError } = customErrors;
-const { appendFollowers, appendFavorites, appendTagList } = helpers;
+const { UnauthorizedError } = customErrors;
+const {
+  appendFollowers,
+  appendFavorites,
+  appendTagList,
+  findArticleBySlugOrFail,
+} = helpers;
 const { Article, Tag, User } = models;
 
 //*  Favorite/Unfavorite Article
@@ -19,22 +24,18 @@ const favoriteToggler = async (
 
     const { slug } = req.params;
 
-    const article = await Article.findOne({
-      where: { slug: slug },
-      include: [
-        {
-          model: Tag,
-          as: "tagList",
-          attributes: ["name"],
-        },
-        {
-          model: User,
-          as: "author",
-          attributes: ["username", "bio", "image" /* "following" */],
-        },
-      ],
-    });
-    if (!article) throw new NotFoundError("Article");
+    const article = await findArticleBySlugOrFail(Article, slug as string, [
+      {
+        model: Tag,
+        as: "tagList",
+        attributes: ["name"],
+      },
+      {
+        model: User,
+        as: "author",
+        attributes: ["username", "bio", "image" /* "following" */],
+      },
+    ]);
 
     if (req.method === "POST") await article.addUser(loggedUser);
     if (req.method === "DELETE") await article.removeUser(loggedUser);
