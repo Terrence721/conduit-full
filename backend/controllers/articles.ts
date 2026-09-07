@@ -6,13 +6,13 @@ import customErrors from "../helper/customErrors";
 const { AlreadyTakenError, FieldRequiredError, ForbiddenError, NotFoundError } =
   customErrors;
 const {
-  appendFollowers,
   appendFavorites,
   findArticleBySlugOrFail,
   decorateArticle,
   decorateArticles,
   parsePagination,
   slugify,
+  stampAuthor,
   PUBLIC_USER_ATTRIBUTES,
 } = helpers;
 const { Article, Tag, User } = models;
@@ -103,12 +103,9 @@ const createArticle = async (
       }
     }
 
-    delete loggedUser.dataValues.token;
-
     article.dataValues.tagList = tagList;
     await article.setAuthor(loggedUser);
-    article.dataValues.author = loggedUser;
-    await appendFollowers(loggedUser, loggedUser);
+    await stampAuthor(loggedUser, article);
     await appendFavorites(loggedUser, article);
 
     res.status(201).json({ article });

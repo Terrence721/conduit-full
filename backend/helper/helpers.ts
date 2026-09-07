@@ -93,6 +93,19 @@ const appendAuthorFollowers = async (loggedUser: any, entity: any) => {
   entity.author.dataValues.followersCount = author.dataValues.followersCount;
 };
 
+// Stamps the just-created loggedUser as a newly created Article/Comment's
+// author, for the immediate response to the person who created it (nobody
+// else ever sees this -- other viewers re-fetch through
+// PUBLIC_USER_ATTRIBUTES). Strips the token verifyToken stamped onto
+// loggedUser first, since that's a request-scoped implementation detail with
+// no business being in a response body, then decorates loggedUser's own
+// follow status since it's about to be serialized as `entity.author`.
+const stampAuthor = async (loggedUser: any, entity: any) => {
+  delete loggedUser.dataValues.token;
+  entity.dataValues.author = loggedUser;
+  await appendFollowers(loggedUser, loggedUser);
+};
+
 const decorateArticle = async (loggedUser: any, article: any) => {
   appendTagList(article.tagList, article);
   await appendAuthorFollowers(loggedUser, article);
@@ -120,6 +133,7 @@ export = {
   appendFavorites,
   appendFollowers,
   appendAuthorFollowers,
+  stampAuthor,
   decorateArticle,
   decorateArticles,
 };
