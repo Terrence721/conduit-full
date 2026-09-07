@@ -1,5 +1,4 @@
-import axios from "axios";
-import errorHandler from "../helpers/errorHandler";
+import apiRequest from "../helpers/apiRequest";
 import type { ArticleLocation, ArticlesResponse } from "../types";
 
 interface GetArticlesParams {
@@ -19,24 +18,15 @@ async function getArticles({
   tagName,
   username,
 }: GetArticlesParams): Promise<ArticlesResponse | undefined> {
-  try {
-    const url: Record<ArticleLocation, string> = {
-      favorites: `/api/articles?favorited=${username}&&limit=${limit}&&offset=${page}`,
-      feed: `/api/articles/feed?limit=${limit}&&offset=${page}`,
-      global: `/api/articles?limit=${limit}&&offset=${page}`,
-      profile: `/api/articles?author=${username}&&limit=${limit}&&offset=${page}`,
-      tag: `/api/articles?tag=${tagName}&&limit=${limit}&&offset=${page}`,
-    };
+  const url: Record<ArticleLocation, string> = {
+    favorites: `/api/articles?favorited=${username}&&limit=${limit}&&offset=${page}`,
+    feed: `/api/articles/feed?limit=${limit}&&offset=${page}`,
+    global: `/api/articles?limit=${limit}&&offset=${page}`,
+    profile: `/api/articles?author=${username}&&limit=${limit}&&offset=${page}`,
+    tag: `/api/articles?tag=${tagName}&&limit=${limit}&&offset=${page}`,
+  };
 
-    const { data } = await axios<ArticlesResponse>({
-      url: url[location],
-      headers,
-    });
-
-    return data;
-  } catch (error) {
-    errorHandler(error);
-  }
+  return apiRequest<ArticlesResponse>({ url: url[location], headers });
 }
 
 export default getArticles;
