@@ -1,8 +1,7 @@
-import { useEffect, useState, type SubmitEvent } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
+import { useState, type SubmitEvent } from "react";
 import fieldHandler from "../../helpers/fieldHandler";
 import requireAuth from "../../helpers/requireAuth";
+import useRequireAuthRedirect from "../../hooks/useRequireAuthRedirect";
 import userUpdate from "../../services/userUpdate";
 import FormFieldset from "../FormFieldset/FormFieldset";
 import type { User } from "../../types";
@@ -26,17 +25,12 @@ function toFormState(loggedUser: User): SettingsFormState {
 }
 
 function SettingsForm() {
-  const auth = useAuth();
+  const auth = useRequireAuthRedirect();
   const [form, setForm] = useState<SettingsFormState>(() =>
     toFormState(auth.loggedUser),
   );
   const [submitting, setSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!auth.isAuth) navigate("/", { replace: true, state: null });
-  }, [auth.isAuth, navigate]);
 
   const handleField = fieldHandler(setForm);
 
