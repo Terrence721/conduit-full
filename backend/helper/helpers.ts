@@ -34,6 +34,15 @@ const findArticleBySlugOrFail = async (
   return article;
 };
 
+const findProfileByUsernameOrFail = async (User: any, username: string) => {
+  const profile = await User.findOne({
+    where: { username },
+    attributes: PUBLIC_USER_ATTRIBUTES,
+  });
+  if (!profile) throw new NotFoundError("User profile");
+  return profile;
+};
+
 const appendTagList = (articleTags: any[], article?: any) => {
   const tagList = articleTags.map((tag) => tag.name);
 
@@ -92,6 +101,7 @@ export = {
   PUBLIC_USER_ATTRIBUTES,
   slugify,
   findArticleBySlugOrFail,
+  findProfileByUsernameOrFail,
   appendTagList,
   appendFavorites,
   appendFollowers,

@@ -1,10 +1,8 @@
 import type { Request, Response, NextFunction } from "express";
 import models from "../models";
 import helpers from "../helper/helpers";
-import customErrors from "../helper/customErrors";
 
-const { NotFoundError } = customErrors;
-const { appendFollowers, PUBLIC_USER_ATTRIBUTES } = helpers;
+const { appendFollowers, findProfileByUsernameOrFail } = helpers;
 const { User } = models;
 
 //? Profile
@@ -13,11 +11,7 @@ const getProfile = async (req: Request, res: Response, next: NextFunction) => {
     const { loggedUser } = req;
     const { username } = req.params;
 
-    const profile = await User.findOne({
-      where: { username: username },
-      attributes: PUBLIC_USER_ATTRIBUTES,
-    });
-    if (!profile) throw new NotFoundError("User profile");
+    const profile = await findProfileByUsernameOrFail(User, username as string);
 
     await appendFollowers(loggedUser, profile);
 
@@ -38,11 +32,7 @@ const followToggler = async (
 
     const { username } = req.params;
 
-    const profile = await User.findOne({
-      where: { username: username },
-      attributes: PUBLIC_USER_ATTRIBUTES,
-    });
-    if (!profile) throw new NotFoundError("User profile");
+    const profile = await findProfileByUsernameOrFail(User, username as string);
 
     if (req.method === "POST") {
       await profile.addFollower(loggedUser);
