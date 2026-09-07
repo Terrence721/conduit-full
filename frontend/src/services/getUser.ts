@@ -1,26 +1,14 @@
-import axios from "axios";
-import errorHandler from "../helpers/errorHandler";
-import type { User } from "../types";
+import apiRequest from "../helpers/apiRequest";
+import type { User, UserResponse } from "../types";
 
 interface GetUserParams {
   headers?: Record<string, string>;
 }
 
-interface UserResponse {
-  user: User;
-}
-
 async function getUser({ headers }: GetUserParams): Promise<User | undefined> {
-  try {
-    const { data } = await axios<UserResponse>({
-      headers,
-      url: "/api/user",
-    });
+  const data = await apiRequest<UserResponse>({ headers, url: "/api/user" });
 
-    return data.user;
-  } catch (error) {
-    errorHandler(error);
-  }
+  return data?.user;
 }
 
 export default getUser;
