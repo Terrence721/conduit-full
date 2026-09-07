@@ -1,5 +1,4 @@
-import axios from "axios";
-import errorHandler from "../helpers/errorHandler";
+import apiRequest from "../helpers/apiRequest";
 import type { MessageResponse } from "../types";
 
 interface DeleteCommentParams {
@@ -13,17 +12,11 @@ async function deleteComment({
   headers,
   slug,
 }: DeleteCommentParams): Promise<MessageResponse | undefined> {
-  try {
-    const { data } = await axios<MessageResponse>({
-      headers,
-      method: "DELETE",
-      url: `/api/articles/${slug}/comments/${commentId}`,
-    });
-
-    return data;
-  } catch (error) {
-    errorHandler(error);
-  }
+  return apiRequest<MessageResponse>({
+    headers,
+    method: "DELETE",
+    url: `/api/articles/${slug}/comments/${commentId}`,
+  });
 }
 
 export default deleteComment;
