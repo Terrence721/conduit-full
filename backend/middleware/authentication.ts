@@ -19,13 +19,11 @@ const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
     if (!userVerified) throw new Error("Invalid Token");
 
     req.loggedUser = await User.findOne({
-      attributes: { exclude: ["email"] },
       where: { email: userVerified.email },
     });
 
     if (!req.loggedUser) return next(new NotFoundError("User"));
 
-    headers.email = userVerified.email;
     req.loggedUser.dataValues.token = token;
 
     next();

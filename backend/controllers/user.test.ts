@@ -31,14 +31,11 @@ const createUser = async (db: any, overrides = {}) => {
 
 describe("controllers/user.ts", () => {
   describe("currentUser", () => {
-    test("attaches email from req.headers.email and clears the header", async () => {
+    test("returns loggedUser including their own email", async () => {
       const db = await buildTestDb();
       const loggedUser = await createUser(db);
       const { currentUser } = await loadUserController(db);
-      const req: any = {
-        loggedUser,
-        headers: { email: "jake@jake.jake" },
-      };
+      const req: any = { loggedUser };
       const res = buildRes();
       const next = vi.fn();
 
@@ -47,7 +44,6 @@ describe("controllers/user.ts", () => {
       expect(next).not.toHaveBeenCalled();
       const [{ user }] = res.json.mock.calls[0];
       expect(user.dataValues.email).toBe("jake@jake.jake");
-      expect(req.headers.email).toBeUndefined();
     });
   });
 
@@ -59,7 +55,6 @@ describe("controllers/user.ts", () => {
       const req: any = {
         loggedUser,
         body: { user: { bio: "I write code" } },
-        headers: { email: "jake@jake.jake" },
       };
       const res = buildRes();
       const next = vi.fn();
@@ -81,7 +76,6 @@ describe("controllers/user.ts", () => {
       const req: any = {
         loggedUser,
         body: { user: { bio: "no email here" } },
-        headers: { email: "jake@jake.jake" },
       };
       const res = buildRes();
       const next = vi.fn();
@@ -99,7 +93,6 @@ describe("controllers/user.ts", () => {
       const req: any = {
         loggedUser,
         body: { user: { email: "new@jake.jake" } },
-        headers: { email: "jake@jake.jake" },
       };
       const res = buildRes();
       const next = vi.fn();
@@ -120,7 +113,6 @@ describe("controllers/user.ts", () => {
       const req: any = {
         loggedUser,
         body: { user: { password: "newpassword123" } },
-        headers: { email: "jake@jake.jake" },
       };
       const res = buildRes();
       const next = vi.fn();
@@ -142,7 +134,6 @@ describe("controllers/user.ts", () => {
       const req: any = {
         loggedUser,
         body: { user: { id: 999, createdAt: "2000-01-01", bio: "safe" } },
-        headers: { email: "jake@jake.jake" },
       };
       const res = buildRes();
       const next = vi.fn();

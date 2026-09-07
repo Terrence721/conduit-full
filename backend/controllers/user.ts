@@ -10,9 +10,6 @@ const currentUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { loggedUser } = req;
 
-    loggedUser.dataValues.email = req.headers.email;
-    delete req.headers.email;
-
     res.json({ user: loggedUser });
   } catch (error) {
     next(error);
@@ -35,11 +32,6 @@ const updateUser = async (req: Request, res: Response, next: NextFunction) => {
     }
 
     await loggedUser.save();
-
-    if (loggedUser.dataValues.email === undefined) {
-      loggedUser.dataValues.email = req.headers.email;
-    }
-    delete req.headers.email;
 
     res.json({ user: loggedUser });
   } catch (error) {
