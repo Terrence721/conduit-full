@@ -1,5 +1,4 @@
-import axios from "axios";
-import errorHandler from "../helpers/errorHandler";
+import apiRequest from "../helpers/apiRequest";
 import type { ArticleResponse } from "../types";
 
 interface SetArticleParams {
@@ -19,18 +18,14 @@ async function setArticle({
   tagList,
   title,
 }: SetArticleParams): Promise<string | undefined> {
-  try {
-    const { data } = await axios<ArticleResponse>({
-      data: { article: { title, description, body, tagList } },
-      headers,
-      method: slug ? "PUT" : "POST",
-      url: slug ? `/api/articles/${slug}` : "/api/articles",
-    });
+  const data = await apiRequest<ArticleResponse>({
+    data: { article: { title, description, body, tagList } },
+    headers,
+    method: slug ? "PUT" : "POST",
+    url: slug ? `/api/articles/${slug}` : "/api/articles",
+  });
 
-    return data.article.slug;
-  } catch (error) {
-    errorHandler(error);
-  }
+  return data?.article.slug;
 }
 
 export default setArticle;
