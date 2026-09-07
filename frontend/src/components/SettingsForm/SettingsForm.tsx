@@ -1,6 +1,7 @@
-import { useEffect, useState, type ChangeEvent, type SubmitEvent } from "react";
+import { useEffect, useState, type SubmitEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import fieldHandler from "../../helpers/fieldHandler";
 import requireAuth from "../../helpers/requireAuth";
 import userUpdate from "../../services/userUpdate";
 import FormFieldset from "../FormFieldset/FormFieldset";
@@ -37,12 +38,6 @@ function SettingsForm() {
     if (!auth.isAuth) navigate("/", { replace: true, state: null });
   }, [auth.isAuth, navigate]);
 
-  function fieldHandler<K extends keyof SettingsFormState>(field: K) {
-    return (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      setForm((f) => ({ ...f, [field]: e.target.value }));
-    };
-  }
-
   const formSubmit = (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (submitting) return;
@@ -76,7 +71,7 @@ function SettingsForm() {
           placeholder="URL of profile picture"
           name="image"
           value={form.image}
-          handler={fieldHandler("image")}
+          handler={fieldHandler(setForm, "image")}
         ></FormFieldset>
 
         <FormFieldset
@@ -84,7 +79,7 @@ function SettingsForm() {
           name="username"
           required
           value={form.username}
-          handler={fieldHandler("username")}
+          handler={fieldHandler(setForm, "username")}
         ></FormFieldset>
 
         <fieldset className="form-group">
@@ -94,7 +89,7 @@ function SettingsForm() {
             placeholder="Short bio about you"
             name="bio"
             value={form.bio}
-            onChange={fieldHandler("bio")}
+            onChange={fieldHandler(setForm, "bio")}
           ></textarea>
         </fieldset>
 
@@ -103,7 +98,7 @@ function SettingsForm() {
           name="email"
           required
           value={form.email}
-          handler={fieldHandler("email")}
+          handler={fieldHandler(setForm, "email")}
         ></FormFieldset>
 
         <FormFieldset
@@ -111,7 +106,7 @@ function SettingsForm() {
           name="password"
           value={form.password}
           placeholder="Password"
-          handler={fieldHandler("password")}
+          handler={fieldHandler(setForm, "password")}
         ></FormFieldset>
 
         <button
