@@ -1,4 +1,4 @@
-import type { AxiosError } from "axios";
+import axios from "axios";
 
 interface ApiErrorResponse {
   errors: {
@@ -6,7 +6,8 @@ interface ApiErrorResponse {
   };
 }
 
-function errorHandler(error: AxiosError<ApiErrorResponse>): void {
+function errorHandler(error: unknown): void {
+  if (!axios.isAxiosError<ApiErrorResponse>(error)) return;
   if (!error.response) return console.log(error);
 
   const { status, data } = error.response;
