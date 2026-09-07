@@ -3,13 +3,8 @@ import models from "../models";
 import helpers from "../helper/helpers";
 import customErrors from "../helper/customErrors";
 
-const {
-  AlreadyTakenError,
-  FieldRequiredError,
-  ForbiddenError,
-  NotFoundError,
-  UnauthorizedError,
-} = customErrors;
+const { AlreadyTakenError, FieldRequiredError, ForbiddenError, NotFoundError } =
+  customErrors;
 const {
   appendFollowers,
   appendFavorites,
@@ -79,7 +74,6 @@ const createArticle = async (
 ) => {
   try {
     const { loggedUser } = req;
-    if (!loggedUser) throw new UnauthorizedError();
 
     const { title, description, body, tagList = [] } = req.body.article;
     if (!title) throw new FieldRequiredError("A title");
@@ -131,7 +125,6 @@ const articlesFeed = async (
 ) => {
   try {
     const { loggedUser } = req;
-    if (!loggedUser) throw new UnauthorizedError();
 
     const { limit = 3, offset = 0 } = req.query as any;
     const authors = await loggedUser.getFollowing();
@@ -184,7 +177,6 @@ const updateArticle = async (
 ) => {
   try {
     const { loggedUser } = req;
-    if (!loggedUser) throw new UnauthorizedError();
 
     const { slug } = req.params;
     const article = await findArticleBySlugOrFail(
@@ -222,7 +214,6 @@ const deleteArticle = async (
 ) => {
   try {
     const { loggedUser } = req;
-    if (!loggedUser) throw new UnauthorizedError();
 
     const { slug } = req.params;
     const article = await findArticleBySlugOrFail(

@@ -1,8 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
-import customErrors from "../helper/customErrors";
 import bcryptHelper from "../helper/bcrypt";
 
-const { UnauthorizedError } = customErrors;
 const { bcryptHash } = bcryptHelper;
 
 const UPDATABLE_FIELDS = ["username", "bio", "image", "email"] as const;
@@ -11,7 +9,6 @@ const UPDATABLE_FIELDS = ["username", "bio", "image", "email"] as const;
 const currentUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { loggedUser } = req;
-    if (!loggedUser) throw new UnauthorizedError();
 
     loggedUser.dataValues.email = req.headers.email;
     delete req.headers.email;
@@ -26,7 +23,6 @@ const currentUser = async (req: Request, res: Response, next: NextFunction) => {
 const updateUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { loggedUser } = req;
-    if (!loggedUser) throw new UnauthorizedError();
 
     const { password, ...user } = req.body.user;
 

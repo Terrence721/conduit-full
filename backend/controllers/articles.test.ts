@@ -191,18 +191,6 @@ describe("controllers/articles.js", () => {
   });
 
   describe("createArticle", () => {
-    test("throws UnauthorizedError when there's no logged-in user", async () => {
-      const db = await buildTestDb();
-      const { createArticle } = await loadArticlesController(db);
-      const req: any = { loggedUser: undefined, body: { article: {} } };
-      const res = buildRes();
-      const next = vi.fn();
-
-      await createArticle(req, res, next);
-
-      expect(next.mock.calls[0][0].name).toBe("UnauthorizedError");
-    });
-
     test.each(["title", "description", "body"])(
       "throws FieldRequiredError when %s is missing",
       async (missingField) => {
@@ -346,18 +334,6 @@ describe("controllers/articles.js", () => {
   });
 
   describe("articlesFeed", () => {
-    test("throws UnauthorizedError when there's no logged-in user", async () => {
-      const db = await buildTestDb();
-      const { articlesFeed } = await loadArticlesController(db);
-      const req: any = { loggedUser: undefined, query: {} };
-      const res = buildRes();
-      const next = vi.fn();
-
-      await articlesFeed(req, res, next);
-
-      expect(next.mock.calls[0][0].name).toBe("UnauthorizedError");
-    });
-
     test("only returns articles from followed authors", async () => {
       const db = await buildTestDb();
       const me = await createUser(db, { username: "me", email: "me@me.me" });
@@ -438,22 +414,6 @@ describe("controllers/articles.js", () => {
   });
 
   describe("updateArticle", () => {
-    test("throws UnauthorizedError when there's no logged-in user", async () => {
-      const db = await buildTestDb();
-      const { updateArticle } = await loadArticlesController(db);
-      const req: any = {
-        loggedUser: undefined,
-        params: { slug: "a" },
-        body: { article: {} },
-      };
-      const res = buildRes();
-      const next = vi.fn();
-
-      await updateArticle(req, res, next);
-
-      expect(next.mock.calls[0][0].name).toBe("UnauthorizedError");
-    });
-
     test("throws NotFoundError when the slug doesn't exist", async () => {
       const db = await buildTestDb();
       const loggedUser = await createUser(db);
@@ -537,18 +497,6 @@ describe("controllers/articles.js", () => {
   });
 
   describe("deleteArticle", () => {
-    test("throws UnauthorizedError when there's no logged-in user", async () => {
-      const db = await buildTestDb();
-      const { deleteArticle } = await loadArticlesController(db);
-      const req: any = { loggedUser: undefined, params: { slug: "a" } };
-      const res = buildRes();
-      const next = vi.fn();
-
-      await deleteArticle(req, res, next);
-
-      expect(next.mock.calls[0][0].name).toBe("UnauthorizedError");
-    });
-
     test("throws NotFoundError when the slug doesn't exist", async () => {
       const db = await buildTestDb();
       const loggedUser = await createUser(db);

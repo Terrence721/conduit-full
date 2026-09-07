@@ -1,9 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import models from "../models";
 import helpers from "../helper/helpers";
-import customErrors from "../helper/customErrors";
 
-const { UnauthorizedError } = customErrors;
 const { findArticleBySlugOrFail, decorateArticle, PUBLIC_USER_ATTRIBUTES } =
   helpers;
 const { Article, Tag, User } = models;
@@ -16,7 +14,6 @@ const favoriteToggler = async (
 ) => {
   try {
     const { loggedUser } = req;
-    if (!loggedUser) throw new UnauthorizedError();
 
     const { slug } = req.params;
 

@@ -85,22 +85,6 @@ describe("controllers/comments.js", () => {
   });
 
   describe("createComment", () => {
-    test("throws UnauthorizedError when there's no logged-in user", async () => {
-      const db = await buildTestDb();
-      const { createComment } = await loadCommentsController(db);
-      const req: any = {
-        loggedUser: undefined,
-        params: { slug: "a" },
-        body: { comment: { body: "hi" } },
-      };
-      const res = buildRes();
-      const next = vi.fn();
-
-      await createComment(req, res, next);
-
-      expect(next.mock.calls[0][0].name).toBe("UnauthorizedError");
-    });
-
     test("throws FieldRequiredError when body is missing", async () => {
       const db = await buildTestDb();
       const loggedUser = await createUser(db);
@@ -160,21 +144,6 @@ describe("controllers/comments.js", () => {
   });
 
   describe("deleteComment", () => {
-    test("throws UnauthorizedError when there's no logged-in user", async () => {
-      const db = await buildTestDb();
-      const { deleteComment } = await loadCommentsController(db);
-      const req: any = {
-        loggedUser: undefined,
-        params: { slug: "a", commentId: 1 },
-      };
-      const res = buildRes();
-      const next = vi.fn();
-
-      await deleteComment(req, res, next);
-
-      expect(next.mock.calls[0][0].name).toBe("UnauthorizedError");
-    });
-
     test("throws NotFoundError when the article slug doesn't exist", async () => {
       const db = await buildTestDb();
       const loggedUser = await createUser(db);

@@ -3,7 +3,7 @@ import models from "../models";
 import customErrors from "../helper/customErrors";
 import jwtHelper from "../helper/jwt";
 
-const { NotFoundError } = customErrors;
+const { NotFoundError, UnauthorizedError } = customErrors;
 const { jwtVerify } = jwtHelper;
 const { User } = models;
 
@@ -34,4 +34,13 @@ const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-export = verifyToken;
+// verifyToken is soft-auth: it attaches req.loggedUser when a valid token is
+// present but never rejects, since some routes work with or without one.
+// requireAuth is the explicit opt-in for routes that actually need a
+// logged-in user -- mount it after verifyToken, not instead of it.
+const requireAuth = (req: Request, res: Response, next: NextFunction) => {
+  if (!req.loggedUser) return next(new UnauthorizedError());
+  next();
+};
+
+export = { verifyToken, requireAuth };
