@@ -39,22 +39,6 @@ const createArticle = async (db: any, author: any) => {
 };
 
 describe("controllers/favorites.js", () => {
-  test("throws UnauthorizedError when there's no logged-in user", async () => {
-    const db = await buildTestDb();
-    const { favoriteToggler } = await loadFavoritesController(db);
-    const req: any = {
-      method: "POST",
-      loggedUser: undefined,
-      params: { slug: "a" },
-    };
-    const res = buildRes();
-    const next = vi.fn();
-
-    await favoriteToggler(req, res, next);
-
-    expect(next.mock.calls[0][0].name).toBe("UnauthorizedError");
-  });
-
   test("throws NotFoundError when the article slug doesn't exist", async () => {
     const db = await buildTestDb();
     const loggedUser = await createUser(db);

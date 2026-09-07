@@ -73,22 +73,6 @@ describe("controllers/profiles.ts", () => {
   });
 
   describe("followToggler", () => {
-    test("throws UnauthorizedError when there's no logged-in user", async () => {
-      const db = await buildTestDb();
-      const { followToggler } = await loadProfilesController(db);
-      const req: any = {
-        method: "POST",
-        loggedUser: undefined,
-        params: { username: "jake" },
-      };
-      const res = buildRes();
-      const next = vi.fn();
-
-      await followToggler(req, res, next);
-
-      expect(next.mock.calls[0][0].name).toBe("UnauthorizedError");
-    });
-
     test("throws NotFoundError when the username doesn't exist", async () => {
       const db = await buildTestDb();
       const loggedUser = await createUser(db);

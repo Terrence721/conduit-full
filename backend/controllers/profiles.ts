@@ -3,7 +3,7 @@ import models from "../models";
 import helpers from "../helper/helpers";
 import customErrors from "../helper/customErrors";
 
-const { UnauthorizedError, NotFoundError } = customErrors;
+const { NotFoundError } = customErrors;
 const { appendFollowers, PUBLIC_USER_ATTRIBUTES } = helpers;
 const { User } = models;
 
@@ -35,7 +35,6 @@ const followToggler = async (
 ) => {
   try {
     const { loggedUser } = req;
-    if (!loggedUser) throw new UnauthorizedError();
 
     const { username } = req.params;
 

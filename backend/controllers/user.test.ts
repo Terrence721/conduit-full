@@ -31,18 +31,6 @@ const createUser = async (db: any, overrides = {}) => {
 
 describe("controllers/user.ts", () => {
   describe("currentUser", () => {
-    test("throws UnauthorizedError when there's no logged-in user", async () => {
-      const db = await buildTestDb();
-      const { currentUser } = await loadUserController(db);
-      const req: any = { loggedUser: undefined, headers: {} };
-      const res = buildRes();
-      const next = vi.fn();
-
-      await currentUser(req, res, next);
-
-      expect(next.mock.calls[0][0].name).toBe("UnauthorizedError");
-    });
-
     test("attaches email from req.headers.email and clears the header", async () => {
       const db = await buildTestDb();
       const loggedUser = await createUser(db);
@@ -64,22 +52,6 @@ describe("controllers/user.ts", () => {
   });
 
   describe("updateUser", () => {
-    test("throws UnauthorizedError when there's no logged-in user", async () => {
-      const db = await buildTestDb();
-      const { updateUser } = await loadUserController(db);
-      const req: any = {
-        loggedUser: undefined,
-        body: { user: {} },
-        headers: {},
-      };
-      const res = buildRes();
-      const next = vi.fn();
-
-      await updateUser(req, res, next);
-
-      expect(next.mock.calls[0][0].name).toBe("UnauthorizedError");
-    });
-
     test("updates a field without a password in the payload, without crashing", async () => {
       const db = await buildTestDb();
       const loggedUser = await createUser(db);

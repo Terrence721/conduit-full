@@ -3,8 +3,7 @@ import models from "../models";
 import helpers from "../helper/helpers";
 import customErrors from "../helper/customErrors";
 
-const { NotFoundError, UnauthorizedError, FieldRequiredError, ForbiddenError } =
-  customErrors;
+const { NotFoundError, FieldRequiredError, ForbiddenError } = customErrors;
 const { appendFollowers, findArticleBySlugOrFail, PUBLIC_USER_ATTRIBUTES } =
   helpers;
 const { Article, Comment, User } = models;
@@ -41,7 +40,6 @@ const createComment = async (
 ) => {
   try {
     const { loggedUser } = req;
-    if (!loggedUser) throw new UnauthorizedError();
 
     const { body } = req.body.comment;
     if (!body) throw new FieldRequiredError("Comment body");
@@ -73,7 +71,6 @@ const deleteComment = async (
 ) => {
   try {
     const { loggedUser } = req;
-    if (!loggedUser) throw new UnauthorizedError();
 
     const { slug, commentId } = req.params;
 

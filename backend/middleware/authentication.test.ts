@@ -7,10 +7,15 @@ export {};
 // logic is exercised for real.
 const fakeUser = { findOne: vi.fn() };
 
-const loadVerifyToken = async () => {
+const loadAuthentication = async () => {
   vi.doMock("../models", () => ({ default: { User: fakeUser } }));
   vi.resetModules();
   return (await import("./authentication")).default;
+};
+
+const loadVerifyToken = async () => {
+  const { verifyToken } = await loadAuthentication();
+  return verifyToken;
 };
 
 const buildReqResNext = (headers: any = {}) => ({
@@ -106,5 +111,27 @@ describe("middleware/authentication.ts", () => {
 
     expect(next).toHaveBeenCalledWith(expect.any(Error));
     expect(fakeUser.findOne).not.toHaveBeenCalled();
+  });
+
+  describe("requireAuth", () => {
+    test("passes UnauthorizedError to next() when there's no loggedUser", async () => {
+      const { requireAuth } = await loadAuthentication();
+      const { req, res, next } = buildReqResNext();
+
+      requireAuth(req, res, next);
+
+      expect(next).toHaveBeenCalledTimes(1);
+      expect(next.mock.calls[0][0].name).toBe("UnauthorizedError");
+    });
+
+    test("calls next() with no error when a loggedUser is present", async () => {
+      const { requireAuth } = await loadAuthentication();
+      const { req, res, next } = buildReqResNext();
+      req.loggedUser = { id: 1 };
+
+      requireAuth(req, res, next);
+
+      expect(next).toHaveBeenCalledWith();
+    });
   });
 });
