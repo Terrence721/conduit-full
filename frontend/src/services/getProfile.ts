@@ -1,5 +1,4 @@
-import axios from "axios";
-import errorHandler from "../helpers/errorHandler";
+import apiRequest from "../helpers/apiRequest";
 import type { Profile, ProfileResponse } from "../types";
 
 interface GetProfileParams {
@@ -11,16 +10,12 @@ async function getProfile({
   headers,
   username,
 }: GetProfileParams): Promise<Profile | undefined> {
-  try {
-    const { data } = await axios<ProfileResponse>({
-      headers,
-      url: `/api/profiles/${username}`,
-    });
+  const data = await apiRequest<ProfileResponse>({
+    headers,
+    url: `/api/profiles/${username}`,
+  });
 
-    return data.profile;
-  } catch (error) {
-    errorHandler(error);
-  }
+  return data?.profile;
 }
 
 export default getProfile;
