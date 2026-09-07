@@ -1,38 +1,17 @@
-import ArticlesPagination from "../components/ArticlesPagination/ArticlesPagination";
-import ArticlesPreview from "../components/ArticlesPreview/ArticlesPreview";
+import ArticlesListView from "../components/ArticlesListView/ArticlesListView";
 import { useFeedContext } from "../context/FeedContext";
-import useArticles from "../hooks/useArticles";
 
 function HomeArticles() {
   const { tabName, tagName } = useFeedContext();
 
-  const { articles, articlesCount, loading, setArticlesData } = useArticles({
-    location: tabName,
-    tabName,
-    tagName,
-  });
-
-  return loading ? (
-    <div className="article-preview">
-      <em>Loading articles list...</em>
-    </div>
-  ) : articles.length > 0 ? (
-    <>
-      <ArticlesPreview
-        articles={articles}
-        loading={loading}
-        updateArticles={setArticlesData}
-      />
-
-      <ArticlesPagination
-        articlesCount={articlesCount}
-        location={tabName}
-        tagName={tagName}
-        updateArticles={setArticlesData}
-      />
-    </>
-  ) : (
-    <div className="article-preview">Articles not available.</div>
+  return (
+    <ArticlesListView
+      emptyText="Articles not available."
+      loadingText="Loading articles list..."
+      location={tabName}
+      tabName={tabName}
+      tagName={tagName}
+    />
   );
 }
 
