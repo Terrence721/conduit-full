@@ -56,10 +56,29 @@ const appendFollowers = async (loggedUser: any, toAppend: any) => {
   }
 };
 
+const decorateArticle = async (loggedUser: any, article: any) => {
+  appendTagList(article.tagList, article);
+  await appendFollowers(loggedUser, article);
+  await appendFavorites(loggedUser, article);
+
+  // Only set when the article came from a User's `getFavorites()` association
+  // fetcher (the through-model's data rides along on the instance under the
+  // through model's own name); harmless no-op otherwise.
+  delete article.dataValues.Favorites;
+};
+
+const decorateArticles = async (loggedUser: any, articles: any[]) => {
+  for (const article of articles) {
+    await decorateArticle(loggedUser, article);
+  }
+};
+
 export = {
   slugify,
   findArticleBySlugOrFail,
   appendTagList,
   appendFavorites,
   appendFollowers,
+  decorateArticle,
+  decorateArticles,
 };
