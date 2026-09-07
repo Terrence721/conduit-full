@@ -424,7 +424,7 @@
 
 <div class="hero">
   <div class="wrap">
-    <p class="eyebrow">Portfolio Manifest — Prepared 2026-09-01</p>
+    <p class="eyebrow">Portfolio Manifest — Prepared 2026-09-07</p>
     <h1 class="name">Terrence&nbsp;Daniels</h1>
     <p class="role">Full-Stack Engineer</p>
     <p class="thesis">
@@ -438,7 +438,7 @@
       previously-invisible backend bugs found only by actually running it: three
       missing database tables for favoriting, following, and tagging, a
       Node-version incompatibility in the migration tooling, and a migration
-      ordering bug — none caught by 214+ passing tests, since none of them
+      ordering bug — none caught by 228+ passing tests, since none of them
       exercise the real database path.
     </p>
     <div class="hero-actions">
@@ -459,7 +459,7 @@
   </div>
   <div class="stamp" aria-hidden="true">
     <div class="stamp-inner">
-      <span class="n">61</span>
+      <span class="n">70</span>
       <span class="l">REAL BUGS<br />FOUND &amp; FIXED</span>
     </div>
   </div>
@@ -469,10 +469,10 @@
   <div class="wrap">
     <div class="manifest-row">
       <div class="manifest-cell">
-        <span class="v">115</span><span class="k">phases shipped</span>
+        <span class="v">117</span><span class="k">phases shipped</span>
       </div>
       <div class="manifest-cell">
-        <span class="v">214/214</span
+        <span class="v">228/228</span
         ><span class="k">backend tests passing</span>
       </div>
       <div class="manifest-cell">
@@ -480,7 +480,7 @@
         ><span class="k">frontend route pages done</span>
       </div>
       <div class="manifest-cell">
-        <span class="v">61</span
+        <span class="v">70</span
         ><span class="k">real bugs found &amp; fixed</span>
       </div>
       <div class="manifest-cell">
@@ -800,7 +800,7 @@
       </div>
     </div>
     <p class="note">
-      <strong>47 more, smaller findings</strong> — a seeder that bypassed
+      <strong>56 more, smaller findings</strong> — a seeder that bypassed
       <code>bcryptHash()</code> entirely, a missing
       <code>tagList</code> default, a missing <code>await</code> on
       <code>setAuthor</code>, two message-formatting bugs, a
@@ -814,7 +814,12 @@
       in a list's optimistic favorite-toggle update, a <code>Link</code> passed
       an entirely wrong-shaped <code>state</code> object, three separate
       components that navigated a user home on a silently-failed request as if
-      it had succeeded, and more — are logged in full in
+      it had succeeded, three missing Sequelize join-table migrations that left
+      favoriting, following, and tagging silently broken against any real
+      deployed database, a <code>react-paginate</code> CJS/UMD interop crash the
+      moment the home page had real articles to paginate, an unparsed pagination
+      query value that could smuggle <code>NaN</code> into a live Sequelize
+      query, and more — are logged in full in
       <a href="https://github.com/Terrence721/conduit-full/blob/main/todo.md"
         >todo.md</a
       >'s phase-by-phase record, not summarized away here.
@@ -831,7 +836,7 @@
     </p>
     <div class="twocol">
       <div class="card">
-        <h3>214/214 backend, real SQLite behind it</h3>
+        <h3>228/228 backend, real SQLite behind it</h3>
         <p>
           Controller and route tests run against a genuine in-memory SQLite
           Sequelize instance running the real models — not hand-stubbed mocks.
@@ -865,7 +870,7 @@
       on them. That layer is done: all 16 service modules, then
       <code>AuthContext</code>/<code>FeedContext</code>, both memoized only
       after a review caught their Provider values causing unnecessary re-renders
-      on every consumer, then all 31 components, sequenced the same way — a full
+      on every consumer, then all 32 components, sequenced the same way — a full
       dependency graph across the source's 31 components was mapped up front so
       zero-dependency leaves got built before anything that composes them. Two
       real architectural choices got decided rather than left open: TanStack
@@ -929,9 +934,23 @@
       source alone; and the new Docker Postgres setup deliberately defaults to
       the standard port for anyone else cloning the repo, rather than hardcoding
       this machine's own port conflict into a committed file. The still-open
-      gap: the 65 files tracked by issue #71 have no behavioral tests, unlike
+      gap: the 68 files tracked by issue #71 have no behavioral tests, unlike
       the backend where every file has one — disclosed and tracked on the board
       rather than quietly deferred.
+    </p>
+    <p class="lede">
+      A DRY/SOLID audit run across the whole codebase (2026-09-07) found 12
+      backend and 8 frontend real findings — not just duplicated code, but
+      genuine SRP, OCP, and DIP violations too: a shared
+      <code>requireAuth</code>
+      middleware replacing 10 reimplementations of the same auth check,
+      <code>appendFollowers</code> split apart once it turned out to be two
+      functions wearing one name, an authenticated user's email removed from a
+      mutable <code>req.headers</code> side channel, and a tangled
+      <code>ArticleEditorForm.tsx</code> pulled apart into a dedicated hook. 19
+      of the 20 findings are fixed; one low-severity duplication
+      (<code>FollowButton</code>/<code>FavButton</code>'s identical toggle
+      pattern) remains open.
     </p>
   </section>
 </div>
@@ -959,11 +978,12 @@
       number on this page is reproducible from the repository's own
       <code>todo.md</code> phase log, commit history, and CI runs — nothing here
       is asserted without a link to check it against. The frontend build is
-      complete: all 16 planned service modules, both context files, all 31
+      complete: all 16 planned service modules, both context files, all 32
       components, all 12 route pages, and the app entry point are done, and the
       full stack has been verified running end to end against a real database.
-      One honest gap remains: 65 tracked files still without behavioral tests —
-      see <code>todo.md</code> for the current state.
+      Two honest gaps remain: 68 tracked files still without behavioral tests,
+      and one open DRY/SOLID finding — see <code>todo.md</code> for the current
+      state.
     </p>
   </div>
 </footer>
