@@ -43,6 +43,10 @@ export interface User {
   token: string;
 }
 
+export interface UserResponse {
+  user: User;
+}
+
 export type AuthState =
   | { headers: { Authorization: string }; isAuth: true; loggedUser: User }
   | { headers: undefined; isAuth: false; loggedUser: User };
