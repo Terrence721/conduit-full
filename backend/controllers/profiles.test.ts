@@ -78,14 +78,13 @@ describe("controllers/profiles.ts", () => {
       const loggedUser = await createUser(db);
       const { followToggler } = await loadProfilesController(db);
       const req: any = {
-        method: "POST",
         loggedUser,
         params: { username: "ghost" },
       };
       const res = buildRes();
       const next = vi.fn();
 
-      await followToggler(req, res, next);
+      await followToggler("add")(req, res, next);
 
       expect(next.mock.calls[0][0].name).toBe("NotFoundError");
     });
@@ -100,14 +99,13 @@ describe("controllers/profiles.ts", () => {
 
       const { followToggler } = await loadProfilesController(db);
       const req: any = {
-        method: "POST",
         loggedUser: fan,
         params: { username: author.username },
       };
       const res = buildRes();
       const next = vi.fn();
 
-      await followToggler(req, res, next);
+      await followToggler("add")(req, res, next);
 
       expect(next).not.toHaveBeenCalled();
       const [{ profile }] = res.json.mock.calls[0];
@@ -131,14 +129,13 @@ describe("controllers/profiles.ts", () => {
 
       const { followToggler } = await loadProfilesController(db);
       const req: any = {
-        method: "DELETE",
         loggedUser: fan,
         params: { username: author.username },
       };
       const res = buildRes();
       const next = vi.fn();
 
-      await followToggler(req, res, next);
+      await followToggler("remove")(req, res, next);
 
       expect(next).not.toHaveBeenCalled();
       const [{ profile }] = res.json.mock.calls[0];

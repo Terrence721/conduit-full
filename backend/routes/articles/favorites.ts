@@ -7,8 +7,18 @@ const { verifyToken, requireAuth } = authentication;
 const { favoriteToggler } = favoritesController;
 
 //* Favorite Article
-router.post("/:slug/favorite", verifyToken, requireAuth, favoriteToggler);
+router.post(
+  "/:slug/favorite",
+  verifyToken,
+  requireAuth,
+  favoriteToggler("add"),
+);
 //* Unfavorite Article
-router.delete("/:slug/favorite", verifyToken, requireAuth, favoriteToggler);
+router.delete(
+  "/:slug/favorite",
+  verifyToken,
+  requireAuth,
+  favoriteToggler("remove"),
+);
 
 export = router;
