@@ -1,12 +1,12 @@
 import {
   useEffect,
   useState,
-  type ChangeEvent,
   type ChangeEventHandler,
   type SubmitEvent,
 } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import fieldHandler from "../../helpers/fieldHandler";
 import requireAuth from "../../helpers/requireAuth";
 import getArticle from "../../services/getArticle";
 import setArticle from "../../services/setArticle";
@@ -69,15 +69,9 @@ function ArticleEditorForm() {
     state,
   ]);
 
-  function fieldHandler<K extends "title" | "description" | "body">(field: K) {
-    return (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      setForm((f) => ({ ...f, [field]: e.target.value }));
-    };
-  }
-
-  const titleHandler = fieldHandler("title");
-  const descriptionHandler = fieldHandler("description");
-  const bodyHandler = fieldHandler("body");
+  const titleHandler = fieldHandler(setForm, "title");
+  const descriptionHandler = fieldHandler(setForm, "description");
+  const bodyHandler = fieldHandler(setForm, "body");
 
   const tagsInputHandler: ChangeEventHandler<HTMLInputElement> = (e) => {
     setTagsInput(e.target.value);
