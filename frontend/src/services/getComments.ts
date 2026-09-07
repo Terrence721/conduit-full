@@ -23,10 +23,7 @@ async function getComments({
 
     return data.comments;
   } catch (error) {
-    if (axios.isAxiosError<{ errors: { body: string[] } }>(error)) {
-      errorHandler(error);
-    }
-
+    errorHandler(error);
     return [];
   }
 }
