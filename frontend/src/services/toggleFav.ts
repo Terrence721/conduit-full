@@ -1,5 +1,4 @@
-import axios from "axios";
-import errorHandler from "../helpers/errorHandler";
+import apiRequest from "../helpers/apiRequest";
 import type { Article, ArticleResponse } from "../types";
 
 interface ToggleFavParams {
@@ -13,17 +12,13 @@ async function toggleFav({
   headers,
   slug,
 }: ToggleFavParams): Promise<Article | undefined> {
-  try {
-    const { data } = await axios<ArticleResponse>({
-      headers,
-      method: favorited ? "DELETE" : "POST",
-      url: `/api/articles/${slug}/favorite`,
-    });
+  const data = await apiRequest<ArticleResponse>({
+    headers,
+    method: favorited ? "DELETE" : "POST",
+    url: `/api/articles/${slug}/favorite`,
+  });
 
-    return data.article;
-  } catch (error) {
-    errorHandler(error);
-  }
+  return data?.article;
 }
 
 export default toggleFav;
