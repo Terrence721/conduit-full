@@ -1,5 +1,4 @@
-import axios from "axios";
-import errorHandler from "../helpers/errorHandler";
+import apiRequest from "../helpers/apiRequest";
 import type { Comment } from "../types";
 
 interface PostCommentParams {
@@ -17,18 +16,14 @@ async function postComment({
   headers,
   slug,
 }: PostCommentParams): Promise<Comment | undefined> {
-  try {
-    const { data } = await axios<CommentResponse>({
-      data: { comment: { body } },
-      headers,
-      method: "POST",
-      url: `/api/articles/${slug}/comments`,
-    });
+  const data = await apiRequest<CommentResponse>({
+    data: { comment: { body } },
+    headers,
+    method: "POST",
+    url: `/api/articles/${slug}/comments`,
+  });
 
-    return data.comment;
-  } catch (error) {
-    errorHandler(error);
-  }
+  return data?.comment;
 }
 
 export default postComment;
