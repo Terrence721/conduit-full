@@ -1,5 +1,22 @@
+import customErrors from "./customErrors";
+
+const { NotFoundError } = customErrors;
+
 const slugify = (string: string): string => {
   return string.trim().toLowerCase().replace(/\W|_/g, "-");
+};
+
+const findArticleBySlugOrFail = async (
+  Article: any,
+  slug: string,
+  include?: any[],
+) => {
+  const article = await Article.findOne({
+    where: { slug },
+    ...(include && { include }),
+  });
+  if (!article) throw new NotFoundError("Article");
+  return article;
 };
 
 const appendTagList = (articleTags: any[], article?: any) => {
@@ -39,4 +56,10 @@ const appendFollowers = async (loggedUser: any, toAppend: any) => {
   }
 };
 
-export = { slugify, appendTagList, appendFavorites, appendFollowers };
+export = {
+  slugify,
+  findArticleBySlugOrFail,
+  appendTagList,
+  appendFavorites,
+  appendFollowers,
+};

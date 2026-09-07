@@ -1,7 +1,9 @@
 export {};
 
 import helpers from "./helpers";
-const { slugify } = helpers;
+import testDbModule from "../testUtils/testDb";
+const { slugify, findArticleBySlugOrFail } = helpers;
+const { buildTestDb } = testDbModule;
 
 describe("Slugify", () => {
   const stringsArray = [
@@ -15,5 +17,51 @@ describe("Slugify", () => {
 
   test.each(stringsArray)("%p", (string) => {
     expect(slugify(string)).toBe("hello-world");
+  });
+});
+
+describe("findArticleBySlugOrFail", () => {
+  test("returns the article when it exists", async () => {
+    const db = await buildTestDb();
+    await db.Article.create({
+      slug: "a",
+      title: "A",
+      description: "d",
+      body: "b",
+    });
+
+    const article = await findArticleBySlugOrFail(db.Article, "a");
+
+    expect(article.slug).toBe("a");
+  });
+
+  test("throws NotFoundError when no article matches the slug", async () => {
+    const db = await buildTestDb();
+
+    await expect(
+      findArticleBySlugOrFail(db.Article, "missing"),
+    ).rejects.toThrow("Article not found");
+  });
+
+  test("applies the given include option", async () => {
+    const db = await buildTestDb();
+    const author = await db.User.create({
+      username: "jake",
+      email: "jake@jake.jake",
+      password: "hashed",
+    });
+    const article = await db.Article.create({
+      slug: "a",
+      title: "A",
+      description: "d",
+      body: "b",
+    });
+    await article.setAuthor(author);
+
+    const found = await findArticleBySlugOrFail(db.Article, "a", [
+      { model: db.User, as: "author" },
+    ]);
+
+    expect(found.author.username).toBe("jake");
   });
 });
