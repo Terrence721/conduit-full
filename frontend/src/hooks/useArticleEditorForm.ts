@@ -33,6 +33,7 @@ function useArticleEditorForm() {
   );
   const [errorMessage, setErrorMessage] = useState("");
   const auth = useRequireAuthRedirect();
+  const { redirectHome } = auth;
   const navigate = useNavigate();
   const { slug } = useParams();
 
@@ -44,7 +45,7 @@ function useArticleEditorForm() {
       .then((article) => {
         if (!article) return;
         if (article.author.username !== auth.loggedUser.username) {
-          navigate("/", { replace: true, state: null });
+          redirectHome();
           return;
         }
 
@@ -58,7 +59,7 @@ function useArticleEditorForm() {
     auth.isAuth,
     auth.headers,
     auth.loggedUser.username,
-    navigate,
+    redirectHome,
     slug,
     state,
   ]);
