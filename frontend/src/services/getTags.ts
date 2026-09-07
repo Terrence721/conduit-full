@@ -1,19 +1,13 @@
-import axios from "axios";
-import errorHandler from "../helpers/errorHandler";
+import apiRequest from "../helpers/apiRequest";
 
 interface TagsResponse {
   tags: string[];
 }
 
 async function getTags(): Promise<string[]> {
-  try {
-    const { data } = await axios<TagsResponse>({ url: "/api/tags" });
+  const data = await apiRequest<TagsResponse>({ url: "/api/tags" });
 
-    return data.tags;
-  } catch (error) {
-    errorHandler(error);
-    return [];
-  }
+  return data?.tags ?? [];
 }
 
 export default getTags;
