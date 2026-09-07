@@ -71,31 +71,29 @@ const appendFavorites = async (loggedUser: any, article: any) => {
   article.dataValues.favoritesCount = favoritesCount;
 };
 
-const appendFollowers = async (loggedUser: any, toAppend: any) => {
-  //
-  if (toAppend?.author) {
-    const author = await toAppend.getAuthor();
+const appendFollowers = async (loggedUser: any, user: any) => {
+  const following = await user.hasFollower(loggedUser ? loggedUser : null);
+  user.dataValues.following = loggedUser ? following : false;
 
-    const following = await author.hasFollower(loggedUser ? loggedUser : null);
-    toAppend.author.dataValues.following = loggedUser ? following : false;
+  const followersCount = await user.countFollowers();
+  user.dataValues.followersCount = followersCount;
+};
 
-    const followersCount = await author.countFollowers();
-    toAppend.author.dataValues.followersCount = followersCount;
-    //
-  } else {
-    const following = await toAppend.hasFollower(
-      loggedUser ? loggedUser : null,
-    );
-    toAppend.dataValues.following = loggedUser ? following : false;
-
-    const followersCount = await toAppend.countFollowers();
-    toAppend.dataValues.followersCount = followersCount;
-  }
+// For an Article/Comment whose `.author` was already eagerly included in the
+// original query -- fetches a fresh author instance to compute follow
+// status (association instance methods need their own live row), then
+// copies the result onto the eagerly-included sub-object, since that's the
+// one actually serialized in the response.
+const appendAuthorFollowers = async (loggedUser: any, entity: any) => {
+  const author = await entity.getAuthor();
+  await appendFollowers(loggedUser, author);
+  entity.author.dataValues.following = author.dataValues.following;
+  entity.author.dataValues.followersCount = author.dataValues.followersCount;
 };
 
 const decorateArticle = async (loggedUser: any, article: any) => {
   appendTagList(article.tagList, article);
-  await appendFollowers(loggedUser, article);
+  await appendAuthorFollowers(loggedUser, article);
   await appendFavorites(loggedUser, article);
 
   // Only set when the article came from a User's `getFavorites()` association
@@ -119,6 +117,7 @@ export = {
   appendTagList,
   appendFavorites,
   appendFollowers,
+  appendAuthorFollowers,
   decorateArticle,
   decorateArticles,
 };

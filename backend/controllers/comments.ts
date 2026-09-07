@@ -4,8 +4,12 @@ import helpers from "../helper/helpers";
 import customErrors from "../helper/customErrors";
 
 const { NotFoundError, FieldRequiredError, ForbiddenError } = customErrors;
-const { appendFollowers, findArticleBySlugOrFail, PUBLIC_USER_ATTRIBUTES } =
-  helpers;
+const {
+  appendFollowers,
+  appendAuthorFollowers,
+  findArticleBySlugOrFail,
+  PUBLIC_USER_ATTRIBUTES,
+} = helpers;
 const { Article, Comment, User } = models;
 
 //? All Comments for Article
@@ -23,7 +27,7 @@ const allComments = async (req: Request, res: Response, next: NextFunction) => {
     });
 
     for (const comment of comments) {
-      await appendFollowers(loggedUser, comment);
+      await appendAuthorFollowers(loggedUser, comment);
     }
 
     res.json({ comments });
