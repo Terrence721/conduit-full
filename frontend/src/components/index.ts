@@ -2,6 +2,7 @@ export { default as ArticleAuthorButtons } from "./ArticleAuthorButtons/ArticleA
 export { default as ArticleEditorForm } from "./ArticleEditorForm/ArticleEditorForm";
 export { default as ArticleMeta } from "./ArticleMeta/ArticleMeta";
 export { default as ArticlesButtons } from "./ArticlesButtons/ArticlesButtons";
+export { default as ArticlesListView } from "./ArticlesListView/ArticlesListView";
 export { default as ArticlesPagination } from "./ArticlesPagination/ArticlesPagination";
 export { default as ArticlesPreview } from "./ArticlesPreview/ArticlesPreview";
 export { default as ArticleTags } from "./ArticleTags/ArticleTags";
