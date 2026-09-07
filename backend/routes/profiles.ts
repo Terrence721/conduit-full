@@ -10,9 +10,19 @@ const { getProfile, followToggler } = profilesController;
 router.get("/:username", verifyToken, getProfile);
 
 //* Follow Profile
-router.post("/:username/follow", verifyToken, requireAuth, followToggler);
+router.post(
+  "/:username/follow",
+  verifyToken,
+  requireAuth,
+  followToggler("add"),
+);
 
 //* Unfollow Profile
-router.delete("/:username/follow", verifyToken, requireAuth, followToggler);
+router.delete(
+  "/:username/follow",
+  verifyToken,
+  requireAuth,
+  followToggler("remove"),
+);
 
 export = router;

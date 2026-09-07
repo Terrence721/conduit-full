@@ -43,11 +43,11 @@ describe("controllers/favorites.js", () => {
     const db = await buildTestDb();
     const loggedUser = await createUser(db);
     const { favoriteToggler } = await loadFavoritesController(db);
-    const req: any = { method: "POST", loggedUser, params: { slug: "ghost" } };
+    const req: any = { loggedUser, params: { slug: "ghost" } };
     const res = buildRes();
     const next = vi.fn();
 
-    await favoriteToggler(req, res, next);
+    await favoriteToggler("add")(req, res, next);
 
     expect(next.mock.calls[0][0].name).toBe("NotFoundError");
   });
@@ -63,14 +63,13 @@ describe("controllers/favorites.js", () => {
 
     const { favoriteToggler } = await loadFavoritesController(db);
     const req: any = {
-      method: "POST",
       loggedUser: fan,
       params: { slug: article.slug },
     };
     const res = buildRes();
     const next = vi.fn();
 
-    await favoriteToggler(req, res, next);
+    await favoriteToggler("add")(req, res, next);
 
     expect(next).not.toHaveBeenCalled();
     const [{ article: found }] = res.json.mock.calls[0];
@@ -95,14 +94,13 @@ describe("controllers/favorites.js", () => {
 
     const { favoriteToggler } = await loadFavoritesController(db);
     const req: any = {
-      method: "DELETE",
       loggedUser: fan,
       params: { slug: article.slug },
     };
     const res = buildRes();
     const next = vi.fn();
 
-    await favoriteToggler(req, res, next);
+    await favoriteToggler("remove")(req, res, next);
 
     expect(next).not.toHaveBeenCalled();
     const [{ article: found }] = res.json.mock.calls[0];

@@ -22,30 +22,31 @@ const getProfile = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 //* Follow/Unfollow Profile
-const followToggler = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { loggedUser } = req;
+// Bound to "add"/"remove" at route-registration time (see
+// routes/profiles.ts) rather than re-deriving the action from req.method at
+// request time -- the route already knows which verb it is.
+const followToggler =
+  (action: "add" | "remove") =>
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { loggedUser } = req;
 
-    const { username } = req.params;
+      const { username } = req.params;
 
-    const profile = await findProfileByUsernameOrFail(User, username as string);
+      const profile = await findProfileByUsernameOrFail(
+        User,
+        username as string,
+      );
 
-    if (req.method === "POST") {
-      await profile.addFollower(loggedUser);
-    } else if (req.method === "DELETE") {
-      await profile.removeFollower(loggedUser);
+      if (action === "add") await profile.addFollower(loggedUser);
+      else await profile.removeFollower(loggedUser);
+
+      await appendFollowers(loggedUser, profile);
+
+      res.json({ profile });
+    } catch (error) {
+      next(error);
     }
-
-    await appendFollowers(loggedUser, profile);
-
-    res.json({ profile });
-  } catch (error) {
-    next(error);
-  }
-};
+  };
 
 export = { getProfile, followToggler };
