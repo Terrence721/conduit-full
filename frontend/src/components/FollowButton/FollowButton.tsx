@@ -1,6 +1,5 @@
-import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
-import requireAuth from "../../helpers/requireAuth";
+import useToggleAction from "../../hooks/useToggleAction";
 import toggleFollow from "../../services/toggleFollow";
 import type { Profile } from "../../types";
 
@@ -17,23 +16,14 @@ function FollowButton({
   handler,
   username,
 }: FollowButtonProps) {
-  const [loading, setLoading] = useState(false);
   const auth = useAuth();
+  const { loading, toggle } = useToggleAction(handler);
 
   const iconStyle = following ? "ion-minus-round" : "ion-plus-round";
   const text = !auth.isAuth ? "Followers" : following ? "Unfollow" : "Follow";
 
-  const handleClick = () => {
-    const authed = requireAuth(auth);
-    if (!authed) return;
-
-    setLoading(true);
-
-    toggleFollow({ following, headers: authed.headers, username })
-      .then(handler)
-      .catch(console.error)
-      .finally(() => setLoading(false));
-  };
+  const handleClick = () =>
+    toggle((headers) => toggleFollow({ following, headers, username }));
 
   return (
     <>
