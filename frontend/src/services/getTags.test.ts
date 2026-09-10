@@ -6,6 +6,10 @@ vi.mock("../helpers/apiRequest");
 describe("getTags", () => {
   const mockedApiRequest = mockApiRequest();
 
+  beforeEach(() => {
+    mockedApiRequest.mockReset();
+  });
+
   test("returns the tags array on success", async () => {
     mockedApiRequest.mockResolvedValueOnce({ tags: ["react", "typescript"] });
 
