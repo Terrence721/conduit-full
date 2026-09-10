@@ -1,6 +1,6 @@
 import type { AuthState } from "../types";
 
-type AuthedState = Extract<AuthState, { isAuth: true }>;
+export type AuthedState = Extract<AuthState, { isAuth: true }>;
 
 function requireAuth(auth: AuthState): AuthedState | null {
   if (auth.isAuth) return auth;
