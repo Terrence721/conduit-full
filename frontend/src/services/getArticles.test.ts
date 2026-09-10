@@ -7,52 +7,40 @@ describe("getArticles", () => {
   const mockedApiRequest = mockApiRequest();
 
   beforeEach(() => {
+    mockedApiRequest.mockReset();
     mockedApiRequest.mockResolvedValue({ articles: [], articlesCount: 0 });
   });
 
-  test("builds the global feed URL with default limit/page", async () => {
-    await getArticles({ location: "global" });
-
-    expect(mockedApiRequest).toHaveBeenCalledWith({
+  test.each([
+    {
+      location: "global" as const,
+      params: {},
       url: "/api/articles?limit=3&&offset=0",
-      headers: undefined,
-    });
-  });
-
-  test("builds the tag URL", async () => {
-    await getArticles({ location: "tag", tagName: "react" });
-
-    expect(mockedApiRequest).toHaveBeenCalledWith({
+    },
+    {
+      location: "tag" as const,
+      params: { tagName: "react" },
       url: "/api/articles?tag=react&&limit=3&&offset=0",
-      headers: undefined,
-    });
-  });
-
-  test("builds the profile (author) URL", async () => {
-    await getArticles({ location: "profile", username: "exampleUser1" });
-
-    expect(mockedApiRequest).toHaveBeenCalledWith({
+    },
+    {
+      location: "profile" as const,
+      params: { username: "exampleUser1" },
       url: "/api/articles?author=exampleUser1&&limit=3&&offset=0",
-      headers: undefined,
-    });
-  });
-
-  test("builds the favorites URL", async () => {
-    await getArticles({ location: "favorites", username: "exampleUser1" });
-
-    expect(mockedApiRequest).toHaveBeenCalledWith({
+    },
+    {
+      location: "favorites" as const,
+      params: { username: "exampleUser1" },
       url: "/api/articles?favorited=exampleUser1&&limit=3&&offset=0",
-      headers: undefined,
-    });
-  });
-
-  test("builds the feed URL, which has no author/tag query param", async () => {
-    await getArticles({ location: "feed" });
-
-    expect(mockedApiRequest).toHaveBeenCalledWith({
+    },
+    {
+      location: "feed" as const,
+      params: {},
       url: "/api/articles/feed?limit=3&&offset=0",
-      headers: undefined,
-    });
+    },
+  ])("builds the $location URL", async ({ location, params, url }) => {
+    await getArticles({ location, ...params });
+
+    expect(mockedApiRequest).toHaveBeenCalledWith({ url, headers: undefined });
   });
 
   test("respects custom limit/page and passes headers through", async () => {
