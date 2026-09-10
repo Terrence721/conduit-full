@@ -1,6 +1,4 @@
-import { useState } from "react";
-import { useAuth } from "../../context/AuthContext";
-import requireAuth from "../../helpers/requireAuth";
+import useToggleAction from "../../hooks/useToggleAction";
 import toggleFav from "../../services/toggleFav";
 import type { Article } from "../../types";
 
@@ -21,8 +19,7 @@ function FavButton({
   slug,
   text,
 }: FavButtonProps) {
-  const [loading, setLoading] = useState(false);
-  const auth = useAuth();
+  const { loading, toggle } = useToggleAction(handler);
 
   const className = [
     "btn",
@@ -34,17 +31,8 @@ function FavButton({
     .filter(Boolean)
     .join(" ");
 
-  const handleClick = () => {
-    const authed = requireAuth(auth);
-    if (!authed) return;
-
-    setLoading(true);
-
-    toggleFav({ favorited, headers: authed.headers, slug })
-      .then(handler)
-      .catch(console.error)
-      .finally(() => setLoading(false));
-  };
+  const handleClick = () =>
+    toggle((headers) => toggleFav({ favorited, headers, slug }));
 
   return (
     <button className={className} disabled={loading} onClick={handleClick}>
