@@ -1,14 +1,8 @@
 export {};
 
-const jsonwebtoken = require("jsonwebtoken");
+import freshJwt from "../testUtils/freshJwt";
 
-// jwt.ts reads process.env.JWT_KEY at module-load time (top-level const),
-// not lazily inside the functions - so it has to be freshly re-imported
-// after stubbing the env, same as config.ts and models/index.ts.
-const freshJwtHelper = async () => {
-  vi.resetModules();
-  return (await import("./jwt")).default;
-};
+const jsonwebtoken = require("jsonwebtoken");
 
 describe("helper/jwt.ts", () => {
   beforeEach(() => {
@@ -20,7 +14,7 @@ describe("helper/jwt.ts", () => {
   });
 
   test("jwtSign produces a token jwtVerify can verify back to the same payload", async () => {
-    const { jwtSign, jwtVerify } = await freshJwtHelper();
+    const { jwtSign, jwtVerify } = await freshJwt();
 
     const token = await jwtSign({
       username: "jake",
@@ -33,7 +27,7 @@ describe("helper/jwt.ts", () => {
   });
 
   test("jwtSign only includes username and email, not other payload fields", async () => {
-    const { jwtSign, jwtVerify } = await freshJwtHelper();
+    const { jwtSign, jwtVerify } = await freshJwt();
 
     const token = await jwtSign({
       username: "jake",
@@ -46,7 +40,7 @@ describe("helper/jwt.ts", () => {
   });
 
   test("jwtSign sets a 7-day expiration", async () => {
-    const { jwtSign } = await freshJwtHelper();
+    const { jwtSign } = await freshJwt();
 
     const token = await jwtSign({
       username: "jake",
@@ -59,14 +53,14 @@ describe("helper/jwt.ts", () => {
   });
 
   test("jwtVerify rejects a token signed with a different secret", async () => {
-    const { jwtVerify } = await freshJwtHelper();
+    const { jwtVerify } = await freshJwt();
     const forgedToken = jsonwebtoken.sign({ username: "eve" }, "wrong-secret");
 
     await expect(jwtVerify(forgedToken)).rejects.toThrow();
   });
 
   test("jwtVerify rejects a token using a different algorithm, even with the right secret", async () => {
-    const { jwtVerify } = await freshJwtHelper();
+    const { jwtVerify } = await freshJwt();
     // Proves the explicit algorithms: ["HS256"] restriction actually does
     // something, not just documents intent - same secret, wrong algorithm.
     const forgedToken = jsonwebtoken.sign(
