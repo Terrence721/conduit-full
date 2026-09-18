@@ -1,6 +1,7 @@
 export {};
 
-import { Sequelize, DataTypes } from "sequelize";
+import { DataTypes } from "sequelize";
+import buildRawSequelize from "../../testUtils/buildRawSequelize";
 import migration from "../20260813154215-create-user";
 import defineUser from "../../models/User";
 
@@ -28,10 +29,7 @@ describe("migrations/20260813154215-create-user", () => {
   });
 
   test("column set matches the real User.ts model", () => {
-    const sequelize = new Sequelize("test", "test", "test", {
-      dialect: "postgres",
-      logging: false,
-    });
+    const sequelize = buildRawSequelize();
     const User = defineUser(sequelize, DataTypes);
 
     for (const column of ["email", "username", "bio", "image", "password"]) {
