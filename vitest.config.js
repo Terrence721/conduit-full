@@ -26,6 +26,11 @@ export default defineConfig({
           css: true,
           setupFiles: "frontend/src/setupTests.ts",
           include: ["frontend/**/*.test.{ts,tsx}"],
+          // Node's own experimental global `localStorage` shadows jsdom's
+          // per-window implementation and resolves to undefined without a
+          // --localstorage-file flag it doesn't have here. Disabling it
+          // lets jsdom's real, per-test-isolated Storage through instead.
+          execArgv: ["--no-experimental-webstorage"],
         },
       },
     ],
