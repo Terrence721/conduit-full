@@ -3,6 +3,7 @@ export {};
 import buildRes from "../testUtils/buildRes";
 import testDbModule from "../testUtils/testDb";
 import installFreshTestDb from "../testUtils/installFreshTestDb";
+import freshJwt from "../testUtils/freshJwt";
 import bcryptHelper from "../helper/bcrypt";
 const { buildTestDb } = testDbModule;
 const { bcryptHash } = bcryptHelper;
@@ -10,11 +11,6 @@ const { bcryptHash } = bcryptHelper;
 const loadUsersController = async (db: any) => {
   installFreshTestDb(db);
   return import("./users");
-};
-
-const freshJwtHelper = async () => {
-  vi.resetModules();
-  return (await import("../helper/jwt")).default;
 };
 
 describe("controllers/users.ts", () => {
@@ -109,7 +105,7 @@ describe("controllers/users.ts", () => {
       const [{ user }] = res.json.mock.calls[0];
       expect(user.username).toBe("jake");
 
-      const { jwtVerify } = await freshJwtHelper();
+      const { jwtVerify } = await freshJwt();
       const decoded = await jwtVerify(user.dataValues.token);
       expect(decoded.username).toBe("jake");
       expect(decoded.email).toBe("jake@jake.jake");
@@ -169,7 +165,7 @@ describe("controllers/users.ts", () => {
       expect(next).not.toHaveBeenCalled();
       const [{ user }] = res.json.mock.calls[0];
 
-      const { jwtVerify } = await freshJwtHelper();
+      const { jwtVerify } = await freshJwt();
       const decoded = await jwtVerify(user.dataValues.token);
       expect(decoded.username).toBe("jake");
       expect(decoded.email).toBe("jake@jake.jake");
