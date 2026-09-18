@@ -1,5 +1,6 @@
 export {};
 
+import buildRes from "../testUtils/buildRes";
 import testDbModule from "../testUtils/testDb";
 import bcryptHelper from "../helper/bcrypt";
 const { buildTestDb, installTestDb } = testDbModule;
@@ -14,13 +15,6 @@ const loadUsersController = async (db: any) => {
 const freshJwtHelper = async () => {
   vi.resetModules();
   return (await import("../helper/jwt")).default;
-};
-
-const buildRes = () => {
-  const res: any = {};
-  res.status = vi.fn().mockReturnValue(res);
-  res.json = vi.fn().mockReturnValue(res);
-  return res;
 };
 
 describe("controllers/users.ts", () => {
