@@ -1,5 +1,6 @@
 export {};
 
+import buildRes from "../testUtils/buildRes";
 import errorHandler from "./errorHandler";
 import customErrors from "../helper/customErrors";
 const {
@@ -9,13 +10,6 @@ const {
   ValidationError,
   FieldRequiredError,
 } = customErrors;
-
-const buildRes = () => {
-  const res: any = {};
-  res.status = vi.fn().mockReturnValue(res);
-  res.json = vi.fn().mockReturnValue(res);
-  return res;
-};
 
 describe("middleware/errorHandler.ts", () => {
   test("responds 401 for UnauthorizedError", () => {
