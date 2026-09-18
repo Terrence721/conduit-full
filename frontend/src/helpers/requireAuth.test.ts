@@ -1,10 +1,11 @@
+import authHeaders from "../testUtils/authHeaders";
 import { emptyAuthState, type AuthState } from "../types";
 import requireAuth from "./requireAuth";
 
 describe("requireAuth", () => {
   test("returns the auth state unchanged when authenticated", () => {
     const auth: AuthState = {
-      headers: { Authorization: "Token fake-token" },
+      headers: authHeaders,
       isAuth: true,
       loggedUser: { ...emptyAuthState.loggedUser, username: "jake" },
     };
