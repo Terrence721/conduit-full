@@ -1,24 +1,20 @@
 export {};
 
-import express from "express";
 import request from "supertest";
 import bcryptHelper from "../helper/bcrypt";
 
 import testDbModule from "../testUtils/testDb";
-const { buildTestDb, installTestDb } = testDbModule;
+import installFreshTestDb from "../testUtils/installFreshTestDb";
+import buildTestApp from "../testUtils/buildTestApp";
+const { buildTestDb } = testDbModule;
 const { bcryptHash } = bcryptHelper;
 
 const loadApp = async (db: any) => {
-  installTestDb(db);
-  vi.resetModules();
+  installFreshTestDb(db);
   const router = (await import("./users")).default;
   const errorHandler = (await import("../middleware/errorHandler")).default;
 
-  const app = express();
-  app.use(express.json());
-  app.use("/users", router);
-  app.use(errorHandler);
-  return app;
+  return buildTestApp(router, errorHandler, "/users");
 };
 
 describe("routes/users.ts", () => {
