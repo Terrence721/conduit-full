@@ -1,6 +1,7 @@
 export {};
 
-import { Sequelize, DataTypes } from "sequelize";
+import { DataTypes } from "sequelize";
+import buildRawSequelize from "../../testUtils/buildRawSequelize";
 import migration from "../20260813154538-create-comment";
 import defineComment from "../../models/Comment";
 
@@ -33,10 +34,7 @@ describe("migrations/20260813154538-create-comment", () => {
   });
 
   test("column set matches the real Comment.ts model, including its associated FKs", () => {
-    const sequelize = new Sequelize("test", "test", "test", {
-      dialect: "postgres",
-      logging: false,
-    });
+    const sequelize = buildRawSequelize();
     const Comment = defineComment(sequelize, DataTypes);
     const User = sequelize.define("User", {});
     const Article = sequelize.define("Article", {});
