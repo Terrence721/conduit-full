@@ -12,61 +12,34 @@ const {
 } = customErrors;
 
 describe("middleware/errorHandler.ts", () => {
-  test("responds 401 for UnauthorizedError", () => {
+  test.each([
+    { name: "UnauthorizedError", error: new UnauthorizedError(), status: 401 },
+    {
+      name: "ForbiddenError",
+      error: new ForbiddenError("article"),
+      status: 403,
+    },
+    {
+      name: "NotFoundError",
+      error: new NotFoundError("Article"),
+      status: 404,
+    },
+    {
+      name: "ValidationError",
+      error: new ValidationError("bad input"),
+      status: 422,
+    },
+    {
+      name: "FieldRequiredError (ValidationError subclass)",
+      error: new FieldRequiredError("email"),
+      status: 422,
+    },
+  ])("responds $status for $name", ({ error, status }) => {
     const res = buildRes();
-    const error = new UnauthorizedError();
 
     errorHandler(error, {} as any, res, vi.fn());
 
-    expect(res.status).toHaveBeenCalledWith(401);
-    expect(res.json).toHaveBeenCalledWith({
-      errors: { body: [error.message] },
-    });
-  });
-
-  test("responds 403 for ForbiddenError", () => {
-    const res = buildRes();
-    const error = new ForbiddenError("article");
-
-    errorHandler(error, {} as any, res, vi.fn());
-
-    expect(res.status).toHaveBeenCalledWith(403);
-    expect(res.json).toHaveBeenCalledWith({
-      errors: { body: [error.message] },
-    });
-  });
-
-  test("responds 404 for NotFoundError", () => {
-    const res = buildRes();
-    const error = new NotFoundError("Article");
-
-    errorHandler(error, {} as any, res, vi.fn());
-
-    expect(res.status).toHaveBeenCalledWith(404);
-    expect(res.json).toHaveBeenCalledWith({
-      errors: { body: [error.message] },
-    });
-  });
-
-  test("responds 422 for ValidationError", () => {
-    const res = buildRes();
-    const error = new ValidationError("bad input");
-
-    errorHandler(error, {} as any, res, vi.fn());
-
-    expect(res.status).toHaveBeenCalledWith(422);
-    expect(res.json).toHaveBeenCalledWith({
-      errors: { body: [error.message] },
-    });
-  });
-
-  test("responds 422 for ValidationError subclasses too (FieldRequiredError)", () => {
-    const res = buildRes();
-    const error = new FieldRequiredError("email");
-
-    errorHandler(error, {} as any, res, vi.fn());
-
-    expect(res.status).toHaveBeenCalledWith(422);
+    expect(res.status).toHaveBeenCalledWith(status);
     expect(res.json).toHaveBeenCalledWith({
       errors: { body: [error.message] },
     });
