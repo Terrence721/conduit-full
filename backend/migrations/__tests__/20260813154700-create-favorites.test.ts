@@ -1,6 +1,7 @@
 export {};
 
-import { Sequelize, DataTypes, type BelongsToMany } from "sequelize";
+import { DataTypes, type BelongsToMany } from "sequelize";
+import buildRawSequelize from "../../testUtils/buildRawSequelize";
 import migration from "../20260813154700-create-favorites";
 import defineUser from "../../models/User";
 import defineArticle from "../../models/Article";
@@ -30,10 +31,7 @@ describe("migrations/20260813154700-create-favorites", () => {
   });
 
   test("columns match User/Article's real belongsToMany association", () => {
-    const sequelize = new Sequelize("test", "test", "test", {
-      dialect: "postgres",
-      logging: false,
-    });
+    const sequelize = buildRawSequelize();
     const User = defineUser(sequelize, DataTypes);
     const Article = defineArticle(sequelize, DataTypes);
     const Tag = sequelize.define("Tag", {});
