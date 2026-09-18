@@ -1,17 +1,12 @@
 export {};
 
-import { Sequelize, DataTypes } from "sequelize";
+import { DataTypes } from "sequelize";
+import buildRawSequelize from "../testUtils/buildRawSequelize";
 import defineUser from "./User";
-
-const buildSequelize = () =>
-  new Sequelize("test", "test", "test", {
-    dialect: "postgres",
-    logging: false,
-  });
 
 describe("models/User.js", () => {
   test("defines the expected fields", () => {
-    const User = defineUser(buildSequelize(), DataTypes);
+    const User = defineUser(buildRawSequelize(), DataTypes);
 
     expect(Object.keys(User.rawAttributes)).toEqual(
       expect.arrayContaining(["email", "username", "bio", "image", "password"]),
@@ -19,7 +14,7 @@ describe("models/User.js", () => {
   });
 
   test("toJSON hides id, password, and timestamps", () => {
-    const User = defineUser(buildSequelize(), DataTypes);
+    const User = defineUser(buildRawSequelize(), DataTypes);
     const user = User.build({
       id: 1,
       email: "jake@jake.jake",
@@ -46,7 +41,7 @@ describe("models/User.js", () => {
 
   describe("associate", () => {
     test("associates Comments through userId, not articleId", () => {
-      const sequelize = buildSequelize();
+      const sequelize = buildRawSequelize();
       const User = defineUser(sequelize, DataTypes);
       const Article = sequelize.define("Article", {});
       const Comment = sequelize.define("Comment", {});
@@ -57,7 +52,7 @@ describe("models/User.js", () => {
     });
 
     test("associates Articles through userId with cascade delete", () => {
-      const sequelize = buildSequelize();
+      const sequelize = buildRawSequelize();
       const User = defineUser(sequelize, DataTypes);
       const Article = sequelize.define("Article", {});
       const Comment = sequelize.define("Comment", {});
