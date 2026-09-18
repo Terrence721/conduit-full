@@ -3,6 +3,7 @@ export {};
 import buildRes from "../testUtils/buildRes";
 import testDbModule from "../testUtils/testDb";
 import installFreshTestDb from "../testUtils/installFreshTestDb";
+import createUserWithFakeToken from "../testUtils/createUserWithFakeToken";
 import bcryptHelper from "../helper/bcrypt";
 const { buildTestDb } = testDbModule;
 const { bcryptCompare } = bcryptHelper;
@@ -12,22 +13,11 @@ const loadUserController = async (db: any) => {
   return import("./user");
 };
 
-const createUser = async (db: any, overrides = {}) => {
-  const user = await db.User.create({
-    username: "jake",
-    email: "jake@jake.jake",
-    password: "hashed",
-    ...overrides,
-  });
-  user.dataValues.token = "fake-token";
-  return user;
-};
-
 describe("controllers/user.ts", () => {
   describe("currentUser", () => {
     test("returns loggedUser including their own email", async () => {
       const db = await buildTestDb();
-      const loggedUser = await createUser(db);
+      const loggedUser = await createUserWithFakeToken(db);
       const { currentUser } = await loadUserController(db);
       const req: any = { loggedUser };
       const res = buildRes();
@@ -44,7 +34,7 @@ describe("controllers/user.ts", () => {
   describe("updateUser", () => {
     test("updates a field without a password in the payload, without crashing", async () => {
       const db = await buildTestDb();
-      const loggedUser = await createUser(db);
+      const loggedUser = await createUserWithFakeToken(db);
       const { updateUser } = await loadUserController(db);
       const req: any = {
         loggedUser,
@@ -65,7 +55,7 @@ describe("controllers/user.ts", () => {
 
     test("includes email in the response even when email isn't part of the update", async () => {
       const db = await buildTestDb();
-      const loggedUser = await createUser(db);
+      const loggedUser = await createUserWithFakeToken(db);
       const { updateUser } = await loadUserController(db);
       const req: any = {
         loggedUser,
@@ -82,7 +72,7 @@ describe("controllers/user.ts", () => {
 
     test("updates the email directly when it's part of the update", async () => {
       const db = await buildTestDb();
-      const loggedUser = await createUser(db);
+      const loggedUser = await createUserWithFakeToken(db);
       const { updateUser } = await loadUserController(db);
       const req: any = {
         loggedUser,
@@ -102,7 +92,7 @@ describe("controllers/user.ts", () => {
 
     test("hashes and persists a new password when one is provided", async () => {
       const db = await buildTestDb();
-      const loggedUser = await createUser(db);
+      const loggedUser = await createUserWithFakeToken(db);
       const { updateUser } = await loadUserController(db);
       const req: any = {
         loggedUser,
@@ -122,7 +112,7 @@ describe("controllers/user.ts", () => {
 
     test("ignores non-whitelisted fields like id (mass-assignment hardening)", async () => {
       const db = await buildTestDb();
-      const loggedUser = await createUser(db);
+      const loggedUser = await createUserWithFakeToken(db);
       const originalId = loggedUser.id;
       const { updateUser } = await loadUserController(db);
       const req: any = {
