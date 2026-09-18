@@ -3,22 +3,12 @@ export {};
 import buildRes from "../testUtils/buildRes";
 import testDbModule from "../testUtils/testDb";
 import installFreshTestDb from "../testUtils/installFreshTestDb";
+import createUserWithFakeToken from "../testUtils/createUserWithFakeToken";
 const { buildTestDb } = testDbModule;
 
 const loadFavoritesController = async (db: any) => {
   installFreshTestDb(db);
   return (await import("./favorites")).default;
-};
-
-const createUser = async (db: any, overrides = {}) => {
-  const user = await db.User.create({
-    username: "jake",
-    email: "jake@jake.jake",
-    password: "hashed",
-    ...overrides,
-  });
-  user.dataValues.token = "fake-token";
-  return user;
 };
 
 const createArticle = async (db: any, author: any) => {
@@ -35,7 +25,7 @@ const createArticle = async (db: any, author: any) => {
 describe("controllers/favorites.js", () => {
   test("throws NotFoundError when the article slug doesn't exist", async () => {
     const db = await buildTestDb();
-    const loggedUser = await createUser(db);
+    const loggedUser = await createUserWithFakeToken(db);
     const { favoriteToggler } = await loadFavoritesController(db);
     const req: any = { loggedUser, params: { slug: "ghost" } };
     const res = buildRes();
@@ -48,8 +38,8 @@ describe("controllers/favorites.js", () => {
 
   test("POST favorites the article and persists it", async () => {
     const db = await buildTestDb();
-    const author = await createUser(db);
-    const fan = await createUser(db, {
+    const author = await createUserWithFakeToken(db);
+    const fan = await createUserWithFakeToken(db, {
       username: "jane",
       email: "jane@jane.jane",
     });
@@ -78,8 +68,8 @@ describe("controllers/favorites.js", () => {
 
   test("DELETE unfavorites the article and persists it", async () => {
     const db = await buildTestDb();
-    const author = await createUser(db);
-    const fan = await createUser(db, {
+    const author = await createUserWithFakeToken(db);
+    const fan = await createUserWithFakeToken(db, {
       username: "jane",
       email: "jane@jane.jane",
     });
