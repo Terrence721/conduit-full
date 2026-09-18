@@ -2,11 +2,11 @@ export {};
 
 import buildRes from "../testUtils/buildRes";
 import testDbModule from "../testUtils/testDb";
-const { buildTestDb, installTestDb } = testDbModule;
+import installFreshTestDb from "../testUtils/installFreshTestDb";
+const { buildTestDb } = testDbModule;
 
 const loadFavoritesController = async (db: any) => {
-  installTestDb(db);
-  vi.resetModules();
+  installFreshTestDb(db);
   return (await import("./favorites")).default;
 };
 
