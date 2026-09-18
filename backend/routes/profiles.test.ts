@@ -1,22 +1,18 @@
 export {};
 
-import express from "express";
 import request from "supertest";
 
 import testDbModule from "../testUtils/testDb";
-const { buildTestDb, installTestDb } = testDbModule;
+import installFreshTestDb from "../testUtils/installFreshTestDb";
+import buildTestApp from "../testUtils/buildTestApp";
+const { buildTestDb } = testDbModule;
 
 const loadApp = async (db: any) => {
-  installTestDb(db);
-  vi.resetModules();
+  installFreshTestDb(db);
   const router = (await import("./profiles")).default;
   const errorHandler = (await import("../middleware/errorHandler")).default;
 
-  const app = express();
-  app.use(express.json());
-  app.use("/profiles", router);
-  app.use(errorHandler);
-  return app;
+  return buildTestApp(router, errorHandler, "/profiles");
 };
 
 const createUser = async (db: any, overrides = {}) => {
