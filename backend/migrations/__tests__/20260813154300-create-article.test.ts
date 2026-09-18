@@ -1,6 +1,7 @@
 export {};
 
-import { Sequelize, DataTypes } from "sequelize";
+import { DataTypes } from "sequelize";
+import buildRawSequelize from "../../testUtils/buildRawSequelize";
 import migration from "../20260813154300-create-article";
 import defineArticle from "../../models/Article";
 
@@ -32,10 +33,7 @@ describe("migrations/20260813154300-create-article", () => {
   });
 
   test("column set matches the real Article.ts model, including its associated userId", () => {
-    const sequelize = new Sequelize("test", "test", "test", {
-      dialect: "postgres",
-      logging: false,
-    });
+    const sequelize = buildRawSequelize();
     const Article = defineArticle(sequelize, DataTypes);
     const User = sequelize.define("User", {});
     const Tag = sequelize.define("Tag", {});
