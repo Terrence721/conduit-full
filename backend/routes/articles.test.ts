@@ -5,6 +5,7 @@ import request from "supertest";
 import testDbModule from "../testUtils/testDb";
 import installFreshTestDb from "../testUtils/installFreshTestDb";
 import buildTestApp from "../testUtils/buildTestApp";
+import createUser from "../testUtils/createUser";
 const { buildTestDb } = testDbModule;
 
 const loadApp = async (db: any) => {
@@ -13,15 +14,6 @@ const loadApp = async (db: any) => {
   const errorHandler = (await import("../middleware/errorHandler")).default;
 
   return buildTestApp(router, errorHandler, "/articles");
-};
-
-const createUser = async (db: any, overrides = {}) => {
-  return db.User.create({
-    username: "jake",
-    email: "jake@jake.jake",
-    password: "hashed",
-    ...overrides,
-  });
 };
 
 const createArticle = async (db: any, author: any, overrides = {}) => {
