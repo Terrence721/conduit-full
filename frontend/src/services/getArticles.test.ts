@@ -1,3 +1,4 @@
+import authHeaders from "../testUtils/authHeaders";
 import mockApiRequest from "../testUtils/mockApiRequest";
 import getArticles from "./getArticles";
 
@@ -44,13 +45,16 @@ describe("getArticles", () => {
   });
 
   test("respects custom limit/page and passes headers through", async () => {
-    const headers = { Authorization: "Token abc123" };
-
-    await getArticles({ headers, limit: 10, location: "global", page: 2 });
+    await getArticles({
+      headers: authHeaders,
+      limit: 10,
+      location: "global",
+      page: 2,
+    });
 
     expect(mockedApiRequest).toHaveBeenCalledWith({
       url: "/api/articles?limit=10&&offset=2",
-      headers,
+      headers: authHeaders,
     });
   });
 
