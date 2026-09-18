@@ -1,22 +1,18 @@
 export {};
 
-import freshJwt from "../testUtils/freshJwt";
+import testDbModule from "../testUtils/testDb";
+import installFreshTestDb from "../testUtils/installFreshTestDb";
+import createUser from "../testUtils/createUser";
+import tokenFor from "../testUtils/tokenFor";
+const { buildTestDb } = testDbModule;
 
-// The only genuine external dependency here is DB access via the User
-// model - faked below via vi.doMock(), since it needs a live Postgres this
-// environment doesn't have. jwtVerify/jwtSign are the real modules: real
-// signing, real verification, no mocking, so the actual token-handling
-// logic is exercised for real.
-const fakeUser = { findOne: vi.fn() };
-
-const loadAuthentication = async () => {
-  vi.doMock("../models", () => ({ default: { User: fakeUser } }));
-  vi.resetModules();
+const loadAuthentication = async (db: any) => {
+  installFreshTestDb(db);
   return (await import("./authentication")).default;
 };
 
-const loadVerifyToken = async () => {
-  const { verifyToken } = await loadAuthentication();
+const loadVerifyToken = async (db: any) => {
+  const { verifyToken } = await loadAuthentication(db);
   return verifyToken;
 };
 
@@ -29,7 +25,6 @@ const buildReqResNext = (headers: any = {}) => ({
 describe("middleware/authentication.ts", () => {
   beforeEach(() => {
     vi.stubEnv("JWT_KEY", "test-secret-key");
-    fakeUser.findOne.mockReset();
   });
 
   afterEach(() => {
@@ -37,18 +32,21 @@ describe("middleware/authentication.ts", () => {
   });
 
   test("calls next() with no error and no loggedUser when there's no Authorization header", async () => {
-    const verifyToken = await loadVerifyToken();
+    const db = await buildTestDb();
+    const findOneSpy = vi.spyOn(db.User, "findOne");
+    const verifyToken = await loadVerifyToken(db);
     const { req, res, next } = buildReqResNext({});
 
     await verifyToken(req, res, next);
 
     expect(next).toHaveBeenCalledWith();
     expect(req.loggedUser).toBeUndefined();
-    expect(fakeUser.findOne).not.toHaveBeenCalled();
+    expect(findOneSpy).not.toHaveBeenCalled();
   });
 
   test("passes a SyntaxError to next() when the Authorization header is malformed", async () => {
-    const verifyToken = await loadVerifyToken();
+    const db = await buildTestDb();
+    const verifyToken = await loadVerifyToken(db);
     const { req, res, next } = buildReqResNext({ authorization: "Token" });
 
     await verifyToken(req, res, next);
@@ -57,35 +55,33 @@ describe("middleware/authentication.ts", () => {
   });
 
   test("attaches req.loggedUser and the token when the JWT is valid and the user exists", async () => {
-    const { jwtSign } = await freshJwt();
-    const token = await jwtSign({
+    const db = await buildTestDb();
+    await createUser(db, { username: "jake", email: "jake@jake.jake" });
+    const token = await tokenFor({
       username: "jake",
       email: "jake@jake.jake",
     });
-    const fakeFoundUser = { dataValues: {} };
-    fakeUser.findOne.mockResolvedValue(fakeFoundUser);
 
-    const verifyToken = await loadVerifyToken();
+    const verifyToken = await loadVerifyToken(db);
     const { req, res, next } = buildReqResNext({
       authorization: `Token ${token}`,
     });
 
     await verifyToken(req, res, next);
 
-    expect(req.loggedUser).toBe(fakeFoundUser);
+    expect(req.loggedUser.dataValues.email).toBe("jake@jake.jake");
     expect(req.loggedUser.dataValues.token).toBe(token);
     expect(next).toHaveBeenCalledWith();
   });
 
   test("calls next() exactly once when the verified user no longer exists (missing-return regression check)", async () => {
-    const { jwtSign } = await freshJwt();
-    const token = await jwtSign({
+    const db = await buildTestDb();
+    const token = await tokenFor({
       username: "ghost",
       email: "ghost@ghost.ghost",
     });
-    fakeUser.findOne.mockResolvedValue(null);
 
-    const verifyToken = await loadVerifyToken();
+    const verifyToken = await loadVerifyToken(db);
     const { req, res, next } = buildReqResNext({
       authorization: `Token ${token}`,
     });
@@ -98,7 +94,9 @@ describe("middleware/authentication.ts", () => {
   });
 
   test("passes the verify error to next() for an invalid token", async () => {
-    const verifyToken = await loadVerifyToken();
+    const db = await buildTestDb();
+    const findOneSpy = vi.spyOn(db.User, "findOne");
+    const verifyToken = await loadVerifyToken(db);
     const { req, res, next } = buildReqResNext({
       authorization: "Token not-a-real-token",
     });
@@ -106,12 +104,13 @@ describe("middleware/authentication.ts", () => {
     await verifyToken(req, res, next);
 
     expect(next).toHaveBeenCalledWith(expect.any(Error));
-    expect(fakeUser.findOne).not.toHaveBeenCalled();
+    expect(findOneSpy).not.toHaveBeenCalled();
   });
 
   describe("requireAuth", () => {
     test("passes UnauthorizedError to next() when there's no loggedUser", async () => {
-      const { requireAuth } = await loadAuthentication();
+      const db = await buildTestDb();
+      const { requireAuth } = await loadAuthentication(db);
       const { req, res, next } = buildReqResNext();
 
       requireAuth(req, res, next);
@@ -121,7 +120,8 @@ describe("middleware/authentication.ts", () => {
     });
 
     test("calls next() with no error when a loggedUser is present", async () => {
-      const { requireAuth } = await loadAuthentication();
+      const db = await buildTestDb();
+      const { requireAuth } = await loadAuthentication(db);
       const { req, res, next } = buildReqResNext();
       req.loggedUser = { id: 1 };
 
