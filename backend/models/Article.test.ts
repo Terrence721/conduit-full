@@ -1,17 +1,12 @@
 export {};
 
-import { Sequelize, DataTypes } from "sequelize";
+import { DataTypes } from "sequelize";
+import buildRawSequelize from "../testUtils/buildRawSequelize";
 import defineArticle from "./Article";
-
-const buildSequelize = () =>
-  new Sequelize("test", "test", "test", {
-    dialect: "postgres",
-    logging: false,
-  });
 
 describe("models/Article.js", () => {
   test("defines the expected fields", () => {
-    const Article = defineArticle(buildSequelize(), DataTypes);
+    const Article = defineArticle(buildRawSequelize(), DataTypes);
 
     expect(Object.keys(Article.rawAttributes)).toEqual(
       expect.arrayContaining(["slug", "title", "description", "body"]),
@@ -19,7 +14,7 @@ describe("models/Article.js", () => {
   });
 
   test("toJSON hides id and userId", () => {
-    const Article = defineArticle(buildSequelize(), DataTypes);
+    const Article = defineArticle(buildRawSequelize(), DataTypes);
     const article = Article.build({
       id: 1,
       userId: 2,
@@ -40,7 +35,7 @@ describe("models/Article.js", () => {
 
   describe("associate", () => {
     const buildAssociatedArticle = () => {
-      const sequelize = buildSequelize();
+      const sequelize = buildRawSequelize();
       const Article = defineArticle(sequelize, DataTypes);
       const User = sequelize.define("User", {});
       const Tag = sequelize.define("Tag", {
