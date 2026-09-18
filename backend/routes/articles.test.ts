@@ -6,6 +6,7 @@ import testDbModule from "../testUtils/testDb";
 import installFreshTestDb from "../testUtils/installFreshTestDb";
 import buildTestApp from "../testUtils/buildTestApp";
 import createUser from "../testUtils/createUser";
+import createArticle from "../testUtils/createArticle";
 const { buildTestDb } = testDbModule;
 
 const loadApp = async (db: any) => {
@@ -14,18 +15,6 @@ const loadApp = async (db: any) => {
   const errorHandler = (await import("../middleware/errorHandler")).default;
 
   return buildTestApp(router, errorHandler, "/articles");
-};
-
-const createArticle = async (db: any, author: any, overrides = {}) => {
-  const article = await db.Article.create({
-    slug: "how-to-train-your-dragon",
-    title: "How to train your dragon",
-    description: "d",
-    body: "b",
-    ...overrides,
-  });
-  await article.setAuthor(author);
-  return article;
 };
 
 const tokenFor = async (user: any) => {
