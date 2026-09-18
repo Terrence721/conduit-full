@@ -1,6 +1,7 @@
 export {};
 
-import { Sequelize, DataTypes, type BelongsToMany } from "sequelize";
+import { DataTypes, type BelongsToMany } from "sequelize";
+import buildRawSequelize from "../../testUtils/buildRawSequelize";
 import migration from "../20260813154800-create-followers";
 import defineUser from "../../models/User";
 
@@ -29,10 +30,7 @@ describe("migrations/20260813154800-create-followers", () => {
   });
 
   test("columns match User's real self-referential belongsToMany association", () => {
-    const sequelize = new Sequelize("test", "test", "test", {
-      dialect: "postgres",
-      logging: false,
-    });
+    const sequelize = buildRawSequelize();
     const User = defineUser(sequelize, DataTypes);
     const Article = sequelize.define("Article", {});
     const Comment = sequelize.define("Comment", {});
