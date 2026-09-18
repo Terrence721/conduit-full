@@ -1,3 +1,4 @@
+import authHeaders from "../testUtils/authHeaders";
 import mockApiRequest from "../testUtils/mockApiRequest";
 import getComments from "./getComments";
 import type { Comment } from "../types";
@@ -33,12 +34,10 @@ describe("getComments", () => {
   });
 
   test("passes headers through when provided", async () => {
-    const headers = { Authorization: "Token abc123" };
-
-    await getComments({ headers, slug: "test-slug" });
+    await getComments({ headers: authHeaders, slug: "test-slug" });
 
     expect(mockedApiRequest).toHaveBeenCalledWith({
-      headers,
+      headers: authHeaders,
       url: "/api/articles/test-slug/comments",
     });
   });
