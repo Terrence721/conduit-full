@@ -424,7 +424,7 @@
 
 <div class="hero">
   <div class="wrap">
-    <p class="eyebrow">Portfolio Manifest — Prepared 2026-09-07</p>
+    <p class="eyebrow">Portfolio Manifest — Prepared 2026-09-18</p>
     <h1 class="name">Terrence&nbsp;Daniels</h1>
     <p class="role">Full-Stack Engineer</p>
     <p class="thesis">
@@ -469,7 +469,7 @@
   <div class="wrap">
     <div class="manifest-row">
       <div class="manifest-cell">
-        <span class="v">117</span><span class="k">phases shipped</span>
+        <span class="v">138</span><span class="k">phases shipped</span>
       </div>
       <div class="manifest-cell">
         <span class="v">228/228</span
@@ -934,9 +934,9 @@
       source alone; and the new Docker Postgres setup deliberately defaults to
       the standard port for anyone else cloning the repo, rather than hardcoding
       this machine's own port conflict into a committed file. The still-open
-      gap: the 68 files tracked by issue #71 have no behavioral tests, unlike
-      the backend where every file has one — disclosed and tracked on the board
-      rather than quietly deferred.
+      gap: 62 of the 69 files tracked by issue #71 have no behavioral tests yet
+      (7 done so far), unlike the backend where every file has one — disclosed
+      and tracked on the board rather than quietly deferred.
     </p>
     <p class="lede">
       A DRY/SOLID audit run across the whole codebase (2026-09-07) found 12
@@ -947,10 +947,12 @@
       <code>appendFollowers</code> split apart once it turned out to be two
       functions wearing one name, an authenticated user's email removed from a
       mutable <code>req.headers</code> side channel, and a tangled
-      <code>ArticleEditorForm.tsx</code> pulled apart into a dedicated hook. 19
-      of the 20 findings are fixed; one low-severity duplication
-      (<code>FollowButton</code>/<code>FavButton</code>'s identical toggle
-      pattern) remains open.
+      <code>ArticleEditorForm.tsx</code> pulled apart into a dedicated hook. All
+      20 findings were fixed. A second, narrower audit targeting test files
+      specifically (2026-09-18) found 9 backend and 2 frontend findings: all 9
+      backend findings and 1 of 2 frontend findings were fixed, and the second
+      frontend finding was reviewed and deliberately rejected as not a real
+      violation at this codebase's size.
     </p>
   </section>
 </div>
@@ -981,9 +983,8 @@
       complete: all 16 planned service modules, both context files, all 32
       components, all 12 route pages, and the app entry point are done, and the
       full stack has been verified running end to end against a real database.
-      Two honest gaps remain: 68 tracked files still without behavioral tests,
-      and one open DRY/SOLID finding — see <code>todo.md</code> for the current
-      state.
+      One honest gap remains: 62 of the 69 files tracked by issue #71 still
+      without behavioral tests — see <code>todo.md</code> for the current state.
     </p>
   </div>
 </footer>
