@@ -2,13 +2,13 @@ export {};
 
 import buildRes from "../testUtils/buildRes";
 import testDbModule from "../testUtils/testDb";
+import installFreshTestDb from "../testUtils/installFreshTestDb";
 import bcryptHelper from "../helper/bcrypt";
-const { buildTestDb, installTestDb } = testDbModule;
+const { buildTestDb } = testDbModule;
 const { bcryptCompare } = bcryptHelper;
 
 const loadUserController = async (db: any) => {
-  installTestDb(db);
-  vi.resetModules();
+  installFreshTestDb(db);
   return import("./user");
 };
 
