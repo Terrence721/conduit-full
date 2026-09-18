@@ -3,22 +3,12 @@ export {};
 import buildRes from "../testUtils/buildRes";
 import testDbModule from "../testUtils/testDb";
 import installFreshTestDb from "../testUtils/installFreshTestDb";
+import createUserWithFakeToken from "../testUtils/createUserWithFakeToken";
 const { buildTestDb } = testDbModule;
 
 const loadCommentsController = async (db: any) => {
   installFreshTestDb(db);
   return (await import("./comments")).default;
-};
-
-const createUser = async (db: any, overrides = {}) => {
-  const user = await db.User.create({
-    username: "jake",
-    email: "jake@jake.jake",
-    password: "hashed",
-    ...overrides,
-  });
-  user.dataValues.token = "fake-token";
-  return user;
 };
 
 const createArticle = async (db: any, author: any, overrides = {}) => {
@@ -37,7 +27,7 @@ describe("controllers/comments.js", () => {
   describe("allComments", () => {
     test("returns an article's comments with author/followers appended", async () => {
       const db = await buildTestDb();
-      const author = await createUser(db);
+      const author = await createUserWithFakeToken(db);
       const article = await createArticle(db, author);
       await db.Comment.create({
         body: "His name was my name too.",
@@ -81,7 +71,7 @@ describe("controllers/comments.js", () => {
   describe("createComment", () => {
     test("throws FieldRequiredError when body is missing", async () => {
       const db = await buildTestDb();
-      const loggedUser = await createUser(db);
+      const loggedUser = await createUserWithFakeToken(db);
       const { createComment } = await loadCommentsController(db);
       const req: any = {
         loggedUser,
@@ -98,7 +88,7 @@ describe("controllers/comments.js", () => {
 
     test("throws NotFoundError when the article slug doesn't exist", async () => {
       const db = await buildTestDb();
-      const loggedUser = await createUser(db);
+      const loggedUser = await createUserWithFakeToken(db);
       const { createComment } = await loadCommentsController(db);
       const req: any = {
         loggedUser,
@@ -115,7 +105,7 @@ describe("controllers/comments.js", () => {
 
     test("creates a comment persisted against the right article and user", async () => {
       const db = await buildTestDb();
-      const loggedUser = await createUser(db);
+      const loggedUser = await createUserWithFakeToken(db);
       const article = await createArticle(db, loggedUser);
       const { createComment } = await loadCommentsController(db);
       const req: any = {
@@ -140,7 +130,7 @@ describe("controllers/comments.js", () => {
   describe("deleteComment", () => {
     test("throws NotFoundError when the article slug doesn't exist", async () => {
       const db = await buildTestDb();
-      const loggedUser = await createUser(db);
+      const loggedUser = await createUserWithFakeToken(db);
       const { deleteComment } = await loadCommentsController(db);
       const req: any = {
         loggedUser,
@@ -156,7 +146,7 @@ describe("controllers/comments.js", () => {
 
     test("throws NotFoundError when the commentId doesn't exist", async () => {
       const db = await buildTestDb();
-      const loggedUser = await createUser(db);
+      const loggedUser = await createUserWithFakeToken(db);
       const article = await createArticle(db, loggedUser);
       const { deleteComment } = await loadCommentsController(db);
       const req: any = {
@@ -173,7 +163,7 @@ describe("controllers/comments.js", () => {
 
     test("throws NotFoundError when the comment belongs to a different article than the slug (regression check)", async () => {
       const db = await buildTestDb();
-      const loggedUser = await createUser(db);
+      const loggedUser = await createUserWithFakeToken(db);
       const article = await createArticle(db, loggedUser, {
         slug: "article-one",
         title: "Article One",
@@ -207,11 +197,11 @@ describe("controllers/comments.js", () => {
 
     test("throws ForbiddenError when the logged-in user isn't the comment's author", async () => {
       const db = await buildTestDb();
-      const author = await createUser(db, {
+      const author = await createUserWithFakeToken(db, {
         username: "jake",
         email: "jake@jake.jake",
       });
-      const other = await createUser(db, {
+      const other = await createUserWithFakeToken(db, {
         username: "mallory",
         email: "m@m.m",
       });
@@ -237,7 +227,7 @@ describe("controllers/comments.js", () => {
 
     test("deletes the comment when the article and author both match", async () => {
       const db = await buildTestDb();
-      const author = await createUser(db);
+      const author = await createUserWithFakeToken(db);
       const article = await createArticle(db, author);
       const comment = await db.Comment.create({
         body: "hi",
