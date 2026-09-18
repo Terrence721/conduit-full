@@ -3,22 +3,12 @@ export {};
 import buildRes from "../testUtils/buildRes";
 import testDbModule from "../testUtils/testDb";
 import installFreshTestDb from "../testUtils/installFreshTestDb";
+import createUserWithFakeToken from "../testUtils/createUserWithFakeToken";
 const { buildTestDb } = testDbModule;
 
 const loadArticlesController = async (db: any) => {
   installFreshTestDb(db);
   return (await import("./articles")).default;
-};
-
-const createUser = async (db: any, overrides = {}) => {
-  const user = await db.User.create({
-    username: "jake",
-    email: "jake@jake.jake",
-    password: "hashed",
-    ...overrides,
-  });
-  user.dataValues.token = "fake-token";
-  return user;
 };
 
 describe("controllers/articles.js", () => {
@@ -41,7 +31,7 @@ describe("controllers/articles.js", () => {
 
     test("returns articles with tagList/favorited/author appended", async () => {
       const db = await buildTestDb();
-      const author = await createUser(db);
+      const author = await createUserWithFakeToken(db);
       const article = await db.Article.create({
         slug: "a",
         title: "A",
@@ -69,7 +59,7 @@ describe("controllers/articles.js", () => {
 
     test("filters by tag", async () => {
       const db = await buildTestDb();
-      const author = await createUser(db);
+      const author = await createUserWithFakeToken(db);
       const match = await db.Article.create({
         slug: "a",
         title: "A",
@@ -102,11 +92,11 @@ describe("controllers/articles.js", () => {
 
     test("filters by author", async () => {
       const db = await buildTestDb();
-      const jake = await createUser(db, {
+      const jake = await createUserWithFakeToken(db, {
         username: "jake",
         email: "jake@jake.jake",
       });
-      const jane = await createUser(db, {
+      const jane = await createUserWithFakeToken(db, {
         username: "jane",
         email: "jane@jane.jane",
       });
@@ -140,11 +130,11 @@ describe("controllers/articles.js", () => {
 
     test("returns a user's favorited articles when favorited is given", async () => {
       const db = await buildTestDb();
-      const author = await createUser(db, {
+      const author = await createUserWithFakeToken(db, {
         username: "jake",
         email: "jake@jake.jake",
       });
-      const fan = await createUser(db, {
+      const fan = await createUserWithFakeToken(db, {
         username: "jane",
         email: "jane@jane.jane",
       });
@@ -189,7 +179,7 @@ describe("controllers/articles.js", () => {
       "throws FieldRequiredError when %s is missing",
       async (missingField) => {
         const db = await buildTestDb();
-        const loggedUser = await createUser(db);
+        const loggedUser = await createUserWithFakeToken(db);
         const { createArticle } = await loadArticlesController(db);
         const article: any = { title: "T", description: "D", body: "B" };
         delete article[missingField];
@@ -205,7 +195,7 @@ describe("controllers/articles.js", () => {
 
     test("creates an article without a tagList in the request body (regression check)", async () => {
       const db = await buildTestDb();
-      const loggedUser = await createUser(db);
+      const loggedUser = await createUserWithFakeToken(db);
       const { createArticle } = await loadArticlesController(db);
       const req: any = {
         loggedUser,
@@ -228,7 +218,7 @@ describe("controllers/articles.js", () => {
 
     test("attaches existing and new tags; silently skips a too-short unknown tag", async () => {
       const db = await buildTestDb();
-      const loggedUser = await createUser(db);
+      const loggedUser = await createUserWithFakeToken(db);
       await db.Tag.create({ name: "dragons" });
       const { createArticle } = await loadArticlesController(db);
       const req: any = {
@@ -260,7 +250,7 @@ describe("controllers/articles.js", () => {
 
     test("throws AlreadyTakenError when the slug is already used", async () => {
       const db = await buildTestDb();
-      const loggedUser = await createUser(db);
+      const loggedUser = await createUserWithFakeToken(db);
       await db.Article.create({
         slug: "how-to-train-your-dragon",
         title: "x",
@@ -288,7 +278,7 @@ describe("controllers/articles.js", () => {
 
     test("awaits setAuthor before responding (regression check for a missing-await bug)", async () => {
       const db = await buildTestDb();
-      const loggedUser = await createUser(db);
+      const loggedUser = await createUserWithFakeToken(db);
       const { createArticle } = await loadArticlesController(db);
 
       let setAuthorSettled = false;
@@ -330,12 +320,15 @@ describe("controllers/articles.js", () => {
   describe("articlesFeed", () => {
     test("only returns articles from followed authors", async () => {
       const db = await buildTestDb();
-      const me = await createUser(db, { username: "me", email: "me@me.me" });
-      const followed = await createUser(db, {
+      const me = await createUserWithFakeToken(db, {
+        username: "me",
+        email: "me@me.me",
+      });
+      const followed = await createUserWithFakeToken(db, {
         username: "followed",
         email: "f@f.f",
       });
-      const stranger = await createUser(db, {
+      const stranger = await createUserWithFakeToken(db, {
         username: "stranger",
         email: "s@s.s",
       });
@@ -373,7 +366,7 @@ describe("controllers/articles.js", () => {
   describe("singleArticle", () => {
     test("returns the article by slug", async () => {
       const db = await buildTestDb();
-      const author = await createUser(db);
+      const author = await createUserWithFakeToken(db);
       const article = await db.Article.create({
         slug: "a",
         title: "A",
@@ -410,7 +403,7 @@ describe("controllers/articles.js", () => {
   describe("updateArticle", () => {
     test("throws NotFoundError when the slug doesn't exist", async () => {
       const db = await buildTestDb();
-      const loggedUser = await createUser(db);
+      const loggedUser = await createUserWithFakeToken(db);
       const { updateArticle } = await loadArticlesController(db);
       const req: any = {
         loggedUser,
@@ -427,11 +420,11 @@ describe("controllers/articles.js", () => {
 
     test("throws ForbiddenError when the logged-in user isn't the author", async () => {
       const db = await buildTestDb();
-      const author = await createUser(db, {
+      const author = await createUserWithFakeToken(db, {
         username: "jake",
         email: "jake@jake.jake",
       });
-      const other = await createUser(db, {
+      const other = await createUserWithFakeToken(db, {
         username: "mallory",
         email: "m@m.m",
       });
@@ -459,7 +452,7 @@ describe("controllers/articles.js", () => {
 
     test("updates title/description/body and regenerates the slug when the author matches", async () => {
       const db = await buildTestDb();
-      const author = await createUser(db);
+      const author = await createUserWithFakeToken(db);
       const article = await db.Article.create({
         slug: "old-title",
         title: "Old title",
@@ -493,7 +486,7 @@ describe("controllers/articles.js", () => {
   describe("deleteArticle", () => {
     test("throws NotFoundError when the slug doesn't exist", async () => {
       const db = await buildTestDb();
-      const loggedUser = await createUser(db);
+      const loggedUser = await createUserWithFakeToken(db);
       const { deleteArticle } = await loadArticlesController(db);
       const req: any = { loggedUser, params: { slug: "ghost" } };
       const res = buildRes();
@@ -506,11 +499,11 @@ describe("controllers/articles.js", () => {
 
     test("throws ForbiddenError when the logged-in user isn't the author", async () => {
       const db = await buildTestDb();
-      const author = await createUser(db, {
+      const author = await createUserWithFakeToken(db, {
         username: "jake",
         email: "jake@jake.jake",
       });
-      const other = await createUser(db, {
+      const other = await createUserWithFakeToken(db, {
         username: "mallory",
         email: "m@m.m",
       });
@@ -534,7 +527,7 @@ describe("controllers/articles.js", () => {
 
     test("deletes the article when the author matches", async () => {
       const db = await buildTestDb();
-      const author = await createUser(db);
+      const author = await createUserWithFakeToken(db);
       const article = await db.Article.create({
         slug: "a",
         title: "A",
