@@ -3,22 +3,12 @@ export {};
 import buildRes from "../testUtils/buildRes";
 import testDbModule from "../testUtils/testDb";
 import installFreshTestDb from "../testUtils/installFreshTestDb";
+import createUserWithFakeToken from "../testUtils/createUserWithFakeToken";
 const { buildTestDb } = testDbModule;
 
 const loadProfilesController = async (db: any) => {
   installFreshTestDb(db);
   return import("./profiles");
-};
-
-const createUser = async (db: any, overrides = {}) => {
-  const user = await db.User.create({
-    username: "jake",
-    email: "jake@jake.jake",
-    password: "hashed",
-    ...overrides,
-  });
-  user.dataValues.token = "fake-token";
-  return user;
 };
 
 describe("controllers/profiles.ts", () => {
@@ -37,7 +27,7 @@ describe("controllers/profiles.ts", () => {
 
     test("returns the profile without the email field", async () => {
       const db = await buildTestDb();
-      await createUser(db);
+      await createUserWithFakeToken(db);
       const { getProfile } = await loadProfilesController(db);
       const req: any = { loggedUser: undefined, params: { username: "jake" } };
       const res = buildRes();
@@ -53,7 +43,7 @@ describe("controllers/profiles.ts", () => {
 
     test("works with no logged-in user and reports following: false", async () => {
       const db = await buildTestDb();
-      await createUser(db);
+      await createUserWithFakeToken(db);
       const { getProfile } = await loadProfilesController(db);
       const req: any = { loggedUser: undefined, params: { username: "jake" } };
       const res = buildRes();
@@ -69,7 +59,7 @@ describe("controllers/profiles.ts", () => {
   describe("followToggler", () => {
     test("throws NotFoundError when the username doesn't exist", async () => {
       const db = await buildTestDb();
-      const loggedUser = await createUser(db);
+      const loggedUser = await createUserWithFakeToken(db);
       const { followToggler } = await loadProfilesController(db);
       const req: any = {
         loggedUser,
@@ -85,8 +75,8 @@ describe("controllers/profiles.ts", () => {
 
     test("POST follows the profile and persists it", async () => {
       const db = await buildTestDb();
-      const author = await createUser(db);
-      const fan = await createUser(db, {
+      const author = await createUserWithFakeToken(db);
+      const fan = await createUserWithFakeToken(db, {
         username: "jane",
         email: "jane@jane.jane",
       });
@@ -114,8 +104,8 @@ describe("controllers/profiles.ts", () => {
 
     test("DELETE unfollows the profile and persists it", async () => {
       const db = await buildTestDb();
-      const author = await createUser(db);
-      const fan = await createUser(db, {
+      const author = await createUserWithFakeToken(db);
+      const fan = await createUserWithFakeToken(db, {
         username: "jane",
         email: "jane@jane.jane",
       });
