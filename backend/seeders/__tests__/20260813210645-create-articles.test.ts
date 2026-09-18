@@ -1,11 +1,11 @@
 export {};
 
 import testDbModule from "../../testUtils/testDb";
-const { buildTestDb, installTestDb } = testDbModule;
+import installFreshTestDb from "../../testUtils/installFreshTestDb";
+const { buildTestDb } = testDbModule;
 
 const loadSeeder = async (db: any) => {
-  installTestDb(db);
-  vi.resetModules();
+  installFreshTestDb(db);
   return (await import("../20260813210645-create-articles")).default;
 };
 
