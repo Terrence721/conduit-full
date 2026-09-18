@@ -1,6 +1,7 @@
 export {};
 
-import { Sequelize, DataTypes } from "sequelize";
+import { DataTypes } from "sequelize";
+import buildRawSequelize from "../../testUtils/buildRawSequelize";
 import migration from "../20260813153749-create-tag";
 import defineTag from "../../models/Tag";
 
@@ -20,10 +21,7 @@ describe("migrations/20260813153749-create-tag", () => {
 
     // Cross-check against the real Tag.ts model definition, not just a
     // hardcoded expectation - catches migration/model drift.
-    const sequelize = new Sequelize("test", "test", "test", {
-      dialect: "postgres",
-      logging: false,
-    });
+    const sequelize = buildRawSequelize();
     const Tag = defineTag(sequelize, DataTypes);
 
     expect(Tag.rawAttributes.name.allowNull).toBe(false);
