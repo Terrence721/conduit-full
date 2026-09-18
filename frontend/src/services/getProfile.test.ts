@@ -1,3 +1,4 @@
+import authHeaders from "../testUtils/authHeaders";
 import mockApiRequest from "../testUtils/mockApiRequest";
 import getProfile from "./getProfile";
 import type { Profile } from "../types";
@@ -25,12 +26,10 @@ describe("getProfile", () => {
   });
 
   test("passes headers through when provided", async () => {
-    const headers = { Authorization: "Token abc123" };
-
-    await getProfile({ headers, username: "exampleUser1" });
+    await getProfile({ headers: authHeaders, username: "exampleUser1" });
 
     expect(mockedApiRequest).toHaveBeenCalledWith({
-      headers,
+      headers: authHeaders,
       url: "/api/profiles/exampleUser1",
     });
   });
