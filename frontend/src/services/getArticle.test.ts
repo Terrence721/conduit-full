@@ -1,3 +1,4 @@
+import authHeaders from "../testUtils/authHeaders";
 import mockApiRequest from "../testUtils/mockApiRequest";
 import getArticle from "./getArticle";
 import type { Article } from "../types";
@@ -25,12 +26,10 @@ describe("getArticle", () => {
   });
 
   test("passes headers through when provided", async () => {
-    const headers = { Authorization: "Token abc123" };
-
-    await getArticle({ headers, slug: "test-slug" });
+    await getArticle({ headers: authHeaders, slug: "test-slug" });
 
     expect(mockedApiRequest).toHaveBeenCalledWith({
-      headers,
+      headers: authHeaders,
       url: "/api/articles/test-slug",
     });
   });
