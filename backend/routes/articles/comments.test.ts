@@ -7,6 +7,7 @@ import installFreshTestDb from "../../testUtils/installFreshTestDb";
 import buildTestApp from "../../testUtils/buildTestApp";
 import createUser from "../../testUtils/createUser";
 import createArticle from "../../testUtils/createArticle";
+import tokenFor from "../../testUtils/tokenFor";
 const { buildTestDb } = testDbModule;
 
 const loadApp = async (db: any) => {
@@ -15,11 +16,6 @@ const loadApp = async (db: any) => {
   const errorHandler = (await import("../../middleware/errorHandler")).default;
 
   return buildTestApp(router, errorHandler, "/articles");
-};
-
-const tokenFor = async (user: any) => {
-  const { jwtSign } = (await import("../../helper/jwt")).default;
-  return jwtSign(user);
 };
 
 describe("routes/articles/comments.ts", () => {
