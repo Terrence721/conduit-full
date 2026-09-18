@@ -4,23 +4,12 @@ import buildRes from "../testUtils/buildRes";
 import testDbModule from "../testUtils/testDb";
 import installFreshTestDb from "../testUtils/installFreshTestDb";
 import createUserWithFakeToken from "../testUtils/createUserWithFakeToken";
+import createArticle from "../testUtils/createArticle";
 const { buildTestDb } = testDbModule;
 
 const loadCommentsController = async (db: any) => {
   installFreshTestDb(db);
   return (await import("./comments")).default;
-};
-
-const createArticle = async (db: any, author: any, overrides = {}) => {
-  const article = await db.Article.create({
-    slug: "how-to-train-your-dragon",
-    title: "How to train your dragon",
-    description: "d",
-    body: "b",
-    ...overrides,
-  });
-  await article.setAuthor(author);
-  return article;
 };
 
 describe("controllers/comments.js", () => {
