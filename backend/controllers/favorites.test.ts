@@ -4,22 +4,12 @@ import buildRes from "../testUtils/buildRes";
 import testDbModule from "../testUtils/testDb";
 import installFreshTestDb from "../testUtils/installFreshTestDb";
 import createUserWithFakeToken from "../testUtils/createUserWithFakeToken";
+import createArticle from "../testUtils/createArticle";
 const { buildTestDb } = testDbModule;
 
 const loadFavoritesController = async (db: any) => {
   installFreshTestDb(db);
   return (await import("./favorites")).default;
-};
-
-const createArticle = async (db: any, author: any) => {
-  const article = await db.Article.create({
-    slug: "how-to-train-your-dragon",
-    title: "How to train your dragon",
-    description: "d",
-    body: "b",
-  });
-  await article.setAuthor(author);
-  return article;
 };
 
 describe("controllers/favorites.js", () => {
