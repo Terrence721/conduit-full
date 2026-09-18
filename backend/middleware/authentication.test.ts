@@ -1,5 +1,7 @@
 export {};
 
+import freshJwt from "../testUtils/freshJwt";
+
 // The only genuine external dependency here is DB access via the User
 // model - faked below via vi.doMock(), since it needs a live Postgres this
 // environment doesn't have. jwtVerify/jwtSign are the real modules: real
@@ -23,11 +25,6 @@ const buildReqResNext = (headers: any = {}) => ({
   res: {} as any,
   next: vi.fn(),
 });
-
-const freshJwtHelper = async () => {
-  vi.resetModules();
-  return (await import("../helper/jwt")).default;
-};
 
 describe("middleware/authentication.ts", () => {
   beforeEach(() => {
@@ -60,7 +57,7 @@ describe("middleware/authentication.ts", () => {
   });
 
   test("attaches req.loggedUser and the token when the JWT is valid and the user exists", async () => {
-    const { jwtSign } = await freshJwtHelper();
+    const { jwtSign } = await freshJwt();
     const token = await jwtSign({
       username: "jake",
       email: "jake@jake.jake",
@@ -81,7 +78,7 @@ describe("middleware/authentication.ts", () => {
   });
 
   test("calls next() exactly once when the verified user no longer exists (missing-return regression check)", async () => {
-    const { jwtSign } = await freshJwtHelper();
+    const { jwtSign } = await freshJwt();
     const token = await jwtSign({
       username: "ghost",
       email: "ghost@ghost.ghost",
