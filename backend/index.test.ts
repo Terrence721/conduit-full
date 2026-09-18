@@ -3,11 +3,11 @@ export {};
 import request from "supertest";
 
 import testDbModule from "./testUtils/testDb";
-const { buildTestDb, installTestDb } = testDbModule;
+import installFreshTestDb from "./testUtils/installFreshTestDb";
+const { buildTestDb } = testDbModule;
 
 const loadApp = async (db: any) => {
-  installTestDb(db);
-  vi.resetModules();
+  installFreshTestDb(db);
   return (await import("./index")).default;
 };
 
