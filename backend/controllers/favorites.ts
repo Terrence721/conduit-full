@@ -1,6 +1,9 @@
 import type { Request, Response, NextFunction } from "express";
 import models from "../models";
 import helpers from "../helper/helpers";
+import customErrors from "../helper/customErrors";
+
+const { ValidationError } = customErrors;
 
 const { findArticleBySlugOrFail, decorateArticle, PUBLIC_USER_ATTRIBUTES } =
   helpers;
@@ -17,6 +20,10 @@ const favoriteToggler =
       const { loggedUser } = req;
 
       const { slug } = req.params;
+
+      if (typeof slug !== "string" || !slug.trim()) {
+        throw new ValidationError("slug is required");
+      }
 
       const article = await findArticleBySlugOrFail(Article, slug as string, [
         {
