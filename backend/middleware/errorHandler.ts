@@ -5,7 +5,7 @@ const { ForbiddenError, NotFoundError, UnauthorizedError, ValidationError } =
   customErrors;
 
 const errorHandler = (
-  error: any,
+  error: unknown,
   req: Request,
   res: Response,
   _next: NextFunction,
