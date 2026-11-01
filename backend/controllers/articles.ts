@@ -36,29 +36,31 @@ const allArticles = async (
   try {
     const { loggedUser } = req;
 
-    const { author, tag, favorited } = req.query as any;
+    const { author, tag, favorited } = req.query as Record<string, unknown>;
     const searchOptions = {
       include: [
         {
           model: Tag,
           as: "tagList",
           attributes: ["name"],
-          ...(tag && { where: { name: tag } }),
+          ...(tag ? { where: { name: tag as string } } : {}),
         },
         {
           model: User,
           as: "author",
           attributes: PUBLIC_USER_ATTRIBUTES,
-          ...(author && { where: { username: author } }),
+          ...(author ? { where: { username: author as string } } : {}),
         },
       ],
       ...parsePagination(req.query),
       order: [["createdAt", "DESC"]] as [string, string][],
     };
 
-    let articles: { rows: any[]; count: number } = { rows: [], count: 0 };
+    let articles: { rows: unknown[]; count: number } = { rows: [], count: 0 };
     if (favorited) {
-      const user = await User.findOne({ where: { username: favorited } });
+      const user = await User.findOne({
+        where: { username: favorited as string },
+      });
       if (!user) throw new NotFoundError("User");
 
       articles.rows = await user.getFavorites(searchOptions);
@@ -160,7 +162,9 @@ const articlesFeed = async (
       include: includeOptions,
       ...parsePagination(req.query),
       order: [["createdAt", "DESC"]],
-      where: { userId: authors.map((author: any) => author.id) },
+      where: {
+        userId: authors.map((author: unknown) => (author as { id: number }).id),
+      },
     });
 
     await decorateArticles(loggedUser, articles.rows);
