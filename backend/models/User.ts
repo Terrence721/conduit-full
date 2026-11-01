@@ -8,17 +8,18 @@ export = (sequelize: Sequelize, DataTypes: typeof DataTypesType) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate({ Article, Comment, User }: any) {
+    static associate(models: Record<string, unknown>) {
+    const { Article, Comment, User } = models;
       // define association here
 
       // Articles
-      this.hasMany(Article, { foreignKey: "userId", onDelete: "CASCADE" });
+      this.hasMany(Article as never, { foreignKey: "userId", onDelete: "CASCADE" });
 
       // Comments
-      this.hasMany(Comment, { foreignKey: "userId" });
+      this.hasMany(Comment as never, { foreignKey: "userId" });
 
       // Favorites
-      this.belongsToMany(Article, {
+      this.belongsToMany(Article as never, {
         through: "Favorites",
         as: "favorites",
         foreignKey: "userId",
@@ -26,13 +27,13 @@ export = (sequelize: Sequelize, DataTypes: typeof DataTypesType) => {
       });
 
       // Followers
-      this.belongsToMany(User, {
+      this.belongsToMany(User as never, {
         through: "Followers",
         as: "followers",
         foreignKey: "userId",
         timestamps: false,
       });
-      this.belongsToMany(User, {
+      this.belongsToMany(User as never, {
         through: "Followers",
         as: "following",
         foreignKey: "followerId",
