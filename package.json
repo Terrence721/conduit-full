@@ -27,6 +27,7 @@
     "start": "yarn workspace frontend build && yarn workspace backend start",
     "clean:logs": "tsx scripts/clean-logs.ts",
     "test": "vitest",
+    "test:coverage": "vitest run --coverage",
     "typecheck": "tsc --noEmit -p scripts/tsconfig.json && yarn workspace backend typecheck && yarn workspace frontend typecheck",
     "lint": "eslint .",
     "format": "prettier --write .",
