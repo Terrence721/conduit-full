@@ -11,11 +11,14 @@ const VALID_DIALECTS: readonly Dialect[] = [
   "oracle",
 ];
 
-const parseDialect = (envVarName: string): Dialect => {
+type DbDialectEnvVarName =
+  "DEV_DB_DIALECT" | "TEST_DB_DIALECT" | "PROD_DB_DIALECT";
+
+const parseDialect = (envVarName: DbDialectEnvVarName): Dialect => {
   const value = process.env[envVarName];
-  if (!VALID_DIALECTS.includes(value as Dialect)) {
+  if (typeof value !== "string" || !VALID_DIALECTS.includes(value as Dialect)) {
     throw new Error(
-      `${envVarName} must be one of ${VALID_DIALECTS.join(", ")}, got: ${value}`,
+      `${envVarName} must be one of ${VALID_DIALECTS.join(", ")}, got: ${value ?? "undefined"}`,
     );
   }
   return value as Dialect;
