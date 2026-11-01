@@ -1,5 +1,4 @@
 import { render, renderHook, act } from "@testing-library/react";
-import type { ReactNode } from "react";
 import FeedProvider, { useFeedContext } from "./FeedContext";
 import AuthProvider from "./AuthContext";
 import getUser from "../services/getUser";
@@ -8,10 +7,6 @@ import type { User } from "../types";
 vi.mock("../services/getUser");
 
 const mockedGetUser = vi.mocked(getUser);
-
-function Wrapper({ children }: { children: ReactNode }) {
-  return <AuthProvider>{children}</AuthProvider>;
-}
 
 describe("useFeedContext", () => {
   beforeEach(() => {

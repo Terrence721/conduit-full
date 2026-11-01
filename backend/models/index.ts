@@ -9,6 +9,7 @@ import defineTag from "./Tag";
 
 const env = process.env.NODE_ENV || "development";
 const envConfig = config[env as keyof typeof config];
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const db: Record<string, any> = {};
 
 const sequelize = new Sequelize(envConfig);
