@@ -27,8 +27,12 @@ const includeOptions = [
   { model: User, as: "author", attributes: PUBLIC_USER_ATTRIBUTES },
 ];
 
-//? All Articles - by Author/by Tag/Favorited by user
-const allArticles = async (req: Request, res: Response, next: NextFunction) => {
+//? All Articles - by Author/by Tag/Favorites by user
+const allArticles = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
   try {
     const { loggedUser } = req;
 
