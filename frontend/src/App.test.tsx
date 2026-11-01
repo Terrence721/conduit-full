@@ -1,41 +1,42 @@
 import { render, screen } from "@testing-library/react";
-import { MemoryRouter, Route, Routes } from "react-router-dom";
+import userEvent from "@testing-library/user-event";
 import App from "./App";
-import AuthProvider from "./context/AuthContext";
-import getUser from "./services/getUser";
-
-vi.mock("./services/getUser");
-
-const mockedGetUser = vi.mocked(getUser);
-
-function Wrapper() {
-  return (
-    <MemoryRouter initialEntries={["/"]}>
-      <AuthProvider>
-        <Routes>
-          <Route element={<App />}>
-            <Route path="/" element={<div>outlet content</div>} />
-          </Route>
-        </Routes>
-      </AuthProvider>
-    </MemoryRouter>
-  );
-}
 
 describe("App", () => {
-  beforeEach(() => {
-    localStorage.clear();
-    mockedGetUser.mockReset();
-    mockedGetUser.mockResolvedValue(undefined);
+  test("renders the editorial landing page", () => {
+    render(<App />);
+
+    expect(screen.getByText(/ideas worth/i)).toBeInTheDocument();
+    expect(screen.getByText(/stories for curious people/i)).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: /start reading/i }),
+    ).toBeInTheDocument();
   });
 
-  test("renders the navbar, outlet and footer", () => {
-    render(<Wrapper />);
+  test("filters stories by search query", async () => {
+    const user = userEvent.setup();
 
-    expect(screen.getAllByText("conduit")).toHaveLength(2);
-    expect(screen.getByText("outlet content")).toBeInTheDocument();
+    render(<App />);
+
+    const search = screen.getByPlaceholderText("Search stories");
+
+    await user.type(search, "Maya");
+
     expect(
-      screen.getByText(/interactive learning project/i),
-    ).toBeInTheDocument();
+      screen.getAllByText("The quiet craft of designing for trust"),
+    ).toHaveLength(2);
+  });
+
+  test("shows the empty state when search has no matches", async () => {
+    const user = userEvent.setup();
+
+    render(<App />);
+
+    await user.type(
+      screen.getByPlaceholderText("Search stories"),
+      "zzzz-not-a-story",
+    );
+
+    expect(screen.getByText("Try another idea.")).toBeInTheDocument();
   });
 });
