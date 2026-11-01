@@ -3,7 +3,8 @@ import models from "../models";
 import helpers from "../helper/helpers";
 import customErrors from "../helper/customErrors";
 
-const { NotFoundError, FieldRequiredError, ForbiddenError } = customErrors;
+const { NotFoundError, FieldRequiredError, ForbiddenError, ValidationError } =
+  customErrors;
 const {
   appendAuthorFollowers,
   findArticleBySlugOrFail,
@@ -45,8 +46,19 @@ const createComment = async (
   try {
     const { loggedUser } = req;
 
+    if (
+      !req.body ||
+      typeof req.body.comment !== "object" ||
+      req.body.comment === null ||
+      Array.isArray(req.body.comment)
+    ) {
+      throw new ValidationError("comment payload is required");
+    }
+
     const { body } = req.body.comment;
-    if (!body) throw new FieldRequiredError("Comment body");
+    if (typeof body !== "string" || !body.trim()) {
+      throw new FieldRequiredError("Comment body");
+    }
 
     const { slug } = req.params;
     const article = await findArticleBySlugOrFail(Article, slug as string);
