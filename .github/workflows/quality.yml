@@ -85,3 +85,22 @@ jobs:
 
       - name: Run Prettier format check
         run: yarn format:check
+
+  audit:
+    name: Yarn audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version-file: ".node-version"
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Run Yarn audit (critical)
+        run: yarn audit --level critical
