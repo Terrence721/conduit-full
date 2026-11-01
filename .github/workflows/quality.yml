@@ -65,7 +65,7 @@ jobs:
         run: yarn install --frozen-lockfile
 
       - name: Run test suite
-        run: yarn test run
+        run: yarn test run --coverage
 
   prettier:
     name: Prettier (format check)
