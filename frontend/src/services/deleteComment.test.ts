@@ -13,7 +13,9 @@ describe("deleteComment", () => {
   });
 
   test("returns the message on success", async () => {
-    const response = { message: "Comment deleted." } as MessageResponse;
+    const response = {
+      message: { body: ["Comment deleted."] },
+    } as MessageResponse;
     mockedApiRequest.mockResolvedValueOnce(response);
 
     const result = await deleteComment({
