@@ -13,7 +13,9 @@ describe("deleteArticle", () => {
   });
 
   test("returns the message on success", async () => {
-    const response = { message: { body: ["Article deleted."] } } as MessageResponse;
+    const response = {
+      message: { body: ["Article deleted."] },
+    } as MessageResponse;
     mockedApiRequest.mockResolvedValueOnce(response);
 
     const result = await deleteArticle({

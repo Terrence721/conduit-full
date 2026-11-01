@@ -28,7 +28,9 @@ describe("userSignUp", () => {
       loggedUser: user,
     });
     expect(mockedApiRequest).toHaveBeenCalledWith({
-      data: { user: { email: "jake@jake.jake", password: "pw", username: "jake" } },
+      data: {
+        user: { email: "jake@jake.jake", password: "pw", username: "jake" },
+      },
       method: "POST",
       url: "/api/users",
     });

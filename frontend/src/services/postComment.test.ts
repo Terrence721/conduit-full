@@ -42,5 +42,4 @@ describe("postComment", () => {
       }),
     ).resolves.toBeUndefined();
   });
-
 });
