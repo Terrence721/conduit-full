@@ -9,11 +9,14 @@ export = (sequelize: Sequelize, DataTypes: typeof DataTypesType) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models: Record<string, unknown>) {
-    const { Article, Comment, User } = models;
+      const { Article, Comment, User } = models;
       // define association here
 
       // Articles
-      this.hasMany(Article as never, { foreignKey: "userId", onDelete: "CASCADE" });
+      this.hasMany(Article as never, {
+        foreignKey: "userId",
+        onDelete: "CASCADE",
+      });
 
       // Comments
       this.hasMany(Comment as never, { foreignKey: "userId" });

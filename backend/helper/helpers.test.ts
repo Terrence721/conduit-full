@@ -62,7 +62,9 @@ describe("findArticleBySlugOrFail", () => {
       { model: db.User, as: "author" },
     ]);
 
-    expect(found.author.username).toBe("jake");
+    expect((found as { author: { username: string } }).author.username).toBe(
+      "jake",
+    );
   });
 });
 

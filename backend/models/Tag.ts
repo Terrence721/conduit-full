@@ -9,7 +9,7 @@ export = (sequelize: Sequelize, DataTypes: typeof DataTypesType) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models: Record<string, unknown>) {
-    const { Article } = models;
+      const { Article } = models;
       // define association here
 
       // Tag list

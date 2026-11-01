@@ -38,8 +38,14 @@ const favoriteToggler =
         },
       ]);
 
-      if (action === "add") await article.addFavoritingUser(loggedUser);
-      else await article.removeFavoritingUser(loggedUser);
+      if (action === "add")
+        await (
+          article as { addFavoritingUser: (u: unknown) => Promise<unknown> }
+        ).addFavoritingUser(loggedUser);
+      else
+        await (
+          article as { removeFavoritingUser: (u: unknown) => Promise<unknown> }
+        ).removeFavoritingUser(loggedUser);
 
       await decorateArticle(loggedUser, article);
 

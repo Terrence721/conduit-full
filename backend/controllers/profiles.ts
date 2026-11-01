@@ -48,8 +48,14 @@ const followToggler =
         username as string,
       );
 
-      if (action === "add") await profile.addFollower(loggedUser);
-      else await profile.removeFollower(loggedUser);
+      if (action === "add")
+        await (
+          profile as { addFollower: (u: unknown) => Promise<unknown> }
+        ).addFollower(loggedUser);
+      else
+        await (
+          profile as { removeFollower: (u: unknown) => Promise<unknown> }
+        ).removeFollower(loggedUser);
 
       await appendFollowers(loggedUser, profile);
 

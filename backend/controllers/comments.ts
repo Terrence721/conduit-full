@@ -21,7 +21,9 @@ const allComments = async (req: Request, res: Response, next: NextFunction) => {
 
     const article = await findArticleBySlugOrFail(Article, slug as string);
 
-    const comments = await article.getComments({
+    const comments = await (
+      article as { getComments: (options: unknown) => Promise<unknown[]> }
+    ).getComments({
       include: [
         { model: User, as: "author", attributes: PUBLIC_USER_ATTRIBUTES },
       ],
