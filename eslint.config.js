@@ -156,5 +156,15 @@ export default [
       },
     },
   },
+  {
+    files: [
+      "backend/**/*.test.ts",
+      "backend/**/__tests__/**/*.ts",
+      "backend/testUtils/**/*.ts",
+    ],
+    rules: {
+      "@typescript-eslint/no-explicit-any": "off",
+    },
+  },
   prettierConfig,
 ];
