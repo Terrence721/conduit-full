@@ -3,8 +3,13 @@ import models from "../models";
 import helpers from "../helper/helpers";
 import customErrors from "../helper/customErrors";
 
-const { AlreadyTakenError, FieldRequiredError, ForbiddenError, NotFoundError } =
-  customErrors;
+const {
+  AlreadyTakenError,
+  FieldRequiredError,
+  ForbiddenError,
+  NotFoundError,
+  ValidationError,
+} = customErrors;
 const {
   appendFavorites,
   findArticleBySlugOrFail,
@@ -75,10 +80,31 @@ const createArticle = async (
   try {
     const { loggedUser } = req;
 
+    if (
+      !req.body ||
+      typeof req.body.article !== "object" ||
+      req.body.article === null ||
+      Array.isArray(req.body.article)
+    ) {
+      throw new ValidationError("article payload is required");
+    }
+
     const { title, description, body, tagList = [] } = req.body.article;
-    if (!title) throw new FieldRequiredError("A title");
-    if (!description) throw new FieldRequiredError("A description");
-    if (!body) throw new FieldRequiredError("An article body");
+    if (typeof title !== "string" || !title.trim()) {
+      throw new FieldRequiredError("A title");
+    }
+    if (typeof description !== "string" || !description.trim()) {
+      throw new FieldRequiredError("A description");
+    }
+    if (typeof body !== "string" || !body.trim()) {
+      throw new FieldRequiredError("An article body");
+    }
+    if (
+      !Array.isArray(tagList) ||
+      !tagList.every((tag) => typeof tag === "string")
+    ) {
+      throw new ValidationError("tagList must be an array of strings");
+    }
 
     const slug = slugify(title);
     const slugInDB = await Article.findOne({ where: { slug: slug } });
@@ -92,12 +118,13 @@ const createArticle = async (
     });
 
     for (const tag of tagList) {
-      const tagInDB = await Tag.findByPk(tag.trim());
+      const normalizedTag = (tag as string).trim();
+      const tagInDB = await Tag.findByPk(normalizedTag);
 
       if (tagInDB) {
         await article.addTagList(tagInDB);
-      } else if (tag.length > 2) {
-        const newTag = await Tag.create({ name: tag.trim() });
+      } else if ((tag as string).length > 2) {
+        const newTag = await Tag.create({ name: normalizedTag });
 
         await article.addTagList(newTag);
       }
@@ -184,13 +211,35 @@ const updateArticle = async (
       throw new ForbiddenError("article");
     }
 
+    if (
+      !req.body ||
+      typeof req.body.article !== "object" ||
+      req.body.article === null ||
+      Array.isArray(req.body.article)
+    ) {
+      throw new ValidationError("article payload is required");
+    }
+
     const { title, description, body } = req.body.article;
-    if (title) {
+    if (title !== undefined) {
+      if (typeof title !== "string" || !title.trim()) {
+        throw new ValidationError("title must be a non-empty string");
+      }
       article.slug = slugify(title);
       article.title = title;
     }
-    if (description) article.description = description;
-    if (body) article.body = body;
+    if (description !== undefined) {
+      if (typeof description !== "string" || !description.trim()) {
+        throw new ValidationError("description must be a non-empty string");
+      }
+      article.description = description;
+    }
+    if (body !== undefined) {
+      if (typeof body !== "string" || !body.trim()) {
+        throw new ValidationError("body must be a non-empty string");
+      }
+      article.body = body;
+    }
     await article.save();
 
     await decorateArticle(loggedUser, article);
