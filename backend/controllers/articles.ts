@@ -215,7 +215,7 @@ const updateArticle = async (
       includeOptions,
     );
 
-    if (loggedUser.id !== article.author.id) {
+    if (loggedUser.id !== (article as { author: { id: number } }).author.id) {
       throw new ForbiddenError("article");
     }
 
@@ -248,7 +248,7 @@ const updateArticle = async (
       }
       article.body = body;
     }
-    await article.save();
+    await (article as { save: () => Promise<unknown> }).save();
 
     await decorateArticle(loggedUser, article);
 
@@ -274,11 +274,11 @@ const deleteArticle = async (
       includeOptions,
     );
 
-    if (loggedUser.id !== article.author.id) {
+    if (loggedUser.id !== (article as { author: { id: number } }).author.id) {
       throw new ForbiddenError("article");
     }
 
-    await article.destroy();
+    await (article as { destroy: () => Promise<unknown> }).destroy();
 
     res.json({ message: { body: ["Article deleted successfully"] } });
   } catch (error) {

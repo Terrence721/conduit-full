@@ -22,9 +22,11 @@ const slugify = (string: string): string => {
 };
 
 const findArticleBySlugOrFail = async (
-  Article: any,
+  Article: {
+    findOne: (options: unknown) => Promise<Record<string, unknown> | null>;
+  },
   slug: string,
-  include?: any[],
+  include?: unknown[],
 ) => {
   const article = await Article.findOne({
     where: { slug },
@@ -34,7 +36,12 @@ const findArticleBySlugOrFail = async (
   return article;
 };
 
-const findProfileByUsernameOrFail = async (User: any, username: string) => {
+const findProfileByUsernameOrFail = async (
+  User: {
+    findOne: (options: unknown) => Promise<Record<string, unknown> | null>;
+  },
+  username: string,
+) => {
   const profile = await User.findOne({
     where: { username },
     attributes: PUBLIC_USER_ATTRIBUTES,
@@ -56,29 +63,42 @@ const parsePagination = (query: Record<string, unknown>) => {
   return { limit, offset: page * limit };
 };
 
-const appendTagList = (articleTags: any[], article?: any) => {
+const appendTagList = (
+  articleTags: { name: string }[],
+  article?: { dataValues: Record<string, unknown> },
+) => {
   const tagList = articleTags.map((tag) => tag.name);
 
-  if (!article) return tagList;
+  if (!article || !article.dataValues) return tagList;
   article.dataValues.tagList = tagList;
 };
 
-const appendFavorites = async (loggedUser: any, article: any) => {
-  const favorited = await article.hasFavoritingUser(
-    loggedUser ? loggedUser : null,
-  );
-  article.dataValues.favorited = loggedUser ? favorited : false;
+const appendFavorites = async (loggedUser: unknown, article: unknown) => {
+  const articleInstance = article as {
+    countFavoritingUsers: () => Promise<number>;
+    dataValues: Record<string, unknown>;
+    hasFavoritingUser: (user: unknown) => Promise<boolean>;
+  };
 
-  const favoritesCount = await article.countFavoritingUsers();
-  article.dataValues.favoritesCount = favoritesCount;
+  const favorited = await articleInstance.hasFavoritingUser(loggedUser ?? null);
+  articleInstance.dataValues.favorited = loggedUser ? favorited : false;
+
+  const favoritesCount = await articleInstance.countFavoritingUsers();
+  articleInstance.dataValues.favoritesCount = favoritesCount;
 };
 
-const appendFollowers = async (loggedUser: any, user: any) => {
-  const following = await user.hasFollower(loggedUser ? loggedUser : null);
-  user.dataValues.following = loggedUser ? following : false;
+const appendFollowers = async (loggedUser: unknown, user: unknown) => {
+  const userInstance = user as {
+    countFollowers: () => Promise<number>;
+    dataValues: Record<string, unknown>;
+    hasFollower: (value: unknown) => Promise<boolean>;
+  };
 
-  const followersCount = await user.countFollowers();
-  user.dataValues.followersCount = followersCount;
+  const following = await userInstance.hasFollower(loggedUser ?? null);
+  userInstance.dataValues.following = loggedUser ? following : false;
+
+  const followersCount = await userInstance.countFollowers();
+  userInstance.dataValues.followersCount = followersCount;
 };
 
 // For an Article/Comment whose `.author` was already eagerly included in the
@@ -86,11 +106,19 @@ const appendFollowers = async (loggedUser: any, user: any) => {
 // status (association instance methods need their own live row), then
 // copies the result onto the eagerly-included sub-object, since that's the
 // one actually serialized in the response.
-const appendAuthorFollowers = async (loggedUser: any, entity: any) => {
-  const author = await entity.getAuthor();
+const appendAuthorFollowers = async (loggedUser: unknown, entity: unknown) => {
+  const entityInstance = entity as {
+    author: { dataValues: Record<string, unknown> };
+    getAuthor: () => Promise<unknown>;
+  };
+  const author = await entityInstance.getAuthor();
   await appendFollowers(loggedUser, author);
-  entity.author.dataValues.following = author.dataValues.following;
-  entity.author.dataValues.followersCount = author.dataValues.followersCount;
+  entityInstance.author.dataValues.following = (
+    author as { dataValues: Record<string, unknown> }
+  ).dataValues.following;
+  entityInstance.author.dataValues.followersCount = (
+    author as { dataValues: Record<string, unknown> }
+  ).dataValues.followersCount;
 };
 
 // Stamps the just-created loggedUser as a newly created Article/Comment's
@@ -100,24 +128,32 @@ const appendAuthorFollowers = async (loggedUser: any, entity: any) => {
 // loggedUser first, since that's a request-scoped implementation detail with
 // no business being in a response body, then decorates loggedUser's own
 // follow status since it's about to be serialized as `entity.author`.
-const stampAuthor = async (loggedUser: any, entity: any) => {
-  delete loggedUser.dataValues.token;
-  entity.dataValues.author = loggedUser;
+const stampAuthor = async (loggedUser: unknown, entity: unknown) => {
+  const userInstance = loggedUser as { dataValues: Record<string, unknown> };
+  const entityInstance = entity as { dataValues: Record<string, unknown> };
+
+  delete userInstance.dataValues.token;
+  entityInstance.dataValues.author = loggedUser;
   await appendFollowers(loggedUser, loggedUser);
 };
 
-const decorateArticle = async (loggedUser: any, article: any) => {
-  appendTagList(article.tagList, article);
-  await appendAuthorFollowers(loggedUser, article);
-  await appendFavorites(loggedUser, article);
+const decorateArticle = async (loggedUser: unknown, article: unknown) => {
+  const articleInstance = article as {
+    dataValues: Record<string, unknown>;
+    tagList?: { name: string }[];
+  };
+
+  appendTagList(articleInstance.tagList ?? [], articleInstance);
+  await appendAuthorFollowers(loggedUser, articleInstance);
+  await appendFavorites(loggedUser, articleInstance);
 
   // Only set when the article came from a User's `getFavorites()` association
   // fetcher (the through-model's data rides along on the instance under the
   // through model's own name); harmless no-op otherwise.
-  delete article.dataValues.Favorites;
+  delete articleInstance.dataValues.Favorites;
 };
 
-const decorateArticles = async (loggedUser: any, articles: any[]) => {
+const decorateArticles = async (loggedUser: unknown, articles: unknown[]) => {
   for (const article of articles) {
     await decorateArticle(loggedUser, article);
   }
