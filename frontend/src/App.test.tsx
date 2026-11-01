@@ -20,11 +20,11 @@ describe("App", () => {
 
     const search = screen.getByPlaceholderText("Search stories");
 
-    await user.type(search, "Maya");
+    await user.type(search, "Elena");
 
-    expect(
-      screen.getAllByText("The quiet craft of designing for trust"),
-    ).toHaveLength(2);
+    expect(screen.getAllByText("The case for designing slower")).toHaveLength(
+      2,
+    );
   });
 
   test("shows the empty state when search has no matches", async () => {
