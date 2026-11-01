@@ -1,6 +1,7 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
+import helmet from "helmet";
 
 import usersRoutes from "./routes/users";
 import userRoutes from "./routes/user";
@@ -15,9 +16,19 @@ const env = process.env.NODE_ENV || "development";
 const PORT = process.env.PORT || 3001;
 const { sequelize } = models;
 
+const allowedOrigins =
+  env === "production"
+    ? (process.env.CORS_ORIGIN ?? "").split(",").filter(Boolean)
+    : true;
+
 const app = express();
-app.use(cors());
-app.use(express.json());
+app.use(helmet());
+app.use(
+  cors({
+    origin: allowedOrigins === true ? true : allowedOrigins,
+  }),
+);
+app.use(express.json({ limit: process.env.JSON_BODY_LIMIT ?? "100kb" }));
 app.use("/api", createRateLimiter());
 
 (async () => {
