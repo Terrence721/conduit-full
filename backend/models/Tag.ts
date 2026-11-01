@@ -8,11 +8,12 @@ export = (sequelize: Sequelize, DataTypes: typeof DataTypesType) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate({ Article }: any) {
+    static associate(models: Record<string, unknown>) {
+    const { Article } = models;
       // define association here
 
       // Tag list
-      this.belongsToMany(Article, {
+      this.belongsToMany(Article as never, {
         through: "TagList",
         foreignKey: "tagName",
         timestamps: false,
