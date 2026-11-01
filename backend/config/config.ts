@@ -1,6 +1,6 @@
 import type { Options, Dialect } from "sequelize";
 
-const VALID_DIALECTS: readonly Dialect[] = [
+const VALID_DIALECTS = [
   "mysql",
   "postgres",
   "sqlite",
@@ -9,14 +9,17 @@ const VALID_DIALECTS: readonly Dialect[] = [
   "db2",
   "snowflake",
   "oracle",
-];
+] as const;
 
 type DbDialectEnvVarName =
   "DEV_DB_DIALECT" | "TEST_DB_DIALECT" | "PROD_DB_DIALECT";
 
-const parseDialect = (envVarName: DbDialectEnvVarName): Dialect => {
+const parseDialect = (envVarName: DbDialectEnvVarName) => {
   const value = process.env[envVarName];
-  if (typeof value !== "string" || !VALID_DIALECTS.includes(value as Dialect)) {
+  if (
+    typeof value !== "string" ||
+    !(VALID_DIALECTS as readonly string[]).includes(value)
+  ) {
     throw new Error(
       `${envVarName} must be one of ${VALID_DIALECTS.join(", ")}, got: ${value ?? "undefined"}`,
     );
@@ -24,7 +27,7 @@ const parseDialect = (envVarName: DbDialectEnvVarName): Dialect => {
   return value as Dialect;
 };
 
-interface RawDbConfig {
+type RawDbConfig = {
   username: string | undefined;
   password: string | undefined;
   database: string | undefined;
@@ -32,7 +35,7 @@ interface RawDbConfig {
   port: string | undefined;
   dialect: Dialect;
   logging: string | undefined;
-}
+};
 
 // process.env.<NAME> and parseDialect("<NAME>") stay as literal calls at
 // each call site below (not built from an interpolated prefix) so that
@@ -57,7 +60,7 @@ const buildDbConfig = ({
   logging: logging === "true" ? console.log : false,
 });
 
-const config: Record<"development" | "test" | "production", Options> = {
+const config = {
   development: buildDbConfig({
     username: process.env.DEV_DB_USERNAME,
     password: process.env.DEV_DB_PASSWORD,
@@ -85,6 +88,6 @@ const config: Record<"development" | "test" | "production", Options> = {
     dialect: parseDialect("PROD_DB_DIALECT"),
     logging: process.env.PROD_DB_LOGGING,
   }),
-};
+} satisfies Record<"development" | "test" | "production", Options>;
 
 export = config;
