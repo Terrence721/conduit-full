@@ -48,9 +48,9 @@ const findProfileByUsernameOrFail = async (User: any, username: string) => {
 // getArticles.ts) and Sequelize needs the actual row offset, page * limit.
 // Falls back to sane defaults instead of letting an unparseable value (e.g.
 // ?limit=abc) become NaN and silently propagate into the Sequelize query.
-const parsePagination = (query: any) => {
-  const parsedLimit = parseInt(query.limit ?? "3", 10);
-  const parsedPage = parseInt(query.offset ?? "0", 10);
+const parsePagination = (query: Record<string, unknown>) => {
+  const parsedLimit = parseInt(String(query.limit ?? "3"), 10);
+  const parsedPage = parseInt(String(query.offset ?? "0"), 10);
   const limit = Number.isNaN(parsedLimit) ? 3 : parsedLimit;
   const page = Number.isNaN(parsedPage) ? 0 : parsedPage;
   return { limit, offset: page * limit };
