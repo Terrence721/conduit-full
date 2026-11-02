@@ -2,9 +2,14 @@ import { render, screen } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import Article from "./Article";
 import AuthProvider from "../../context/AuthContext";
+import getArticle from "../../services/getArticle";
 import getUser from "../../services/getUser";
+import type { Article as ArticleType } from "../../types";
 
+vi.mock("../../services/getArticle");
 vi.mock("../../services/getUser");
+
+const mockedGetArticle = vi.mocked(getArticle);
 const mockedGetUser = vi.mocked(getUser);
 
 const article = {
@@ -24,20 +29,20 @@ const article = {
   tagList: ["react"],
   title: "Title",
   updatedAt: "2024-01-01T00:00:00.000Z",
-};
+} as ArticleType;
 
 describe("Article route", () => {
   beforeEach(() => {
     localStorage.clear();
     mockedGetUser.mockReset();
     mockedGetUser.mockResolvedValue(undefined);
+    mockedGetArticle.mockReset();
+    mockedGetArticle.mockResolvedValue(article);
   });
 
-  test("renders the article from route state", () => {
+  test("renders the article", async () => {
     render(
-      <MemoryRouter
-        initialEntries={[{ pathname: "/article/slug", state: article }]}
-      >
+      <MemoryRouter initialEntries={["/article/slug"]}>
         <AuthProvider>
           <Routes>
             <Route path="/article/:slug" element={<Article />} />
@@ -46,16 +51,14 @@ describe("Article route", () => {
       </MemoryRouter>,
     );
 
-    expect(screen.getByText("Title")).toBeInTheDocument();
+    expect(await screen.findByText("Title")).toBeInTheDocument();
     expect(screen.getByText("article body")).toBeInTheDocument();
     expect(screen.getByText("react")).toBeInTheDocument();
   });
 
-  test("renders the author name", () => {
+  test("renders the author name", async () => {
     render(
-      <MemoryRouter
-        initialEntries={[{ pathname: "/article/slug", state: article }]}
-      >
+      <MemoryRouter initialEntries={["/article/slug"]}>
         <AuthProvider>
           <Routes>
             <Route path="/article/:slug" element={<Article />} />
@@ -64,7 +67,8 @@ describe("Article route", () => {
       </MemoryRouter>,
     );
 
-    const links = screen.getAllByRole("link", { name: "jake" });
-    expect(links.length).toBeGreaterThan(0);
+    expect(
+      await screen.findByRole("heading", { name: "jake", level: 3 }),
+    ).toBeInTheDocument();
   });
 });
