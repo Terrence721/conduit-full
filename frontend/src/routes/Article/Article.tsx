@@ -54,7 +54,10 @@ function Article() {
     setLoading(true);
     getArticle({ headers, slug })
       .then((result) => {
-        if (!result) return;
+        if (!result) {
+          navigate("/not-found", { replace: true });
+          return;
+        }
         setArticle(result);
       })
       .catch(() => navigate("/not-found", { replace: true }))

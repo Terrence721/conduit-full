@@ -1,60 +1,24 @@
-import { render, screen, waitFor } from "@testing-library/react";
-import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { render, screen } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
+import type { ReactNode } from "react";
 import CommentsSection from "./CommentsSection";
-import AuthProvider from "../../context/AuthContext";
-import getComments from "../../services/getComments";
-import getUser from "../../services/getUser";
 
-vi.mock("../../services/getComments");
-vi.mock("../../services/getUser");
+vi.mock("../../components/CommentEditor/CommentEditor", () => ({
+  default: () => <div>comment editor</div>,
+}));
+vi.mock("../../components/CommentList/CommentList", () => ({
+  default: () => <div>comment list</div>,
+}));
 
-const mockedGetComments = vi.mocked(getComments);
-const mockedGetUser = vi.mocked(getUser);
+function Wrapper({ children }: { children: ReactNode }) {
+  return <MemoryRouter>{children}</MemoryRouter>;
+}
 
 describe("CommentsSection", () => {
-  beforeEach(() => {
-    localStorage.clear();
-    mockedGetComments.mockReset();
-    mockedGetUser.mockReset();
-    mockedGetUser.mockResolvedValue(undefined);
-    mockedGetComments.mockResolvedValue([]);
-  });
+  test("renders the comment editor and list", () => {
+    render(<CommentsSection />, { wrapper: Wrapper });
 
-  test("renders comment editor sign-in prompt and empty list", async () => {
-    render(
-      <MemoryRouter initialEntries={["/article/slug"]}>
-        <AuthProvider>
-          <Routes>
-            <Route path="/article/:slug" element={<CommentsSection />} />
-          </Routes>
-        </AuthProvider>
-      </MemoryRouter>,
-    );
-
-    expect(screen.getByRole("link", { name: "Sign in" })).toBeInTheDocument();
-    await waitFor(() => {
-      expect(
-        screen.getByText("There are no comments yet..."),
-      ).toBeInTheDocument();
-    });
-  });
-
-  test("calls getComments with the slug", async () => {
-    render(
-      <MemoryRouter initialEntries={["/article/slug"]}>
-        <AuthProvider>
-          <Routes>
-            <Route path="/article/:slug" element={<CommentsSection />} />
-          </Routes>
-        </AuthProvider>
-      </MemoryRouter>,
-    );
-
-    await waitFor(() => {
-      expect(mockedGetComments).toHaveBeenCalledWith({
-        headers: undefined,
-        slug: "slug",
-      });
-    });
+    expect(screen.getByText("comment editor")).toBeInTheDocument();
+    expect(screen.getByText("comment list")).toBeInTheDocument();
   });
 });

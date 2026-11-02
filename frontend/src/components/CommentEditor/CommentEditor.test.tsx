@@ -1,11 +1,11 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import type { ReactNode } from "react";
 import CommentEditor from "./CommentEditor";
 import AuthProvider from "../../context/AuthContext";
 import postComment from "../../services/postComment";
 import getUser from "../../services/getUser";
-import type { Comment } from "../../types";
 
 vi.mock("../../services/postComment");
 vi.mock("../../services/getUser");
@@ -15,15 +15,23 @@ const mockedGetUser = vi.mocked(getUser);
 
 function Wrapper({ children }: { children: ReactNode }) {
   return (
-    <MemoryRouter initialEntries={["/article/slug"]}>
+    <MemoryRouter initialEntries={["/article/dragons"]}>
       <AuthProvider>
         <Routes>
-          <Route path="/article/:slug" element={<>{children}</>} />
+          <Route path="/article/:slug" element={children} />
         </Routes>
       </AuthProvider>
     </MemoryRouter>
   );
 }
+
+const comment = {
+  author: { username: "jake" },
+  body: "first comment",
+  createdAt: "2024-01-01T00:00:00.000Z",
+  id: 1,
+  updatedAt: "2024-01-01T00:00:00.000Z",
+};
 
 describe("CommentEditor", () => {
   beforeEach(() => {
@@ -33,138 +41,89 @@ describe("CommentEditor", () => {
     mockedGetUser.mockResolvedValue(undefined);
   });
 
-  test("prompts unauthenticated users to sign in", () => {
-    render(
-      <Wrapper>
-        <CommentEditor updateComments={() => undefined} />
-      </Wrapper>,
-    );
-
-    expect(screen.getByRole("link", { name: "Sign in" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Sign up" })).toBeInTheDocument();
+  beforeAll(() => {
+    window.alert = vi.fn();
   });
 
-  test("renders the editor when authenticated", async () => {
-    const headers = { Authorization: "Token abc123" };
-    localStorage.setItem(
-      "loggedUser",
-      JSON.stringify({
-        headers,
-        isAuth: true,
-        loggedUser: { username: "jake", image: null, token: "abc123" },
-      }),
-    );
-    mockedGetUser.mockResolvedValue({
-      bio: null,
-      email: "jake@jake.jake",
-      image: null,
-      token: "abc123",
-      username: "jake",
+  test("shows the sign-in prompt when logged out", () => {
+    render(<CommentEditor updateComments={vi.fn()} />, {
+      wrapper: Wrapper,
     });
 
-    render(
-      <Wrapper>
-        <CommentEditor updateComments={() => undefined} />
-      </Wrapper>,
-    );
-
-    await waitFor(() => {
-      expect(
-        screen.getByPlaceholderText("Write a comment..."),
-      ).toBeInTheDocument();
-    });
-    expect(
-      screen.getByRole("button", { name: /post comment/i }),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/sign in/i)).toBeInTheDocument();
+    expect(screen.getByText(/sign up/i)).toBeInTheDocument();
   });
 
-  test("does not submit an empty comment", async () => {
-    const headers = { Authorization: "Token abc123" };
-    localStorage.setItem(
-      "loggedUser",
-      JSON.stringify({
-        headers,
-        isAuth: true,
-        loggedUser: { username: "jake", image: null, token: "abc123" },
-      }),
-    );
-    mockedGetUser.mockResolvedValue({
-      bio: null,
-      email: "jake@jake.jake",
-      image: null,
-      token: "abc123",
-      username: "jake",
-    });
-
-    render(
-      <Wrapper>
-        <CommentEditor updateComments={() => undefined} />
-      </Wrapper>,
-    );
-
-    await waitFor(() => {
-      expect(
-        screen.getByPlaceholderText("Write a comment..."),
-      ).toBeInTheDocument();
-    });
-
-    fireEvent.submit(
-      screen.getByRole("button", { name: /post comment/i }).closest("form")!,
-    );
-
-    expect(mockedPostComment).not.toHaveBeenCalled();
-  });
-
-  test("posts a comment and calls updateComments", async () => {
-    const headers = { Authorization: "Token abc123" };
-    localStorage.setItem(
-      "loggedUser",
-      JSON.stringify({
-        headers,
-        isAuth: true,
-        loggedUser: { username: "jake", image: null, token: "abc123" },
-      }),
-    );
-    mockedGetUser.mockResolvedValue({
-      bio: null,
-      email: "jake@jake.jake",
-      image: null,
-      token: "abc123",
-      username: "jake",
-    });
-
-    const comment = { body: "nice", id: 1 } as Comment;
-    mockedPostComment.mockResolvedValueOnce(comment);
-
+  test("posts a comment when authenticated", async () => {
+    const user = userEvent.setup();
     const updateComments = vi.fn();
 
-    render(
-      <Wrapper>
-        <CommentEditor updateComments={updateComments} />
-      </Wrapper>,
+    localStorage.setItem(
+      "loggedUser",
+      JSON.stringify({
+        headers: { Authorization: "Token abc123" },
+        isAuth: true,
+        loggedUser: { username: "jake" },
+      }),
     );
+    mockedGetUser.mockResolvedValue({
+      bio: null,
+      email: "jake@jake.jake",
+      image: null,
+      token: "abc123",
+      username: "jake",
+    });
+    mockedPostComment.mockResolvedValue(comment as never);
+
+    render(<CommentEditor updateComments={updateComments} />, {
+      wrapper: Wrapper,
+    });
+
+    await user.type(
+      screen.getByPlaceholderText("Write a comment..."),
+      comment.body,
+    );
+    await user.click(screen.getByRole("button", { name: /post comment/i }));
 
     await waitFor(() => {
-      expect(
-        screen.getByPlaceholderText("Write a comment..."),
-      ).toBeInTheDocument();
+      expect(mockedPostComment).toHaveBeenCalledWith({
+        body: "first comment",
+        headers: { Authorization: "Token abc123" },
+        slug: "dragons",
+      });
     });
-
-    fireEvent.change(screen.getByPlaceholderText("Write a comment..."), {
-      target: { value: "nice" },
-    });
-    fireEvent.submit(
-      screen.getByRole("button", { name: /post comment/i }).closest("form")!,
-    );
 
     await waitFor(() => {
-      expect(updateComments).toHaveBeenCalledWith(comment);
+      expect(screen.getByPlaceholderText("Write a comment...")).toHaveValue("");
     });
 
-    expect(mockedPostComment).toHaveBeenCalledWith({
-      body: "nice",
-      headers,
-      slug: "slug",
+    expect(updateComments).toHaveBeenCalledWith(comment);
+  });
+
+  test("does not post an empty comment", async () => {
+    const user = userEvent.setup();
+    localStorage.setItem(
+      "loggedUser",
+      JSON.stringify({
+        headers: { Authorization: "Token abc123" },
+        isAuth: true,
+        loggedUser: { username: "jake" },
+      }),
+    );
+    mockedGetUser.mockResolvedValue({
+      bio: null,
+      email: "jake@jake.jake",
+      image: null,
+      token: "abc123",
+      username: "jake",
     });
+
+    render(<CommentEditor updateComments={vi.fn()} />, {
+      wrapper: Wrapper,
+    });
+
+    await user.click(screen.getByRole("button", { name: /post comment/i }));
+
+    expect(mockedPostComment).not.toHaveBeenCalled();
   });
 });
