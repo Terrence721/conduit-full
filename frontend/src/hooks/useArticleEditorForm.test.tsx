@@ -40,9 +40,7 @@ function Wrapper({
   initialEntries?: any;
 }) {
   return (
-    <MemoryRouter initialEntries={initialEntries}>
-      {children}
-    </MemoryRouter>
+    <MemoryRouter initialEntries={initialEntries}>{children}</MemoryRouter>
   );
 }
 
@@ -68,7 +66,9 @@ const article = {
 } as unknown as Article;
 
 function changeEvent(value: string) {
-  return { target: { value } } as unknown as React.ChangeEvent<HTMLInputElement>;
+  return {
+    target: { value },
+  } as unknown as React.ChangeEvent<HTMLInputElement>;
 }
 
 describe("useArticleEditorForm", () => {

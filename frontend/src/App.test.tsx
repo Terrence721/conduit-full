@@ -66,7 +66,9 @@ describe("App", () => {
 
     await user.click(screen.getByRole("tab", { name: "Following" }));
 
-    expect(screen.getByRole("tab", { name: "Following" })).toHaveClass(/active/);
+    expect(screen.getByRole("tab", { name: "Following" })).toHaveClass(
+      /active/,
+    );
   });
 
   test("filters by a topic and clears it", async () => {
@@ -74,8 +76,10 @@ describe("App", () => {
 
     render(<App />, { wrapper: Wrapper });
 
-    const topicButton = Array.from(document.querySelectorAll(".topic-strip button")).find(
-      (button) => button.textContent?.includes("Design"),
+    const topicButton = Array.from(
+      document.querySelectorAll(".topic-strip button"),
+    ).find((button) =>
+      button.textContent?.includes("Design"),
     ) as HTMLButtonElement;
     await user.click(topicButton);
 
@@ -83,7 +87,9 @@ describe("App", () => {
       expect(document.querySelector(".active-filter")).not.toBeNull();
     });
 
-    const clearButton = document.querySelector(".active-filter") as HTMLButtonElement;
+    const clearButton = document.querySelector(
+      ".active-filter",
+    ) as HTMLButtonElement;
     await user.click(clearButton);
 
     expect(document.querySelector(".active-filter")).toBeNull();
@@ -105,9 +111,11 @@ describe("App", () => {
       }),
     ).toBeInTheDocument();
 
-    const backButton = [...screen.getAllByRole("button", {
-      name: "Back to stories",
-    })].find((button) => button.classList.contains("join-button"))!;
+    const backButton = [
+      ...screen.getAllByRole("button", {
+        name: "Back to stories",
+      }),
+    ].find((button) => button.classList.contains("join-button"))!;
 
     await user.click(backButton);
 
@@ -125,9 +133,7 @@ describe("App", () => {
 
     await user.click(screen.getByRole("button", { name: "Save story" }));
 
-    expect(
-      screen.getByRole("button", { name: "Saved" }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Saved" })).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "Saved" }));
 
