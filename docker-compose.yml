@@ -6,10 +6,31 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: conduit
     ports:
       - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - conduit-full-postgres-data:/var/lib/postgresql
 
+  app:
+    build: .
+    container_name: conduit-full-app
+    restart: unless-stopped
+    depends_on:
+      - postgres
+    environment:
+      NODE_ENV: production
+      PORT: "3001"
+      PROD_DB_DIALECT: postgres
+      PROD_DB_USERNAME: postgres
+      PROD_DB_PASSWORD: postgres
+      PROD_DB_NAME: conduit
+      PROD_DB_HOSTNAME: postgres
+      PROD_DB_PORT: "5432"
+      PROD_DB_LOGGING: "false"
+      JWT_KEY: "change-me-in-production"
+      CORS_ORIGIN: "http://localhost:3001"
+    ports:
+      - "3001:3001"
 volumes:
   conduit-full-postgres-data:

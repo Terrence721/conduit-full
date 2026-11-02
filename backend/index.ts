@@ -1,5 +1,6 @@
 import "dotenv/config";
 import express from "express";
+import type { Server } from "http";
 import cors from "cors";
 import helmet from "helmet";
 
@@ -31,6 +32,17 @@ app.use(
 app.use(express.json({ limit: process.env.JSON_BODY_LIMIT ?? "100kb" }));
 app.use("/api", createRateLimiter());
 
+app.get("/healthz", (_req, res) => res.json({ status: "ok" }));
+
+app.get("/readyz", async (_req, res) => {
+  try {
+    await sequelize.authenticate();
+    res.json({ status: "ready" });
+  } catch (error) {
+    res.status(503).json({ errors: { body: ["Database unavailable"] } });
+  }
+});
+
 (async () => {
   try {
     await sequelize.authenticate();
@@ -56,9 +68,24 @@ app.all("/*any", (req, res) =>
 app.use(errorHandler);
 
 if (require.main === module) {
-  app.listen(PORT, () =>
+  const server: Server = app.listen(PORT, () =>
     console.log(`Server running on http://localhost:${PORT}`),
   );
+
+  const shutdown = (signal: string) => {
+    console.log(`Received ${signal}, shutting down gracefully.`);
+    server.close(async () => {
+      try {
+        await sequelize.close();
+      } catch (error) {
+        console.error("Error closing database connection:", error);
+      }
+      process.exit(0);
+    });
+  };
+
+  process.on("SIGTERM", () => shutdown("SIGTERM"));
+  process.on("SIGINT", () => shutdown("SIGINT"));
 }
 
 export = app;
