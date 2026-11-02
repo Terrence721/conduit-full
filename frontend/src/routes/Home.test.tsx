@@ -1,87 +1,57 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { MemoryRouter } from "react-router-dom";
 import Home from "./Home";
 import AuthProvider from "../context/AuthContext";
+import getArticles from "../services/getArticles";
 import getUser from "../services/getUser";
-import getTags from "../services/getTags";
 
+vi.mock("../services/getArticles");
 vi.mock("../services/getUser");
-vi.mock("../services/getTags");
 
+const mockedGetArticles = vi.mocked(getArticles);
 const mockedGetUser = vi.mocked(getUser);
-const mockedGetTags = vi.mocked(getTags);
 
 describe("Home route", () => {
   beforeEach(() => {
     localStorage.clear();
     mockedGetUser.mockReset();
     mockedGetUser.mockResolvedValue(undefined);
-    mockedGetTags.mockReset();
-    mockedGetTags.mockReturnValue(new Promise(() => undefined));
+    mockedGetArticles.mockReset();
+    mockedGetArticles.mockResolvedValue({
+      articles: [],
+      articlesCount: 0,
+    });
   });
 
-  test("shows the banner for logged-out users", () => {
+  test("renders the editorial home hero", () => {
     render(
-      <MemoryRouter initialEntries={["/"]}>
+      <MemoryRouter>
         <AuthProvider>
-          <Routes>
-            <Route path="/" element={<Home />} />
-          </Routes>
+          <Home />
         </AuthProvider>
       </MemoryRouter>,
     );
 
-    expect(
-      screen.getByText("A place to share your knowledge."),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/ideas worth/i)).toBeInTheDocument();
+    expect(screen.getByText("Popular topics")).toBeInTheDocument();
   });
 
-  test("hides the banner for logged-in users", async () => {
-    const headers = { Authorization: "Token abc123" };
-    localStorage.setItem(
-      "loggedUser",
-      JSON.stringify({
-        headers,
-        isAuth: true,
-        loggedUser: { username: "jake", token: "abc123" },
-      }),
-    );
-    mockedGetUser.mockResolvedValue({
-      bio: null,
-      email: "jake@jake.jake",
-      image: null,
-      token: "abc123",
-      username: "jake",
+  test("renders fetched articles", async () => {
+    mockedGetArticles.mockResolvedValue({
+      articles: [],
+      articlesCount: 0,
     });
 
     render(
-      <MemoryRouter initialEntries={["/"]}>
+      <MemoryRouter>
         <AuthProvider>
-          <Routes>
-            <Route path="/" element={<Home />} />
-          </Routes>
+          <Home />
         </AuthProvider>
       </MemoryRouter>,
     );
 
     await waitFor(() => {
-      expect(
-        screen.queryByText("A place to share your knowledge."),
-      ).not.toBeInTheDocument();
+      expect(mockedGetArticles).toHaveBeenCalled();
     });
-  });
-
-  test("renders the popular tags sidebar", () => {
-    render(
-      <MemoryRouter initialEntries={["/"]}>
-        <AuthProvider>
-          <Routes>
-            <Route path="/" element={<Home />} />
-          </Routes>
-        </AuthProvider>
-      </MemoryRouter>,
-    );
-
-    expect(screen.getByText("Popular Tags")).toBeInTheDocument();
   });
 });
