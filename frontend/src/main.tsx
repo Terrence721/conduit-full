@@ -1,10 +1,60 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import { HashRouter, Route, Routes } from "react-router-dom";
 import App from "./App";
+import AuthProvider from "./context/AuthContext";
+import Layout from "./Layout";
 import "./index.css";
+import Article from "./routes/Article/Article";
+import CommentsSection from "./routes/Article/CommentsSection";
+import ArticleEditor from "./routes/ArticleEditor";
+import Home from "./routes/Home";
+import HomeArticles from "./routes/HomeArticles";
+import Login from "./routes/Login";
+import NotFound from "./routes/NotFound";
+import Profile from "./routes/Profile/Profile";
+import ProfileArticles from "./routes/Profile/ProfileArticles";
+import ProfileFavArticles from "./routes/Profile/ProfileFavArticles";
+import Settings from "./routes/Settings";
+import SignUp from "./routes/SignUp";
 
-ReactDOM.createRoot(document.getElementById("root")!).render(
+const rootElement = document.getElementById("root");
+if (!rootElement) throw new Error("Root element not found");
+
+ReactDOM.createRoot(rootElement).render(
   <React.StrictMode>
-    <App />
+    <HashRouter>
+      <AuthProvider>
+        <Routes>
+          <Route path="/" element={<App />} />
+
+          <Route element={<Layout />}>
+            <Route path="home" element={<Home />}>
+              <Route index element={<HomeArticles />} />
+            </Route>
+
+            <Route path="login" element={<Login />} />
+            <Route path="register" element={<SignUp />} />
+
+            <Route path="settings" element={<Settings />} />
+
+            <Route path="editor" element={<ArticleEditor />}>
+              <Route path=":slug" element={<ArticleEditor />} />
+            </Route>
+
+            <Route path="article/:slug" element={<Article />}>
+              <Route index element={<CommentsSection />} />
+            </Route>
+
+            <Route path="profile/:username" element={<Profile />}>
+              <Route index element={<ProfileArticles />} />
+              <Route path="favorites" element={<ProfileFavArticles />} />
+            </Route>
+
+            <Route path="*" element={<NotFound />} />
+          </Route>
+        </Routes>
+      </AuthProvider>
+    </HashRouter>
   </React.StrictMode>,
 );
