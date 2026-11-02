@@ -1036,7 +1036,7 @@ function App() {
                 Publish your ideas, find your readers, and join a thoughtful
                 community.
               </p>
-              <a href="#join">
+              <a href="/editor">
                 Start writing <ArrowIcon />
               </a>
             </div>
