@@ -1,6 +1,6 @@
 import Markdown from "markdown-to-jsx";
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, Outlet, useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import requireAuth from "../../helpers/requireAuth";
 import toggleFav from "../../services/toggleFav";
@@ -154,6 +154,8 @@ function Article() {
           </div>
         </footer>
       </article>
+
+      <Outlet />
     </main>
   );
 }
