@@ -136,11 +136,13 @@ svg {
   color: var(--white);
   font-size: 12px;
   font-weight: 700;
+  justify-self: end;
   padding: 12px 17px;
   text-decoration: none;
   transition:
     background 160ms ease,
     transform 160ms ease;
+  width: fit-content;
 }
 
 .join-button:hover {
