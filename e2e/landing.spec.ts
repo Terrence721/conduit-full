@@ -104,10 +104,13 @@ test("opens and closes the article reader for the featured story", async ({
     page.getByText("Speed is not the same as progress"),
   ).toBeVisible();
   await expect(
-    page.getByRole("button", { name: "Back to stories" }),
+    page.getByRole("banner").getByRole("button", { name: "Back to stories" }),
   ).toBeVisible();
 
-  await page.getByRole("button", { name: "Back to stories" }).click();
+  await page
+    .getByRole("banner")
+    .getByRole("button", { name: "Back to stories" })
+    .click();
 
   await expect(
     page.getByRole("heading", { name: "Stories for curious people" }),
