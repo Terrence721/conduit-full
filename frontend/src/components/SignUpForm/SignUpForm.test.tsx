@@ -18,7 +18,7 @@ function Wrapper({ children }: { children: ReactNode }) {
       <AuthProvider>
         <Routes>
           <Route path="/register" element={<>{children}</>} />
-          <Route path="/" element={<div>home</div>} />
+          <Route path="/home" element={<div>home</div>} />
         </Routes>
       </AuthProvider>
     </MemoryRouter>
