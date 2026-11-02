@@ -7,6 +7,7 @@ import toggleFav from "../../services/toggleFav";
 import getArticle from "../../services/getArticle";
 import dateFormatter from "../../helpers/dateFormatter";
 import type { Article as ArticleType } from "../../types";
+import errorHandler from "../../helpers/errorHandler";
 
 const emptyArticle: ArticleType = {
   author: {
@@ -77,7 +78,7 @@ function Article() {
           favoritesCount: updated.favoritesCount,
         }));
       })
-      .catch(console.error);
+      .catch(errorHandler);
   };
 
   if (loading || !article.slug) {

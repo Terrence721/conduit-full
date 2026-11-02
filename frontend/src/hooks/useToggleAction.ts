@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import requireAuth, { type AuthedState } from "../helpers/requireAuth";
+import errorHandler from "../helpers/errorHandler";
 
 function useToggleAction<T>(handler: (result: T | undefined) => void) {
   const [loading, setLoading] = useState(false);
@@ -16,7 +17,7 @@ function useToggleAction<T>(handler: (result: T | undefined) => void) {
 
     action(authed.headers)
       .then(handler)
-      .catch(console.error)
+      .catch(errorHandler)
       .finally(() => setLoading(false));
   };
 

@@ -10,6 +10,7 @@ import {
 } from "react";
 import getUser from "../services/getUser";
 import { emptyAuthState, type AuthState } from "../types";
+import errorHandler from "../helpers/errorHandler";
 
 type AuthContextValue = AuthState & {
   setAuthState: Dispatch<SetStateAction<AuthState>>;
@@ -50,7 +51,7 @@ function AuthProvider({ children }: AuthProviderProps) {
         if (!loggedUser) return;
         setAuthState((prev) => ({ ...prev, loggedUser }));
       })
-      .catch(console.error);
+      .catch(errorHandler);
   }, [headers]);
 
   const value = useMemo(() => ({ ...authState, setAuthState }), [authState]);

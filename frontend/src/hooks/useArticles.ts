@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import getArticles from "../services/getArticles";
 import type { ArticleLocation, ArticlesResponse } from "../types";
+import errorHandler from "../helpers/errorHandler";
 
 export interface UseArticlesParams {
   location: ArticleLocation;
@@ -29,7 +30,7 @@ function useArticles({ location, tagName, username }: UseArticlesParams) {
 
     getArticles({ headers, location, tagName, username })
       .then((result) => setArticlesData(result ?? emptyArticlesData))
-      .catch(console.error)
+      .catch(errorHandler)
       .finally(() => setLoadedKey(requestKey));
   }, [headers, location, tagName, username, requestKey]);
 

@@ -7,6 +7,7 @@ import deleteComment from "../../services/deleteComment";
 import getComments from "../../services/getComments";
 import CommentAuthor from "../CommentAuthor/CommentAuthor";
 import type { Comment, MessageResponse } from "../../types";
+import errorHandler from "../../helpers/errorHandler";
 
 interface CommentListProps {
   triggerUpdate: unknown;
@@ -23,7 +24,7 @@ function CommentList({ triggerUpdate, updateComments }: CommentListProps) {
 
     getComments({ headers: auth.headers, slug })
       .then(setComments)
-      .catch(console.error);
+      .catch(errorHandler);
   }, [slug, auth.headers, triggerUpdate]);
 
   const handleClick = (commentId: number) => {
@@ -37,7 +38,7 @@ function CommentList({ triggerUpdate, updateComments }: CommentListProps) {
         if (!result) return;
         updateComments(result);
       })
-      .catch(console.error);
+      .catch(errorHandler);
   };
 
   return comments.length > 0 ? (

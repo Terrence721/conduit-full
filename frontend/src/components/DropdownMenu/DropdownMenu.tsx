@@ -20,19 +20,35 @@ function DropdownMenu() {
     setDropdown(false);
   };
 
+  const handleToggleKeyDown = (
+    event: React.KeyboardEvent<HTMLButtonElement>,
+  ) => {
+    if (event.key === "Escape") {
+      close();
+      event.currentTarget.blur();
+    }
+  };
+
   return (
     <li className="nav-item dropdown">
-      <div className="nav-link dropdown-toggle cursor-pointer" onClick={toggle}>
+      <button
+        type="button"
+        className="nav-link dropdown-toggle cursor-pointer"
+        aria-expanded={dropdown}
+        aria-haspopup="menu"
+        onClick={toggle}
+        onKeyDown={handleToggleKeyDown}
+      >
         <Avatar
           alt={loggedUser.username}
           className="user-pic"
           src={loggedUser.image}
         />
         {loggedUser.username}
-      </div>
+      </button>
 
       {dropdown && (
-        <div className="dropdown-menu" onMouseLeave={close}>
+        <div className="dropdown-menu" onMouseLeave={close} role="menu">
           <DropdownItem
             icon="ion-person"
             text="Profile"

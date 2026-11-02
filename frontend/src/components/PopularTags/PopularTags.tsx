@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import getTags from "../../services/getTags";
 import TagButton from "./TagButton";
+import errorHandler from "../../helpers/errorHandler";
 
 function PopularTags() {
   const [tags, setTags] = useState<string[] | null>(null);
@@ -9,7 +10,7 @@ function PopularTags() {
     getTags()
       .then(setTags)
       .catch((error: unknown) => {
-        console.error(error);
+        errorHandler(error);
         setTags([]);
       });
   }, []);

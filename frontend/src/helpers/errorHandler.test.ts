@@ -44,12 +44,12 @@ describe("Catching errors", () => {
       response: undefined,
     } as AxiosError<{ errors: { body: string[] } }>;
 
-    const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
     expect(() => errorHandler(noResponseError)).not.toThrow();
-    expect(logSpy).toHaveBeenCalled();
+    expect(errorSpy).toHaveBeenCalled();
 
-    logSpy.mockRestore();
+    errorSpy.mockRestore();
   });
 
   test("uses console.dir for statuses outside the handled set", () => {

@@ -5,6 +5,7 @@ import requireAuth from "../../helpers/requireAuth";
 import postComment from "../../services/postComment";
 import Avatar from "../Avatar/Avatar";
 import type { Comment } from "../../types";
+import errorHandler from "../../helpers/errorHandler";
 
 interface CommentEditorProps {
   updateComments: (comment: Comment) => void;
@@ -28,7 +29,7 @@ function CommentEditor({ updateComments }: CommentEditorProps) {
         updateComments(comment);
         setBody("");
       })
-      .catch(console.error);
+      .catch(errorHandler);
   };
 
   return auth.isAuth ? (

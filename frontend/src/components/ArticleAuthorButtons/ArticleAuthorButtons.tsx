@@ -3,6 +3,7 @@ import { useAuth } from "../../context/AuthContext";
 import requireAuth from "../../helpers/requireAuth";
 import deleteArticle from "../../services/deleteArticle";
 import type { Article } from "../../types";
+import errorHandler from "../../helpers/errorHandler";
 
 type ArticleAuthorButtonsProps = Pick<
   Article,
@@ -27,7 +28,7 @@ function ArticleAuthorButtons({
 
     deleteArticle({ headers: authed.headers, slug })
       .then(() => navigate("/"))
-      .catch(console.error);
+      .catch(errorHandler);
   };
 
   return (

@@ -6,6 +6,7 @@ import getProfile from "../../services/getProfile";
 import Avatar from "../Avatar/Avatar";
 import FollowButton from "../FollowButton/FollowButton";
 import type { Profile } from "../../types";
+import errorHandler from "../../helpers/errorHandler";
 
 type AuthorState = Omit<Profile, "username">;
 
@@ -32,7 +33,7 @@ function AuthorInfo() {
         setAuthor(profile);
       })
       .catch((error) => {
-        console.error(error);
+        errorHandler(error);
         navigate("/not-found", { replace: true });
       });
   }, [username, headers, navigate]);

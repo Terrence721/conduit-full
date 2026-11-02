@@ -113,6 +113,10 @@ jobs:
           DEV_DB_PORT: "5432"
           DEV_DB_DIALECT: postgres
           DEV_DB_LOGGING: "false"
+          TEST_DB_DIALECT: postgres
+          PROD_DB_DIALECT: postgres
+          TEST_DB_LOGGING: "false"
+          PROD_DB_LOGGING: "false"
 
       - name: Run Playwright suite
         run: yarn test:e2e
@@ -126,6 +130,10 @@ jobs:
           DEV_DB_PORT: "5432"
           DEV_DB_DIALECT: postgres
           DEV_DB_LOGGING: "false"
+          TEST_DB_DIALECT: postgres
+          PROD_DB_DIALECT: postgres
+          TEST_DB_LOGGING: "false"
+          PROD_DB_LOGGING: "false"
           CI: "true"
 
   prettier:

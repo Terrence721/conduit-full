@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import App from "./App";
 import AuthProvider from "./context/AuthContext";
+import ToastProvider from "./context/ToastContext";
 import Layout from "./Layout";
 import "./styles.css";
 import "./index.css";
@@ -25,37 +26,39 @@ if (!rootElement) throw new Error("Root element not found");
 ReactDOM.createRoot(rootElement).render(
   <React.StrictMode>
     <BrowserRouter>
-      <AuthProvider>
-        <Routes>
-          <Route path="/" element={<App />} />
+      <ToastProvider>
+        <AuthProvider>
+          <Routes>
+            <Route path="/" element={<App />} />
 
-          <Route element={<Layout />}>
-            <Route path="home" element={<Home />}>
-              <Route index element={<HomeArticles />} />
+            <Route element={<Layout />}>
+              <Route path="home" element={<Home />}>
+                <Route index element={<HomeArticles />} />
+              </Route>
+
+              <Route path="login" element={<Login />} />
+              <Route path="register" element={<SignUp />} />
+
+              <Route path="settings" element={<Settings />} />
+
+              <Route path="editor" element={<ArticleEditor />}>
+                <Route path=":slug" element={<ArticleEditor />} />
+              </Route>
+
+              <Route path="article/:slug" element={<Article />}>
+                <Route index element={<CommentsSection />} />
+              </Route>
+
+              <Route path="profile/:username" element={<Profile />}>
+                <Route index element={<ProfileArticles />} />
+                <Route path="favorites" element={<ProfileFavArticles />} />
+              </Route>
+
+              <Route path="*" element={<NotFound />} />
             </Route>
-
-            <Route path="login" element={<Login />} />
-            <Route path="register" element={<SignUp />} />
-
-            <Route path="settings" element={<Settings />} />
-
-            <Route path="editor" element={<ArticleEditor />}>
-              <Route path=":slug" element={<ArticleEditor />} />
-            </Route>
-
-            <Route path="article/:slug" element={<Article />}>
-              <Route index element={<CommentsSection />} />
-            </Route>
-
-            <Route path="profile/:username" element={<Profile />}>
-              <Route index element={<ProfileArticles />} />
-              <Route path="favorites" element={<ProfileFavArticles />} />
-            </Route>
-
-            <Route path="*" element={<NotFound />} />
-          </Route>
-        </Routes>
-      </AuthProvider>
+          </Routes>
+        </AuthProvider>
+      </ToastProvider>
     </BrowserRouter>
   </React.StrictMode>,
 );

@@ -11,6 +11,7 @@ import getArticle from "../services/getArticle";
 import setArticle from "../services/setArticle";
 import useRequireAuthRedirect from "./useRequireAuthRedirect";
 import type { Article } from "../types";
+import errorHandler from "../helpers/errorHandler";
 
 type ArticleFormState = Pick<
   Article,
@@ -52,7 +53,7 @@ function useArticleEditorForm() {
         setForm(article);
         setTagsInput(article.tagList.join(" "));
       })
-      .catch(console.error);
+      .catch(errorHandler);
 
     return () => setForm(emptyForm);
   }, [

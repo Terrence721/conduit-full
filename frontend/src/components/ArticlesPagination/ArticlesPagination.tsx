@@ -2,6 +2,7 @@ import ReactPaginateImport from "react-paginate";
 import { useAuth } from "../../context/AuthContext";
 import getArticles from "../../services/getArticles";
 import type { ArticleLocation, ArticlesResponse } from "../../types";
+import errorHandler from "../../helpers/errorHandler";
 
 // react-paginate's own UMD build nests its component under `.default` even on
 // the CJS branch, which Vite's dependency pre-bundling doesn't unwrap for a
@@ -32,7 +33,7 @@ function ArticlesPagination({
   const handlePageChange = ({ selected: page }: { selected: number }) => {
     getArticles({ headers, location, page, tagName, username })
       .then(updateArticles)
-      .catch(console.error);
+      .catch(errorHandler);
   };
 
   return (
