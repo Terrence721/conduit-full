@@ -19,13 +19,13 @@ const { sequelize } = models;
 const allowedOrigins =
   env === "production"
     ? (process.env.CORS_ORIGIN ?? "").split(",").filter(Boolean)
-    : true;
+    : ["http://localhost:3000", "http://127.0.0.1:3000"];
 
 const app = express();
 app.use(helmet());
 app.use(
   cors({
-    origin: allowedOrigins === true ? true : allowedOrigins,
+    origin: allowedOrigins,
   }),
 );
 app.use(express.json({ limit: process.env.JSON_BODY_LIMIT ?? "100kb" }));
