@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import NavItem from "../NavItem/NavItem";
-import SourceCodeLink from "../SourceCodeLink/SourceCodeLink";
 import DropdownMenu from "../DropdownMenu/DropdownMenu";
 
 function Navbar() {
@@ -13,8 +12,6 @@ function Navbar() {
         <Link className="navbar-brand" to="/">
           conduit
         </Link>
-
-        <SourceCodeLink position="left" />
 
         <ul className="nav navbar-nav pull-xs-right">
           <NavItem text="Home" icon="ion-compose" url="/" />
