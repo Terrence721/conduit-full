@@ -714,7 +714,7 @@ function App() {
           </button>
           <p>Conduit journal</p>
           <button className="join-button" type="button" onClick={closeArticle}>
-            Discover more
+            Back to stories
           </button>
         </header>
         <ArticleReader
