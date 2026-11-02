@@ -37,10 +37,12 @@ function Wrapper({
   initialEntries = ["/editor"],
 }: {
   children: ReactNode;
-  initialEntries?: any;
+  initialEntries?: unknown;
 }) {
   return (
-    <MemoryRouter initialEntries={initialEntries}>{children}</MemoryRouter>
+    <MemoryRouter initialEntries={initialEntries as never}>
+      {children}
+    </MemoryRouter>
   );
 }
 
@@ -77,7 +79,7 @@ describe("useArticleEditorForm", () => {
     mockedGetArticle.mockReset();
     mockedSetArticle.mockReset();
     mockedUseRequireAuthRedirect.mockReset();
-    mockedUseRequireAuthRedirect.mockReturnValue(makeAuth() as any);
+    mockedUseRequireAuthRedirect.mockReturnValue(makeAuth() as never);
   });
 
   test("starts with an empty form for a new article", () => {
@@ -170,7 +172,7 @@ describe("useArticleEditorForm", () => {
   test("redirects home when the existing article is owned by someone else", async () => {
     const redirectHome = vi.fn();
     mockedUseRequireAuthRedirect.mockReturnValue(
-      makeAuth({ loggedUser: { username: "mallory" }, redirectHome }) as any,
+      makeAuth({ loggedUser: { username: "mallory" }, redirectHome }) as never,
     );
     mockedGetArticle.mockResolvedValueOnce(article);
 
@@ -185,7 +187,7 @@ describe("useArticleEditorForm", () => {
 
   test("does not fetch when there is no slug or no auth", async () => {
     mockedUseRequireAuthRedirect.mockReturnValue(
-      makeAuth({ isAuth: false }) as any,
+      makeAuth({ isAuth: false }) as never,
     );
 
     renderHook(() => useArticleEditorForm(), {
@@ -213,7 +215,7 @@ describe("useArticleEditorForm", () => {
     await act(async () => {
       await result.current.formSubmit({
         preventDefault: vi.fn(),
-      } as any);
+      } as never);
     });
 
     expect(mockedSetArticle).toHaveBeenCalledWith({
@@ -237,7 +239,7 @@ describe("useArticleEditorForm", () => {
     await act(async () => {
       await result.current.formSubmit({
         preventDefault: vi.fn(),
-      } as any);
+      } as never);
     });
 
     await waitFor(() => {
@@ -247,7 +249,7 @@ describe("useArticleEditorForm", () => {
 
   test("does nothing when not authenticated", async () => {
     mockedUseRequireAuthRedirect.mockReturnValue(
-      makeAuth({ isAuth: false, headers: undefined }) as any,
+      makeAuth({ isAuth: false, headers: undefined }) as never,
     );
 
     const { result } = renderHook(() => useArticleEditorForm(), {
@@ -257,7 +259,7 @@ describe("useArticleEditorForm", () => {
     await act(async () => {
       await result.current.formSubmit({
         preventDefault: vi.fn(),
-      } as any);
+      } as never);
     });
 
     expect(mockedSetArticle).not.toHaveBeenCalled();
