@@ -1,0 +1,166 @@
+openapi: 3.0.3
+info:
+  title: Conduit API
+  version: 1.0.0
+  description: RealWorld (Conduit) example app API
+servers:
+  - url: http://localhost:3001
+paths:
+  /api/users:
+    post:
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: object
+                  required: [username, email, password]
+                  properties:
+                    username: { type: string }
+                    email: { type: string, format: email }
+                    password: { type: string }
+      responses:
+        "201":
+          description: Created
+  /api/users/login:
+    post:
+      summary: Log in
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: object
+                  required: [email, password]
+                  properties:
+                    email: { type: string }
+                    password: { type: string }
+      responses:
+        "200":
+          description: OK
+  /api/user:
+    get:
+      summary: Get current user
+      security: [{ TokenAuth: [] }]
+      responses:
+        "200": { description: OK }
+    put:
+      summary: Update current user
+      security: [{ TokenAuth: [] }]
+      responses:
+        "200": { description: OK }
+  /api/articles:
+    get:
+      summary: List articles
+      parameters:
+        - { name: tag, in: query, schema: { type: string } }
+        - { name: author, in: query, schema: { type: string } }
+        - { name: favorited, in: query, schema: { type: string } }
+        - { name: limit, in: query, schema: { type: integer } }
+        - { name: offset, in: query, schema: { type: integer } }
+      responses:
+        "200": { description: OK }
+    post:
+      summary: Create article
+      security: [{ TokenAuth: [] }]
+      responses:
+        "201": { description: Created }
+  /api/articles/{slug}:
+    get:
+      summary: Get article
+      parameters:
+        - { name: slug, in: path, required: true, schema: { type: string } }
+      responses:
+        "200": { description: OK }
+    put:
+      summary: Update article
+      security: [{ TokenAuth: [] }]
+      parameters:
+        - { name: slug, in: path, required: true, schema: { type: string } }
+      responses:
+        "200": { description: OK }
+    delete:
+      summary: Delete article
+      security: [{ TokenAuth: [] }]
+      parameters:
+        - { name: slug, in: path, required: true, schema: { type: string } }
+      responses:
+        "204": { description: Deleted }
+  /api/articles/{slug}/comments:
+    get:
+      summary: Get comments
+      parameters:
+        - { name: slug, in: path, required: true, schema: { type: string } }
+      responses:
+        "200": { description: OK }
+    post:
+      summary: Add comment
+      security: [{ TokenAuth: [] }]
+      parameters:
+        - { name: slug, in: path, required: true, schema: { type: string } }
+      responses:
+        "201": { description: Created }
+  /api/articles/{slug}/comments/{id}:
+    delete:
+      summary: Delete comment
+      security: [{ TokenAuth: [] }]
+      parameters:
+        - { name: slug, in: path, required: true, schema: { type: string } }
+        - { name: id, in: path, required: true, schema: { type: integer } }
+      responses:
+        "204": { description: Deleted }
+  /api/articles/{slug}/favorite:
+    post:
+      summary: Favorite article
+      security: [{ TokenAuth: [] }]
+      parameters:
+        - { name: slug, in: path, required: true, schema: { type: string } }
+      responses:
+        "200": { description: OK }
+    delete:
+      summary: Unfavorite article
+      security: [{ TokenAuth: [] }]
+      parameters:
+        - { name: slug, in: path, required: true, schema: { type: string } }
+      responses:
+        "200": { description: OK }
+  /api/profiles/{username}:
+    get:
+      summary: Get profile
+      parameters:
+        - { name: username, in: path, required: true, schema: { type: string } }
+      responses:
+        "200": { description: OK }
+  /api/profiles/{username}/follow:
+    post:
+      summary: Follow user
+      security: [{ TokenAuth: [] }]
+      parameters:
+        - { name: username, in: path, required: true, schema: { type: string } }
+      responses:
+        "200": { description: OK }
+    delete:
+      summary: Unfollow user
+      security: [{ TokenAuth: [] }]
+      parameters:
+        - { name: username, in: path, required: true, schema: { type: string } }
+      responses:
+        "200": { description: OK }
+  /api/tags:
+    get:
+      summary: Get tags
+      responses:
+        "200": { description: OK }
+components:
+  securitySchemes:
+    TokenAuth:
+      type: apiKey
+      in: header
+      name: Authorization

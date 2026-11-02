@@ -1,5 +1,6 @@
 import "dotenv/config";
 import express from "express";
+import path from "path";
 import type { Server } from "http";
 import cors from "cors";
 import helmet from "helmet";
@@ -31,6 +32,30 @@ app.use(
 );
 app.use(express.json({ limit: process.env.JSON_BODY_LIMIT ?? "100kb" }));
 app.use("/api", createRateLimiter());
+
+// API documentation (OpenAPI spec + Swagger UI, loaded from CDN so no
+// extra dependency is required).
+app.get("/openapi.yaml", (_req, res) =>
+  res.sendFile(path.join(__dirname, "openapi.yaml")),
+);
+
+app.get("/api-docs", (_req, res) => {
+  res.type("html").send(`<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Conduit API Docs</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui.css" />
+  </head>
+  <body>
+    <div id="swagger-ui"></div>
+    <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
+    <script>
+      SwaggerUIBundle({ url: "/openapi.yaml", dom_id: "#swagger-ui" });
+    </script>
+  </body>
+</html>`);
+});
 
 app.get("/healthz", (_req, res) => res.json({ status: "ok" }));
 

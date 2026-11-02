@@ -19,6 +19,7 @@ ENV NODE_ENV=production
 RUN corepack enable
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=build /app/backend/dist ./backend/dist
+COPY backend/openapi.yaml ./backend/dist/openapi.yaml
 COPY --from=build /app/frontend/dist ./frontend/dist
 COPY backend/package.json ./backend/
 COPY package.json ./
