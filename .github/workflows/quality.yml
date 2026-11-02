@@ -67,6 +67,67 @@ jobs:
       - name: Run test suite
         run: yarn test run --coverage
 
+  e2e:
+    name: Playwright E2E
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: conduit_development
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version-file: ".node-version"
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn cache clean && yarn install --frozen-lockfile
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Run database migrations
+        run: yarn sqlz db:migrate
+        env:
+          PORT: "3001"
+          JWT_KEY: "ci-secret"
+          DEV_DB_USERNAME: postgres
+          DEV_DB_PASSWORD: postgres
+          DEV_DB_NAME: conduit_development
+          DEV_DB_HOSTNAME: 127.0.0.1
+          DEV_DB_PORT: "5432"
+          DEV_DB_DIALECT: postgres
+          DEV_DB_LOGGING: "false"
+
+      - name: Run Playwright suite
+        run: yarn test:e2e
+        env:
+          PORT: "3001"
+          JWT_KEY: "ci-secret"
+          DEV_DB_USERNAME: postgres
+          DEV_DB_PASSWORD: postgres
+          DEV_DB_NAME: conduit_development
+          DEV_DB_HOSTNAME: 127.0.0.1
+          DEV_DB_PORT: "5432"
+          DEV_DB_DIALECT: postgres
+          DEV_DB_LOGGING: "false"
+          CI: "true"
+
   prettier:
     name: Prettier (format check)
     runs-on: ubuntu-latest
