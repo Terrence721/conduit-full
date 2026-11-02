@@ -96,6 +96,31 @@ describe("useAuth", () => {
     expect(result.current.loggedUser).toBeUndefined();
   });
 
+  test("logs the error when getUser rejects without crashing", async () => {
+    const headers = { Authorization: "Token abc123" };
+    localStorage.setItem(
+      "loggedUser",
+      JSON.stringify({ headers, isAuth: true }),
+    );
+
+    mockedGetUser.mockRejectedValueOnce(new Error("boom"));
+
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    const { result } = renderHook(() => useAuth(), { wrapper: Wrapper });
+
+    await waitFor(() => {
+      expect(mockedGetUser).toHaveBeenCalledWith({ headers });
+    });
+    // Let the rejected promise and its .catch run.
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(result.current.loggedUser).toBeUndefined();
+    expect(errorSpy).toHaveBeenCalled();
+
+    errorSpy.mockRestore();
+  });
+
   test("setAuthState updates the value and persists via caller", () => {
     const { result } = renderHook(() => useAuth(), { wrapper: Wrapper });
 

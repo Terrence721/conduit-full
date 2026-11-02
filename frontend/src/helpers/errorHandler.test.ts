@@ -1,5 +1,6 @@
 import type { AxiosError } from "axios";
 import errorHandler from "./errorHandler";
+import { vi } from "vitest";
 
 describe("Catching errors", () => {
   const statusCodes = [401, 403, 404, 422, 500] as const;
@@ -35,5 +36,36 @@ describe("Catching errors", () => {
     expect(() =>
       errorHandler({ response: { status: 500, data: {} } }),
     ).not.toThrow();
+  });
+
+  test("logs (does not throw) when an axios error has no response", () => {
+    const noResponseError = {
+      isAxiosError: true,
+      response: undefined,
+    } as AxiosError<{ errors: { body: string[] } }>;
+
+    const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+
+    expect(() => errorHandler(noResponseError)).not.toThrow();
+    expect(logSpy).toHaveBeenCalled();
+
+    logSpy.mockRestore();
+  });
+
+  test("uses console.dir for statuses outside the handled set", () => {
+    const otherError = {
+      isAxiosError: true,
+      response: {
+        status: 418,
+        data: { errors: { body: ["teapot"] } },
+      },
+    } as AxiosError<{ errors: { body: string[] } }>;
+
+    const dirSpy = vi.spyOn(console, "dir").mockImplementation(() => {});
+
+    expect(() => errorHandler(otherError)).not.toThrow();
+    expect(dirSpy).toHaveBeenCalled();
+
+    dirSpy.mockRestore();
   });
 });

@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import SignUp from "./SignUp";
 import AuthProvider from "../context/AuthContext";
@@ -37,5 +37,34 @@ describe("SignUp route", () => {
     ).toHaveAttribute("href", "/login");
     expect(screen.getByPlaceholderText("Your Name")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Sign up" })).toBeInTheDocument();
+  });
+
+  test("shows the error message when sign-up fails", async () => {
+    mockedUserSignUp.mockResolvedValueOnce(undefined);
+
+    render(
+      <MemoryRouter>
+        <AuthProvider>
+          <SignUp />
+        </AuthProvider>
+      </MemoryRouter>,
+    );
+
+    fireEvent.change(screen.getByPlaceholderText("Your Name"), {
+      target: { value: "jake" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("Email"), {
+      target: { value: "jake@jake.jake" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("Password"), {
+      target: { value: "password" },
+    });
+    fireEvent.submit(
+      screen.getByRole("button", { name: "Sign up" }).closest("form")!,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText(/something went wrong/i)).toBeInTheDocument();
+    });
   });
 });

@@ -1,5 +1,6 @@
-import { render, renderHook, act } from "@testing-library/react";
+import { render, renderHook, act, waitFor } from "@testing-library/react";
 import FeedProvider, { useFeedContext } from "./FeedContext";
+import { useAuth } from "./AuthContext";
 import AuthProvider from "./AuthContext";
 import getUser from "../services/getUser";
 import type { User } from "../types";
@@ -80,5 +81,34 @@ describe("useFeedContext", () => {
 
     expect(result.current.tabName).toBe("tag");
     expect(result.current.tagName).toBe("dragons");
+  });
+
+  test("moves to the your-feed tab when auth toggles from logged out to logged in", async () => {
+    const { result } = renderHook(
+      () => {
+        const auth = useAuth();
+        const feed = useFeedContext();
+        return { auth, feed };
+      },
+      {
+        wrapper: ({ children }) => (
+          <AuthProvider>
+            <FeedProvider>{children}</FeedProvider>
+          </AuthProvider>
+        ),
+      },
+    );
+
+    expect(result.current.feed.tabName).toBe("global");
+
+    act(() => {
+      result.current.auth.setAuthState({
+        headers: { Authorization: "Token abc123" },
+        isAuth: true,
+        loggedUser: { username: "jake" } as User,
+      });
+    });
+
+    await waitFor(() => expect(result.current.feed.tabName).toBe("feed"));
   });
 });
