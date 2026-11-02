@@ -53,7 +53,8 @@ test("creates, edits, comments on, and deletes an article", async ({
   await expect(page.getByText("great article")).toBeVisible({ timeout: 30000 });
 
   // Edit via API (mirrors the editor's PUT; the editor UI is covered
-  // separately by the component tests)
+  // separately by the component tests). Updating the title also re-slugs
+  // the article, so follow the new slug returned by the API.
   const updateResponse = await request.put(
     `http://localhost:3001/api/articles/${slug}`,
     {
@@ -68,15 +69,19 @@ test("creates, edits, comments on, and deletes an article", async ({
     },
   );
   expect(updateResponse.ok()).toBeTruthy();
+  const updated = (await updateResponse.json()) as {
+    article?: { slug: string };
+  };
+  const updatedSlug = updated.article?.slug ?? slug;
 
-  await page.goto(`/article/${slug}`);
+  await page.goto(`/article/${updatedSlug}`);
   await expect(
     page.getByRole("heading", { level: 1, name: updatedTitle }),
   ).toBeVisible({ timeout: 30000 });
 
   // Delete via API (no in-page delete control today)
   const deleteResponse = await request.delete(
-    `http://localhost:3001/api/articles/${slug}`,
+    `http://localhost:3001/api/articles/${updatedSlug}`,
     { headers: { Authorization: `Token ${user.token}` } },
   );
   expect(deleteResponse.ok()).toBeTruthy();
