@@ -12,12 +12,12 @@ test("loads the editorial landing page", async ({ page }) => {
 test("filters stories by search", async ({ page }) => {
   await page.goto("/");
 
-  await page.getByPlaceholder("Search stories").fill("Maya");
+  await page.getByPlaceholder("Search stories").fill("Elena");
 
   await expect(
     page.getByRole("heading", {
       level: 3,
-      name: "The quiet craft of designing for trust",
+      name: "The case for designing slower",
     }),
   ).toBeVisible();
 });
