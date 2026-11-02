@@ -120,7 +120,7 @@ describe("Article route", () => {
     mockedToggleFav.mockResolvedValueOnce({
       favorited: true,
       favoritesCount: 3,
-    });
+    } as never);
 
     render(<Article />, { wrapper: Wrapper });
 
