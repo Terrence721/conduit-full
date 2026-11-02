@@ -36,20 +36,24 @@ const allArticles = async (
   try {
     const { loggedUser } = req;
 
-    const { author, tag, favorited } = req.query as Record<string, unknown>;
+    const { author, tag, favorited } = req.query as {
+      author?: string;
+      favorited?: string;
+      tag?: string;
+    };
     const searchOptions = {
       include: [
         {
           model: Tag,
           as: "tagList",
           attributes: ["name"],
-          ...(tag ? { where: { name: tag as string } } : {}),
+          ...(tag ? { where: { name: tag } } : {}),
         },
         {
           model: User,
           as: "author",
           attributes: PUBLIC_USER_ATTRIBUTES,
-          ...(author ? { where: { username: author as string } } : {}),
+          ...(author ? { where: { username: author } } : {}),
         },
       ],
       ...parsePagination(req.query),
@@ -59,7 +63,7 @@ const allArticles = async (
     let articles: { rows: unknown[]; count: number } = { rows: [], count: 0 };
     if (favorited) {
       const user = await User.findOne({
-        where: { username: favorited as string },
+        where: { username: favorited },
       });
       if (!user) throw new NotFoundError("User");
 
