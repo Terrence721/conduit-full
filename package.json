@@ -31,7 +31,7 @@
     "prestart": "yarn clean:logs",
     "start": "yarn workspace frontend build && yarn workspace backend start",
     "clean:logs": "tsx scripts/clean-logs.ts",
-    "test": "vitest",
+    "test": "vitest --configLoader native",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
     "typecheck": "tsc --noEmit -p scripts/tsconfig.json && yarn workspace backend typecheck && yarn workspace frontend typecheck",
