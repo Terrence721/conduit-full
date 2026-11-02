@@ -31,6 +31,16 @@ app.use(
   }),
 );
 app.use(express.json({ limit: process.env.JSON_BODY_LIMIT ?? "100kb" }));
+// Stricter, IP-keyed limit on the login endpoint to slow brute-force
+// attempts; runs before the global /api limiter.
+app.use(
+  "/api/users/login",
+  createRateLimiter({
+    limit: 10,
+    keyGenerator: (req) => req.ip ?? "unknown",
+  }),
+);
+
 app.use("/api", createRateLimiter());
 
 // API documentation (OpenAPI spec + Swagger UI, loaded from CDN so no
