@@ -12,7 +12,7 @@ test("registers, creates an article, comments, and saves it", async ({
   const password = "password123";
   const title = `E2E story ${id}`;
 
-  const response = await request.post("http://localhost:3007/api/users", {
+  const response = await request.post("http://localhost:3001/api/users", {
     data: { user: { email, password, username } },
   });
   const parsed = (await response.json()) as { user?: { token: string } };
