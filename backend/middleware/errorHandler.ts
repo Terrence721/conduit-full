@@ -10,7 +10,7 @@ const errorHandler = (
   res: Response,
   _next: NextFunction,
 ) => {
-  const requestId = (res.locals?.requestId as string) ?? "unknown";
+  const requestId = (res.locals.requestId as string) ?? "unknown";
   console.error(
     JSON.stringify({
       error: error instanceof Error ? error.message : String(error),
