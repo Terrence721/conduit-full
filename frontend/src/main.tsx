@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { HashRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import App from "./App";
 import AuthProvider from "./context/AuthContext";
 import Layout from "./Layout";
@@ -24,7 +24,7 @@ if (!rootElement) throw new Error("Root element not found");
 
 ReactDOM.createRoot(rootElement).render(
   <React.StrictMode>
-    <HashRouter>
+    <BrowserRouter>
       <AuthProvider>
         <Routes>
           <Route path="/" element={<App />} />
@@ -56,6 +56,6 @@ ReactDOM.createRoot(rootElement).render(
           </Route>
         </Routes>
       </AuthProvider>
-    </HashRouter>
+    </BrowserRouter>
   </React.StrictMode>,
 );
