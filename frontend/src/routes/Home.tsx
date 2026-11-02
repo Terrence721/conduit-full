@@ -295,7 +295,7 @@ export default function Home() {
               Publish your ideas, find your readers, and join a thoughtful
               community.
             </p>
-            <Link to="/editor">Start writing</Link>
+            <Link to={isAuth ? "/editor" : "/login"}>Start writing</Link>
           </div>
         </aside>
       </section>

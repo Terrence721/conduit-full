@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useMemo, useState, type ReactNode } from "react";
+import { useAuth } from "./context/AuthContext";
 
 type Article = {
   id: number;
@@ -646,6 +647,7 @@ function ArticleReader({
 }
 
 function App() {
+  const auth = useAuth();
   const [feed, setFeed] = useState<"For you" | "Following">("For you");
   const [activeTag, setActiveTag] = useState("All topics");
   const [query, setQuery] = useState("");
@@ -1037,7 +1039,7 @@ function App() {
                 Publish your ideas, find your readers, and join a thoughtful
                 community.
               </p>
-              <Link to="/editor">
+              <Link to={auth.isAuth ? "/editor" : "/login"}>
                 Start writing <ArrowIcon />
               </Link>
             </div>
