@@ -872,6 +872,8 @@ function App() {
                 <SearchIcon />
                 <span className="sr-only">Search stories</span>
                 <input
+                  id="story-search"
+                  name="story-search"
                   type="search"
                   placeholder="Search stories"
                   value={query}
@@ -1065,6 +1067,8 @@ function App() {
             <label>
               <span className="sr-only">Email address</span>
               <input
+                id="newsletter-email"
+                name="newsletter-email"
                 required
                 type="email"
                 placeholder="Your email address"

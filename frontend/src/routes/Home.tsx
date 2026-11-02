@@ -150,6 +150,8 @@ export default function Home() {
             <label className="feed-search">
               <span className="sr-only">Search stories</span>
               <input
+                id="story-search"
+                name="story-search"
                 type="search"
                 placeholder="Search stories"
                 value={query}
