@@ -7,6 +7,18 @@ const { ValidationError } = customErrors;
 
 const UPDATABLE_FIELDS = ["username", "bio", "image", "email"] as const;
 
+const isValidEmail = (email: string): boolean => {
+  const atIndex = email.indexOf("@");
+  const lastDot = email.lastIndexOf(".");
+  return (
+    atIndex > 0 &&
+    email.indexOf("@", atIndex + 1) === -1 &&
+    lastDot > atIndex + 1 &&
+    lastDot < email.length - 1 &&
+    !/\s/.test(email)
+  );
+};
+
 //* Current User
 const currentUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -41,10 +53,7 @@ const updateUser = async (req: Request, res: Response, next: NextFunction) => {
       }
     }
 
-    if (
-      user.email !== undefined &&
-      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(user.email)
-    ) {
+    if (user.email !== undefined && !isValidEmail(user.email)) {
       throw new ValidationError("email must be valid");
     }
 
