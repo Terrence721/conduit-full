@@ -1,28 +1,8 @@
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-  type Dispatch,
-  type ReactNode,
-  type SetStateAction,
-} from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import getUser from "../services/getUser";
+import { AuthContext } from "./AuthContextInstance";
 import { emptyAuthState, type AuthState } from "../types";
 import errorHandler from "../helpers/errorHandler";
-
-type AuthContextValue = AuthState & {
-  setAuthState: Dispatch<SetStateAction<AuthState>>;
-};
-
-const AuthContext = createContext<AuthContextValue | undefined>(undefined);
-
-export function useAuth(): AuthContextValue {
-  const context = useContext(AuthContext);
-  if (!context) throw new Error("useAuth must be used within an AuthProvider");
-  return context;
-}
 
 function getStoredAuthState(): AuthState {
   const stored = localStorage.getItem("loggedUser");

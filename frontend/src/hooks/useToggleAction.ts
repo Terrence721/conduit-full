@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../hooks/useAuth";
 import requireAuth, { type AuthedState } from "../helpers/requireAuth";
 import errorHandler from "../helpers/errorHandler";
 

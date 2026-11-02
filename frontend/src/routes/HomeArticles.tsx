@@ -1,5 +1,5 @@
 import ArticlesListView from "../components/ArticlesListView/ArticlesListView";
-import { useFeedContext } from "../context/FeedContext";
+import { useFeedContext } from "../hooks/useFeedContext";
 
 function HomeArticles() {
   const { tabName, tagName } = useFeedContext();

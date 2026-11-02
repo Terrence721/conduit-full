@@ -1,4 +1,4 @@
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../hooks/useAuth";
 import useToggleAction from "../../hooks/useToggleAction";
 import toggleFollow from "../../services/toggleFollow";
 import type { Profile } from "../../types";

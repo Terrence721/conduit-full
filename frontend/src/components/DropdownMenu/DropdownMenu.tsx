@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../hooks/useAuth";
 import userLogout from "../../services/userLogout";
 import Avatar from "../Avatar/Avatar";
 import DropdownItem from "../DropdownItem/DropdownItem";

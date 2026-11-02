@@ -1,7 +1,7 @@
 import Markdown from "markdown-to-jsx";
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../hooks/useAuth";
 import getProfile from "../../services/getProfile";
 import Avatar from "../Avatar/Avatar";
 import FollowButton from "../FollowButton/FollowButton";

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useMemo, useState, type ReactNode } from "react";
-import { useAuth } from "./context/AuthContext";
+import { useAuth } from "./hooks/useAuth";
 
 type Article = {
   id: number;

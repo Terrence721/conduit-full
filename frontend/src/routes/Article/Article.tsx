@@ -1,7 +1,7 @@
 import Markdown from "markdown-to-jsx";
 import { useEffect, useState } from "react";
 import { Link, Outlet, useNavigate, useParams } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../hooks/useAuth";
 import requireAuth from "../../helpers/requireAuth";
 import toggleFav from "../../services/toggleFav";
 import getArticle from "../../services/getArticle";

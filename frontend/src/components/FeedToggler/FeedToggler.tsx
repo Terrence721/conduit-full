@@ -1,5 +1,5 @@
-import { useAuth } from "../../context/AuthContext";
-import { useFeedContext } from "../../context/FeedContext";
+import { useAuth } from "../../hooks/useAuth";
+import { useFeedContext } from "../../hooks/useFeedContext";
 import FeedNavLink from "./FeedNavLink";
 
 function FeedToggler() {

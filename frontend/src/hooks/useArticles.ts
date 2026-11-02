@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../hooks/useAuth";
 import getArticles from "../services/getArticles";
 import type { ArticleLocation, ArticlesResponse } from "../types";
 import errorHandler from "../helpers/errorHandler";

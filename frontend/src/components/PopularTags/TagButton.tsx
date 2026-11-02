@@ -1,4 +1,4 @@
-import { useFeedContext } from "../../context/FeedContext";
+import { useFeedContext } from "../../hooks/useFeedContext";
 
 interface TagButtonProps {
   tagsList: string[];

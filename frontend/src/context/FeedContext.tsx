@@ -1,32 +1,13 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-  type ReactNode,
-} from "react";
-import { useAuth } from "./AuthContext";
+import { useCallback, useMemo, useState, type ReactNode } from "react";
+import { useAuth } from "../hooks/useAuth";
+import { FeedContext } from "./FeedContextInstance";
 
-export type FeedTabName = "feed" | "global" | "tag";
+import type { FeedTabName } from "./FeedContextInstance";
+export type { FeedTabName };
 
 interface FeedTab {
   tabName: FeedTabName;
   tagName: string;
-}
-
-interface FeedContextValue extends FeedTab {
-  changeTab: (tabName: FeedTabName, tagName: string) => void;
-}
-
-const FeedContext = createContext<FeedContextValue | undefined>(undefined);
-
-export function useFeedContext(): FeedContextValue {
-  const context = useContext(FeedContext);
-  if (!context) {
-    throw new Error("useFeedContext must be used within a FeedProvider");
-  }
-  return context;
 }
 
 interface FeedProviderProps {

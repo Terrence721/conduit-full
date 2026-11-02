@@ -1,6 +1,7 @@
 import { render, renderHook, act, waitFor } from "@testing-library/react";
-import FeedProvider, { useFeedContext } from "./FeedContext";
-import { useAuth } from "./AuthContext";
+import FeedProvider from "./FeedContext";
+import { useFeedContext } from "../hooks/useFeedContext";
+import { useAuth } from "../hooks/useAuth";
 import AuthProvider from "./AuthContext";
 import getUser from "../services/getUser";
 import type { User } from "../types";

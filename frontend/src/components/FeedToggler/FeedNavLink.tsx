@@ -1,4 +1,5 @@
-import { useFeedContext, type FeedTabName } from "../../context/FeedContext";
+import { useFeedContext } from "../../hooks/useFeedContext";
+import type { FeedTabName } from "../../context/FeedContext";
 
 interface FeedNavLinkProps {
   icon?: boolean;

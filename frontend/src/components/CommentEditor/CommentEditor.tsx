@@ -1,6 +1,6 @@
 import { useState, type SubmitEvent } from "react";
 import { Link, useParams } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../hooks/useAuth";
 import requireAuth from "../../helpers/requireAuth";
 import postComment from "../../services/postComment";
 import Avatar from "../Avatar/Avatar";

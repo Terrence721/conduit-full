@@ -1,7 +1,8 @@
 import { act, render, renderHook, waitFor } from "@testing-library/react";
 import type { ReactNode } from "react";
 import getUser from "../services/getUser";
-import AuthProvider, { useAuth } from "./AuthContext";
+import AuthProvider from "./AuthContext";
+import { useAuth } from "../hooks/useAuth";
 import type { AuthState, User } from "../types";
 import { emptyAuthState } from "../types";
 

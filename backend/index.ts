@@ -63,7 +63,7 @@ app.get("/readyz", async (_req, res) => {
   try {
     await sequelize.authenticate();
     res.json({ status: "ready" });
-  } catch (error) {
+  } catch {
     res.status(503).json({ errors: { body: ["Database unavailable"] } });
   }
 });

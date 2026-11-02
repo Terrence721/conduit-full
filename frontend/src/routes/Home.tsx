@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../hooks/useAuth";
 import useArticles from "../hooks/useArticles";
 import dateFormatter from "../helpers/dateFormatter";
 import type { ArticleLocation } from "../types";

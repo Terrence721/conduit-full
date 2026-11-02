@@ -1,6 +1,6 @@
 import { useState, type SubmitEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../hooks/useAuth";
 import handleAuthResult from "../../helpers/handleAuthResult";
 import userSignUp from "../../services/userSignUp";
 import FormFieldset from "../FormFieldset/FormFieldset";
