@@ -11,6 +11,8 @@
 # Intended to be launched by a Scheduled Task at logon, but also runnable manually:
 #   powershell -ExecutionPolicy Bypass -File .\scripts\dev-bootstrap.ps1
 
+param([switch]$EnvOnly)
+
 $ErrorActionPreference = "Stop"
 
 # Always run from the repo root (this file's parent's parent).
@@ -43,23 +45,27 @@ if ($LASTEXITCODE -ne 0) { Write-Host "    (DB already exists; continuing)" }
 
 # 4. Migrate --------------------------------------------------------------------
 Write-Host "==> Running migrations..."
-yarn sqlz db:migrate
+$migrateOutput = yarn sqlz db:migrate 2>&1
+Write-Host $migrateOutput
 if ($LASTEXITCODE -ne 0) { throw "migrations failed ($LASTEXITCODE)" }
 
-# 5. Seed only when the database is empty ---------------------------------------
-$userCount = 0
-try {
-    $raw = docker exec conduit-full-postgres psql -U postgres -d conduit_development -tAc 'SELECT COUNT(*) FROM "Users";' 2>$null
-    $userCount = [int]($raw.Trim())
-} catch {
-    $userCount = 0
-}
-if ($userCount -eq 0) {
-    Write-Host "==> Database is empty; seeding dummy data..."
+# 5. Seed only on the first run ---------------------------------------------------
+# Checking the Users table directly is unreliable across shells and container
+# timing, so a marker file records that seeding has already happened. Delete
+# ".seeded" if you drop/recreate the database and want a fresh seed.
+$seedMarker = Join-Path $repoRoot ".seeded"
+if (-not (Test-Path $seedMarker)) {
+    Write-Host "==> First run; seeding dummy data..."
     yarn sqlz db:seed:all
     if ($LASTEXITCODE -ne 0) { throw "seeding failed ($LASTEXITCODE)" }
+    New-Item -ItemType File -Path $seedMarker | Out-Null
 } else {
-    Write-Host "==> Database already has $userCount user(s); skipping seed."
+    Write-Host "==> Already seeded (marker present); skipping seed."
+}
+
+if ($EnvOnly) {
+    Write-Host "==> Environment ready (dev servers not started)."
+    exit 0
 }
 
 # 6. Dev servers ----------------------------------------------------------------
