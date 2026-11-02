@@ -34,7 +34,12 @@ if (-not $ready) { throw "Postgres did not become ready in time" }
 
 # 3. Create database (idempotent: ignored if it already exists) ------------------
 Write-Host "==> Ensuring development database exists..."
+# "db:create" exits non-zero when the DB already exists; that is expected.
+$previousPreference = $ErrorActionPreference
+$ErrorActionPreference = "Continue"
 yarn sqlz db:create 2>&1 | Out-Null
+$ErrorActionPreference = $previousPreference
+if ($LASTEXITCODE -ne 0) { Write-Host "    (DB already exists; continuing)" }
 
 # 4. Migrate --------------------------------------------------------------------
 Write-Host "==> Running migrations..."
