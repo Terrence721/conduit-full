@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 // Flaky in this environment (backend/Postgres port and proxy instability);
 // keep as a scaffold until the local stack is reliably runnable.
-test.skip("registers, creates an article, comments, and saves it", async ({
+test("registers, creates an article, comments, and saves it", async ({
   page,
   request,
 }) => {
