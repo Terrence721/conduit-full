@@ -1,5 +1,6 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
+import type { ReactNode } from "react";
 import Profile from "./Profile";
 import AuthProvider from "../../context/AuthContext";
 import getProfile from "../../services/getProfile";
@@ -11,6 +12,18 @@ vi.mock("../../services/getUser");
 const mockedGetProfile = vi.mocked(getProfile);
 const mockedGetUser = vi.mocked(getUser);
 
+function Wrapper({ children }: { children: ReactNode }) {
+  return (
+    <MemoryRouter initialEntries={["/profile/jake"]}>
+      <AuthProvider>
+        <Routes>
+          <Route path="/profile/:username" element={children} />
+        </Routes>
+      </AuthProvider>
+    </MemoryRouter>
+  );
+}
+
 describe("Profile route", () => {
   beforeEach(() => {
     localStorage.clear();
@@ -19,32 +32,66 @@ describe("Profile route", () => {
     mockedGetUser.mockResolvedValue(undefined);
   });
 
-  test("renders the profile navigation", async () => {
-    mockedGetProfile.mockResolvedValue({
+  test("shows the username and edit link for the signed-in user", async () => {
+    localStorage.setItem(
+      "loggedUser",
+      JSON.stringify({
+        headers: { Authorization: "Token abc123" },
+        isAuth: true,
+        loggedUser: { username: "jake" },
+      }),
+    );
+    mockedGetUser.mockResolvedValue({
       bio: null,
-      followersCount: 0,
+      email: "jake@jake.jake",
+      image: null,
+      token: "abc123",
+      username: "jake",
+    });
+    mockedGetProfile.mockResolvedValue({
+      bio: "Bio",
+      followersCount: 2,
       following: false,
       image: null,
       username: "jake",
     });
 
-    render(
-      <MemoryRouter initialEntries={["/profile/jake"]}>
-        <AuthProvider>
-          <Routes>
-            <Route path="/profile/:username" element={<Profile />} />
-          </Routes>
-        </AuthProvider>
-      </MemoryRouter>,
-    );
+    render(<Profile />, { wrapper: Wrapper });
 
     await waitFor(() => {
-      expect(
-        screen.getByRole("link", { name: "My Articles" }),
-      ).toBeInTheDocument();
+      expect(screen.getByText("jake")).toBeInTheDocument();
     });
+
     expect(
-      screen.getByRole("link", { name: "Favorited Articles" }),
+      screen.getByRole("link", { name: "Edit Profile Settings" }),
     ).toBeInTheDocument();
+  });
+
+  test("renders another user's follow control", async () => {
+    mockedGetProfile.mockResolvedValue({
+      bio: "Bio",
+      followersCount: 4,
+      following: false,
+      image: null,
+      username: "jane",
+    });
+
+    render(<Profile />, {
+      wrapper: ({ children }) => (
+        <MemoryRouter initialEntries={["/profile/jane"]}>
+          <AuthProvider>
+            <Routes>
+              <Route path="/profile/:username" element={children} />
+            </Routes>
+          </AuthProvider>
+        </MemoryRouter>
+      ),
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText("jane")).toBeInTheDocument();
+    });
+
+    expect(screen.getByText("( 4 )")).toBeInTheDocument();
   });
 });

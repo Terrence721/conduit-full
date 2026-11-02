@@ -1,148 +1,101 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { MemoryRouter } from "react-router-dom";
-import type { ReactNode } from "react";
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import SettingsForm from "./SettingsForm";
-import type { AuthState } from "../../types";
-import AuthProvider from "../../context/AuthContext";
+import useRequireAuthRedirect from "../../hooks/useRequireAuthRedirect";
 import userUpdate from "../../services/userUpdate";
-import getUser from "../../services/getUser";
 
+vi.mock("../../hooks/useRequireAuthRedirect");
 vi.mock("../../services/userUpdate");
-vi.mock("../../services/getUser");
 
+const mockedUseRequireAuthRedirect = vi.mocked(useRequireAuthRedirect);
 const mockedUserUpdate = vi.mocked(userUpdate);
-const mockedGetUser = vi.mocked(getUser);
 
-function Wrapper({ children }: { children: ReactNode }) {
-  return (
-    <MemoryRouter initialEntries={["/settings"]}>
-      <AuthProvider>{children}</AuthProvider>
-    </MemoryRouter>
-  );
+function authState() {
+  return {
+    isAuth: true,
+    headers: { Authorization: "Token abc123" },
+    loggedUser: {
+      bio: "bio",
+      email: "jake@jake.jake",
+      image: "pic.png",
+      token: "abc123",
+      username: "jake",
+    },
+    setAuthState: vi.fn(),
+    redirectHome: vi.fn(),
+  };
 }
 
 describe("SettingsForm", () => {
-  const loggedUser = {
-    bio: "bio",
-    email: "jake@jake.jake",
-    image: "img.png",
-    token: "abc123",
-    username: "jake",
-  };
-
   beforeEach(() => {
-    localStorage.clear();
     mockedUserUpdate.mockReset();
-    mockedGetUser.mockReset();
-    mockedGetUser.mockResolvedValue(loggedUser);
+    mockedUseRequireAuthRedirect.mockReset();
+    mockedUseRequireAuthRedirect.mockReturnValue(authState() as never);
   });
 
-  test("renders nothing when not authenticated", () => {
-    mockedGetUser.mockResolvedValue(undefined);
+  test("renders the current profile values", () => {
+    render(<SettingsForm />);
 
-    const { container } = render(
-      <Wrapper>
-        <SettingsForm />
-      </Wrapper>,
-    );
-
-    expect(container).toBeEmptyDOMElement();
-  });
-
-  test("renders fields populated from the logged-in user", async () => {
-    localStorage.setItem(
-      "loggedUser",
-      JSON.stringify({
-        headers: { Authorization: "Token abc123" },
-        isAuth: true,
-        loggedUser,
-      }),
-    );
-
-    render(
-      <Wrapper>
-        <SettingsForm />
-      </Wrapper>,
-    );
-
-    await waitFor(() => {
-      expect(screen.getByPlaceholderText("Your Name")).toHaveValue("jake");
-    });
+    expect(screen.getByPlaceholderText("Your Name")).toHaveValue("jake");
     expect(screen.getByPlaceholderText("Email")).toHaveValue("jake@jake.jake");
+    expect(screen.getByPlaceholderText("URL of profile picture")).toHaveValue(
+      "pic.png",
+    );
     expect(screen.getByPlaceholderText("Short bio about you")).toHaveValue(
       "bio",
     );
   });
 
-  test("updates settings and calls userUpdate", async () => {
-    localStorage.setItem(
-      "loggedUser",
-      JSON.stringify({
-        headers: { Authorization: "Token abc123" },
-        isAuth: true,
-        loggedUser,
-      }),
-    );
+  test("updates settings and calls setAuthState on success", async () => {
+    const user = userEvent.setup();
+    const auth = authState();
+    mockedUseRequireAuthRedirect.mockReturnValue(auth as never);
+    mockedUserUpdate.mockResolvedValueOnce(auth.loggedUser as never);
 
-    const updated = {
-      headers: { Authorization: "Token abc123" },
-      isAuth: true,
-      loggedUser: { ...loggedUser, bio: "new bio" },
-    };
-    mockedUserUpdate.mockResolvedValueOnce(updated as AuthState);
+    render(<SettingsForm />);
 
-    render(
-      <Wrapper>
-        <SettingsForm />
-      </Wrapper>,
-    );
-
-    await waitFor(() => {
-      expect(screen.getByPlaceholderText("Your Name")).toHaveValue("jake");
-    });
-
-    fireEvent.change(screen.getByPlaceholderText("Short bio about you"), {
-      target: { value: "new bio" },
-    });
-    fireEvent.submit(
-      screen.getByRole("button", { name: /update settings/i }).closest("form")!,
-    );
+    await user.clear(screen.getByPlaceholderText("Your Name"));
+    await user.type(screen.getByPlaceholderText("Your Name"), "jake-2");
+    await user.click(screen.getByRole("button", { name: "Update Settings" }));
 
     await waitFor(() => {
       expect(mockedUserUpdate).toHaveBeenCalled();
     });
+    expect(auth.setAuthState).toHaveBeenCalled();
   });
 
-  test("shows an error message when the update fails", async () => {
-    localStorage.setItem(
-      "loggedUser",
-      JSON.stringify({
-        headers: { Authorization: "Token abc123" },
-        isAuth: true,
-        loggedUser,
-      }),
-    );
-
+  test("shows an error message when update fails", async () => {
+    const user = userEvent.setup();
     mockedUserUpdate.mockResolvedValueOnce(undefined);
 
-    render(
-      <Wrapper>
-        <SettingsForm />
-      </Wrapper>,
-    );
+    render(<SettingsForm />);
 
-    await waitFor(() => {
-      expect(screen.getByPlaceholderText("Your Name")).toHaveValue("jake");
-    });
-
-    fireEvent.submit(
-      screen.getByRole("button", { name: /update settings/i }).closest("form")!,
-    );
+    await user.click(screen.getByRole("button", { name: "Update Settings" }));
 
     await waitFor(() => {
       expect(
         screen.getByText("Something went wrong. Please try again."),
       ).toBeInTheDocument();
     });
+  });
+
+  test("renders nothing when logged out", () => {
+    mockedUseRequireAuthRedirect.mockReturnValue({
+      isAuth: false,
+      headers: undefined,
+      loggedUser: {
+        username: "",
+        email: "",
+        token: "",
+        bio: null,
+        image: null,
+      },
+      setAuthState: vi.fn(),
+      redirectHome: vi.fn(),
+    } as never);
+
+    const { container } = render(<SettingsForm />);
+
+    expect(container).toBeEmptyDOMElement();
   });
 });
