@@ -49,20 +49,20 @@ function AuthorInfo() {
   if (!username) return null;
 
   return (
-    <div className="col-xs-12 col-md-10 offset-md-1">
+    <div className="writer-card">
+      <span className="writer-card-mark" aria-hidden="true">
+        ✦
+      </span>
       <Avatar alt={username} className="user-img" src={author.image} />
-      <h4>{username}</h4>
+      <h3>{username}</h3>
 
       {author.bio && (
         <Markdown options={{ forceBlock: true }}>{author.bio}</Markdown>
       )}
 
       {username === loggedUser.username ? (
-        <Link
-          className="btn btn-sm btn-outline-secondary action-btn"
-          to="/settings"
-        >
-          <i className="ion-gear-a"></i> Edit Profile Settings
+        <Link className="primary-button" to="/settings">
+          Edit Profile Settings
         </Link>
       ) : (
         <FollowButton
