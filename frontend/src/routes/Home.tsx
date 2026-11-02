@@ -295,7 +295,7 @@ export default function Home() {
               Publish your ideas, find your readers, and join a thoughtful
               community.
             </p>
-            <a href="/editor">Start writing</a>
+            <Link to="/editor">Start writing</Link>
           </div>
         </aside>
       </section>

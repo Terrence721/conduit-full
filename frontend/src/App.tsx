@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { useMemo, useState, type ReactNode } from "react";
 
 type Article = {
@@ -1036,9 +1037,9 @@ function App() {
                 Publish your ideas, find your readers, and join a thoughtful
                 community.
               </p>
-              <a href="/editor">
+              <Link to="/editor">
                 Start writing <ArrowIcon />
-              </a>
+              </Link>
             </div>
 
             <div className="sidebar-footer">
