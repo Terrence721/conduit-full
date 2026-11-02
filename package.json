@@ -21,7 +21,9 @@
   },
   "scripts": {
     "predev": "yarn clean:logs",
-    "dev": "concurrently --names 'Node,Vite' -c 'green,blue' \"yarn workspace backend dev\" \"yarn workspace frontend dev\"",
+    "dev": "yarn dev:env && yarn dev:app",
+    "dev:app": "concurrently --names 'Node,Vite' -c 'green,blue' \"yarn workspace backend dev\" \"yarn workspace frontend dev\"",
+    "dev:env": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev-bootstrap.ps1 -EnvOnly",
     "dev:bootstrap": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev-bootstrap.ps1",
     "sqlz": "yarn workspace backend sqlz",
     "prestart": "yarn clean:logs",
