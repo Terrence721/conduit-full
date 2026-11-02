@@ -3,7 +3,9 @@ import { expect, test } from "@playwright/test";
 test("shows the home route", async ({ page }) => {
   await page.goto("/home");
 
-  await expect(page.getByRole("button", { name: "Global Feed" })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Stories for curious people" }),
+  ).toBeVisible();
 });
 
 test("shows the login route", async ({ page }) => {
