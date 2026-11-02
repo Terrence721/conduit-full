@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import useArticles from "../hooks/useArticles";
 import dateFormatter from "../helpers/dateFormatter";
-import type { Article, ArticleLocation } from "../types";
+import type { ArticleLocation } from "../types";
 
 const popularTags = [
   "Design",
@@ -60,7 +60,7 @@ export default function Home() {
         ? "feed"
         : "global";
 
-  const { articles, loading, setArticlesData } = useArticles({
+  const { articles, loading } = useArticles({
     location,
     tagName: activeTag !== "All topics" ? activeTag : undefined,
   });

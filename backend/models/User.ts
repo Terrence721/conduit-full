@@ -1,8 +1,26 @@
 "use strict";
-import { Model, Sequelize, DataTypes as DataTypesType } from "sequelize";
+import {
+  Model,
+  Sequelize,
+  DataTypes as DataTypesType,
+  InferAttributes,
+  InferCreationAttributes,
+  CreationOptional,
+} from "sequelize";
 
 export = (sequelize: Sequelize, DataTypes: typeof DataTypesType) => {
-  class User extends Model {
+  class User extends Model<
+    InferAttributes<User>,
+    InferCreationAttributes<User>
+  > {
+    declare id: CreationOptional<number>;
+    declare email: string;
+    declare username: string;
+    declare bio: string | null;
+    declare image: string | null;
+    declare password: string;
+    declare createdAt: CreationOptional<Date>;
+    declare updatedAt: CreationOptional<Date>;
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -61,7 +79,7 @@ export = (sequelize: Sequelize, DataTypes: typeof DataTypesType) => {
       bio: DataTypes.TEXT,
       image: DataTypes.TEXT,
       password: DataTypes.STRING,
-    },
+    } as never,
     {
       sequelize,
       modelName: "User",

@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
 import dateFormatter from "../../helpers/dateFormatter";
 import FavButton from "../FavButton/FavButton";
 import type { Article, ArticlesResponse } from "../../types";
@@ -49,8 +48,6 @@ function ArticlesPreview({
   loadingText,
   updateArticles,
 }: ArticlesPreviewProps) {
-  const { loggedUser } = useAuth();
-
   const handleFav = (updated: Article | undefined) => {
     if (!updated) return;
 

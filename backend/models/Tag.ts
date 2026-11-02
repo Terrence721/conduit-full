@@ -1,8 +1,15 @@
 "use strict";
-import { Model, Sequelize, DataTypes as DataTypesType } from "sequelize";
+import {
+  Model,
+  Sequelize,
+  DataTypes as DataTypesType,
+  InferAttributes,
+  InferCreationAttributes,
+} from "sequelize";
 
 export = (sequelize: Sequelize, DataTypes: typeof DataTypesType) => {
-  class Tag extends Model {
+  class Tag extends Model<InferAttributes<Tag>, InferCreationAttributes<Tag>> {
+    declare name: string;
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -34,7 +41,7 @@ export = (sequelize: Sequelize, DataTypes: typeof DataTypesType) => {
         allowNull: false,
         primaryKey: true,
       },
-    },
+    } as never,
     {
       sequelize,
       modelName: "Tag",
