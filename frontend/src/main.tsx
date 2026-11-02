@@ -5,6 +5,7 @@ import App from "./App";
 import AuthProvider from "./context/AuthContext";
 import Layout from "./Layout";
 import "./index.css";
+import "./styles.css";
 import Article from "./routes/Article/Article";
 import CommentsSection from "./routes/Article/CommentsSection";
 import ArticleEditor from "./routes/ArticleEditor";
