@@ -27,16 +27,4 @@ describe("Footer", () => {
       screen.getByText(/interactive learning project/i),
     ).toBeInTheDocument();
   });
-
-  test("renders the source code link", () => {
-    render(
-      <MemoryRouter>
-        <Footer />
-      </MemoryRouter>,
-    );
-
-    expect(screen.getByRole("link", { name: /source code/i })).toHaveAttribute(
-      "href",
-    );
-  });
 });

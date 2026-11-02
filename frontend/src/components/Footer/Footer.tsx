@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import SourceCodeLink from "../SourceCodeLink/SourceCodeLink";
 
 function Footer() {
   return (
@@ -12,8 +11,6 @@ function Footer() {
         <a href="https://thinkster.io">Thinkster</a>. Code &amp; design licensed
         under MIT.
       </span>
-
-      <SourceCodeLink position="right" />
     </div>
   );
 }
