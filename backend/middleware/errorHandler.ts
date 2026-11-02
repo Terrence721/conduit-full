@@ -10,8 +10,15 @@ const errorHandler = (
   res: Response,
   _next: NextFunction,
 ) => {
-  console.log("\x1b[31m%s\x1b[0m", "▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼");
-  console.log(error);
+  const requestId = (res.locals.requestId as string) ?? "unknown";
+  console.error(
+    JSON.stringify({
+      error: error instanceof Error ? error.message : String(error),
+      method: req.method,
+      path: req.originalUrl,
+      requestId,
+    }),
+  );
 
   if (error instanceof UnauthorizedError) {
     res.status(401).json({ errors: { body: [error.message] } });
@@ -24,8 +31,6 @@ const errorHandler = (
   } else {
     res.status(500).json({ errors: { body: ["Internal server error"] } });
   }
-
-  console.log("\x1b[31m%s\x1b[0m", "▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲");
 };
 
 export = errorHandler;
