@@ -13,7 +13,7 @@ function handleAuthResult(
   }
 
   setAuthState(authState);
-  navigate("/");
+  navigate("/home");
 }
 
 export default handleAuthResult;
