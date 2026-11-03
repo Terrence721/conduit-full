@@ -28,7 +28,7 @@
     "dev:bootstrap": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev-bootstrap.ps1",
     "sqlz": "yarn workspace backend sqlz",
     "prestart": "yarn clean:logs",
-    "start": "yarn workspace frontend build && yarn workspace backend start",
+    "start": "yarn workspace frontend build && yarn workspace backend build && yarn workspace backend start",
     "clean:logs": "tsx scripts/clean-logs.ts",
     "test": "vitest --configLoader native",
     "test:coverage": "vitest run --coverage",
