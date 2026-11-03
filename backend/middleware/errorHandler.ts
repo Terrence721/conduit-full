@@ -4,6 +4,16 @@ import customErrors from "../helper/customErrors";
 const { ForbiddenError, NotFoundError, UnauthorizedError, ValidationError } =
   customErrors;
 
+let sentryModule: {
+  captureException?: (error: unknown, context?: unknown) => void;
+} | null = null;
+try {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  sentryModule = require("@sentry/node");
+} catch {
+  sentryModule = null;
+}
+
 const errorHandler = (
   error: unknown,
   req: Request,
@@ -19,6 +29,12 @@ const errorHandler = (
       requestId,
     }),
   );
+
+  if (sentryModule && process.env.SENTRY_DSN) {
+    sentryModule.captureException?.(error, {
+      extra: { method: req.method, path: req.originalUrl, requestId },
+    });
+  }
 
   if (error instanceof UnauthorizedError) {
     res.status(401).json({ errors: { body: [error.message] } });

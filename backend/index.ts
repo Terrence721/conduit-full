@@ -22,6 +22,26 @@ const env = process.env.NODE_ENV || "development";
 const PORT = process.env.PORT || 3001;
 const { sequelize } = models;
 
+// Optional error reporting via Sentry when SENTRY_DSN and the package are
+// available; otherwise logging remains the only sink.
+const sentry: {
+  captureException?: (error: unknown, context?: unknown) => void;
+} | null = (() => {
+  if (!process.env.SENTRY_DSN) return null;
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const module = require("@sentry/node");
+    module.init({ dsn: process.env.SENTRY_DSN, environment: env });
+    return module;
+  } catch (error) {
+    console.warn(
+      "Sentry is configured but the package is not installed:",
+      error,
+    );
+    return null;
+  }
+})();
+
 const validateProductionEnv = () => {
   if (env !== "production") return;
 
