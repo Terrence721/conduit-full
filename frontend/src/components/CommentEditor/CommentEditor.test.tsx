@@ -100,6 +100,44 @@ describe("CommentEditor", () => {
     expect(updateComments).toHaveBeenCalledWith(comment);
   });
 
+  test("does not update when postComment resolves without a comment", async () => {
+    const user = userEvent.setup();
+    const updateComments = vi.fn();
+
+    localStorage.setItem(
+      "loggedUser",
+      JSON.stringify({
+        headers: { Authorization: "Token abc123" },
+        isAuth: true,
+        loggedUser: { username: "jake" },
+      }),
+    );
+    mockedGetUser.mockResolvedValue({
+      bio: null,
+      email: "jake@jake.jake",
+      image: null,
+      token: "abc123",
+      username: "jake",
+    });
+    mockedPostComment.mockResolvedValue(undefined as never);
+
+    render(<CommentEditor updateComments={updateComments} />, {
+      wrapper: Wrapper,
+    });
+
+    await user.type(
+      screen.getByPlaceholderText("Write a comment..."),
+      "first comment",
+    );
+    await user.click(screen.getByRole("button", { name: /post comment/i }));
+
+    await waitFor(() => {
+      expect(mockedPostComment).toHaveBeenCalled();
+    });
+
+    expect(updateComments).not.toHaveBeenCalled();
+  });
+
   test("does not post an empty comment", async () => {
     const user = userEvent.setup();
     localStorage.setItem(
