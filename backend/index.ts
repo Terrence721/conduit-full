@@ -118,14 +118,23 @@ app.get("/api-docs", (_req, res) => {
 
 app.get("/healthz", (_req, res) => res.json({ status: "ok" }));
 
-app.get("/readyz", async (_req, res) => {
-  try {
-    await sequelize.authenticate();
-    res.json({ status: "ready" });
-  } catch {
-    res.status(503).json({ errors: { body: ["Database unavailable"] } });
-  }
-});
+app.get(
+  "/readyz",
+  rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 100,
+    standardHeaders: true,
+    legacyHeaders: false,
+  }),
+  async (_req, res) => {
+    try {
+      await sequelize.authenticate();
+      res.json({ status: "ready" });
+    } catch {
+      res.status(503).json({ errors: { body: ["Database unavailable"] } });
+    }
+  },
+);
 
 (async () => {
   try {
