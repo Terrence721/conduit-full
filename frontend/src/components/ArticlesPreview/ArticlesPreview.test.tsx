@@ -153,7 +153,12 @@ describe("ArticlesPreview", () => {
 
   test("calls updateArticles after a successful favorite", async () => {
     const user = userEvent.setup();
-    const updateArticles = vi.fn();
+    const updateArticles = vi.fn((updater) => {
+      if (typeof updater === "function") {
+        return updater({ articles: [article], articlesCount: 1 });
+      }
+      return updater;
+    });
     localStorage.setItem(
       "loggedUser",
       JSON.stringify({
@@ -200,5 +205,171 @@ describe("ArticlesPreview", () => {
       });
     });
     expect(updateArticles).toHaveBeenCalled();
+  });
+
+  test("ignores an undefined favorite result in the preview", async () => {
+    const user = userEvent.setup();
+    const updateArticles = vi.fn((updater) => {
+      if (typeof updater === "function") {
+        return updater({ articles: [article], articlesCount: 1 });
+      }
+      return updater;
+    });
+    localStorage.setItem(
+      "loggedUser",
+      JSON.stringify({
+        headers: { Authorization: "Token abc123" },
+        isAuth: true,
+        loggedUser: { username: "jake" },
+      }),
+    );
+    mockedGetUser.mockResolvedValue({
+      bio: null,
+      email: "jake@jake.jake",
+      image: null,
+      token: "abc123",
+      username: "jake",
+    });
+    mockedToggleFav.mockResolvedValue(undefined);
+
+    render(
+      <Wrapper>
+        <ArticlesPreview
+          articles={[article]}
+          emptyText="No articles"
+          loading={false}
+          loadingText="Loading..."
+          updateArticles={updateArticles}
+        />
+      </Wrapper>,
+    );
+
+    const favoriteButton = document.querySelector(
+      ".btn-outline-primary",
+    ) as HTMLButtonElement;
+    await user.click(favoriteButton);
+
+    await waitFor(() => {
+      expect(mockedToggleFav).toHaveBeenCalled();
+    });
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(updateArticles).not.toHaveBeenCalled();
+  });
+
+  test("does not mutate the list when there is no previous response", async () => {
+    const user = userEvent.setup();
+    const updateArticles = vi.fn((updater) => {
+      if (typeof updater === "function") {
+        return updater(undefined);
+      }
+      return updater;
+    });
+    localStorage.setItem(
+      "loggedUser",
+      JSON.stringify({
+        headers: { Authorization: "Token abc123" },
+        isAuth: true,
+        loggedUser: { username: "jake" },
+      }),
+    );
+    mockedGetUser.mockResolvedValue({
+      bio: null,
+      email: "jake@jake.jake",
+      image: null,
+      token: "abc123",
+      username: "jake",
+    });
+    mockedToggleFav.mockResolvedValue({
+      ...article,
+      favorited: true,
+      favoritesCount: 4,
+    });
+
+    render(
+      <Wrapper>
+        <ArticlesPreview
+          articles={[article]}
+          emptyText="No articles"
+          loading={false}
+          loadingText="Loading..."
+          updateArticles={updateArticles}
+        />
+      </Wrapper>,
+    );
+
+    const favoriteButton = document.querySelector(
+      ".btn-outline-primary",
+    ) as HTMLButtonElement;
+    await user.click(favoriteButton);
+
+    await waitFor(() => {
+      expect(updateArticles).toHaveBeenCalled();
+    });
+
+    const updater = updateArticles.mock.calls[0][0];
+    expect(updater(undefined)).toBeUndefined();
+  });
+
+  test("updates the matching article and leaves unrelated articles alone", async () => {
+    const user = userEvent.setup();
+    const unrelatedArticle = { ...article, slug: "other", title: "Other" };
+    const updatedArticle = { ...article, favorited: true, favoritesCount: 4 };
+    const previousResponse = {
+      articles: [article, unrelatedArticle],
+      articlesCount: 2,
+    };
+    const updateArticles = vi.fn((updater) => {
+      if (typeof updater === "function") {
+        return updater(previousResponse);
+      }
+      return updater;
+    });
+    localStorage.setItem(
+      "loggedUser",
+      JSON.stringify({
+        headers: { Authorization: "Token abc123" },
+        isAuth: true,
+        loggedUser: { username: "jake" },
+      }),
+    );
+    mockedGetUser.mockResolvedValue({
+      bio: null,
+      email: "jake@jake.jake",
+      image: null,
+      token: "abc123",
+      username: "jake",
+    });
+    mockedToggleFav.mockResolvedValue(updatedArticle);
+
+    render(
+      <Wrapper>
+        <ArticlesPreview
+          articles={[article, unrelatedArticle]}
+          emptyText="No articles"
+          loading={false}
+          loadingText="Loading..."
+          updateArticles={updateArticles}
+        />
+      </Wrapper>,
+    );
+
+    const favoriteButton = document.querySelectorAll(
+      ".btn-outline-primary",
+    )[0] as HTMLButtonElement;
+    await user.click(favoriteButton);
+
+    await waitFor(() => {
+      expect(updateArticles).toHaveBeenCalled();
+    });
+
+    const updater = updateArticles.mock.calls[0][0];
+    const next = updater(previousResponse);
+
+    expect(next.articles[0]).toMatchObject({
+      favorited: true,
+      favoritesCount: 4,
+    });
+    expect(next.articles[1]).toEqual(unrelatedArticle);
   });
 });

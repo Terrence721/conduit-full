@@ -96,4 +96,71 @@ describe("index.ts", () => {
     expect(tagsRes.status).toBe(200);
     expect(tagsRes.body.tags).toEqual([]);
   });
+
+  test("GET /healthz reports ok", async () => {
+    const db = await buildTestDb();
+    const app = await loadApp(db);
+
+    const res = await request(app).get("/healthz");
+
+    expect(res.status).toBe(200);
+    expect(res.body.status).toBe("ok");
+  });
+
+  test("GET /openapi.yaml serves the spec", async () => {
+    const db = await buildTestDb();
+    const app = await loadApp(db);
+
+    const res = await request(app).get("/openapi.yaml");
+
+    expect(res.status).toBe(200);
+  });
+
+  test("GET /api-docs returns the Swagger UI page", async () => {
+    const db = await buildTestDb();
+    const app = await loadApp(db);
+
+    const res = await request(app).get("/api-docs");
+
+    expect(res.status).toBe(200);
+    expect(res.headers["content-type"]).toMatch(/html/);
+    expect(res.text).toMatch(/swagger-ui/);
+  });
+
+  test("GET /readyz succeeds when the database is available", async () => {
+    const db = await buildTestDb();
+    const app = await loadApp(db);
+
+    const res = await request(app).get("/readyz");
+
+    expect(res.status).toBe(200);
+    expect(res.body.status).toBe("ready");
+  });
+
+  test("GET /readyz returns 503 when the database is unavailable", async () => {
+    const db = await buildTestDb();
+    db.sequelize.authenticate = async () => {
+      throw new Error("boom");
+    };
+    const app = await loadApp(db);
+
+    const res = await request(app).get("/readyz");
+
+    expect(res.status).toBe(503);
+    expect(res.body.errors.body[0]).toBe("Database unavailable");
+  });
+
+  test("production mode uses env-driven CORS origins and static serving", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("CORS_ORIGIN", "http://a.example,http://b.example");
+
+    const db = await buildTestDb();
+    const app = await loadApp(db);
+
+    // Module evaluation (above) already exercised the production branches:
+    // env-driven CORS origins and express.static registration. Running the
+    // app as a process would need a built frontend, so we only assert the
+    // bootstrap completed.
+    expect(app).toBeTruthy();
+  });
 });

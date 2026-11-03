@@ -225,4 +225,180 @@ describe("ArticlesButtons", () => {
       expect(mockedToggleFav).toHaveBeenCalled();
     });
   });
+
+  test("applies the follow result through setArticle when follow resolves", async () => {
+    const user = userEvent.setup();
+    const setArticle = vi.fn();
+    const updatedProfile: Profile = {
+      bio: "bio",
+      followersCount: 4,
+      following: true,
+      image: null,
+      username: "jake",
+    };
+    localStorage.setItem(
+      "loggedUser",
+      JSON.stringify({
+        headers: { Authorization: "Token abc123" },
+        isAuth: true,
+        loggedUser: { username: "jane", token: "abc" },
+      }),
+    );
+    mockedGetUser.mockResolvedValue({
+      bio: null,
+      email: "jane@jane.jane",
+      image: null,
+      token: "abc",
+      username: "jane",
+    });
+    mockedToggleFollow.mockResolvedValue(updatedProfile);
+
+    render(
+      <Wrapper>
+        <ArticlesButtons article={article} setArticle={setArticle as any} />
+      </Wrapper>,
+    );
+
+    await waitFor(() =>
+      expect(
+        screen.getByRole("button", { name: /follow/i }),
+      ).toBeInTheDocument(),
+    );
+
+    await user.click(screen.getByRole("button", { name: /follow/i }));
+
+    await waitFor(() => expect(setArticle).toHaveBeenCalled());
+
+    const updater = setArticle.mock.calls[0][0];
+    expect(updater(article)).toEqual({ ...article, author: updatedProfile });
+  });
+
+  test("ignores an undefined follow result", async () => {
+    const user = userEvent.setup();
+    const setArticle = vi.fn();
+    localStorage.setItem(
+      "loggedUser",
+      JSON.stringify({
+        headers: { Authorization: "Token abc123" },
+        isAuth: true,
+        loggedUser: { username: "jane", token: "abc" },
+      }),
+    );
+    mockedGetUser.mockResolvedValue({
+      bio: null,
+      email: "jane@jane.jane",
+      image: null,
+      token: "abc",
+      username: "jane",
+    });
+    mockedToggleFollow.mockResolvedValue(undefined);
+
+    render(
+      <Wrapper>
+        <ArticlesButtons article={article} setArticle={setArticle as any} />
+      </Wrapper>,
+    );
+
+    await waitFor(() =>
+      expect(
+        screen.getByRole("button", { name: /follow/i }),
+      ).toBeInTheDocument(),
+    );
+
+    await user.click(screen.getByRole("button", { name: /follow/i }));
+
+    await waitFor(() => expect(mockedToggleFollow).toHaveBeenCalled());
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(setArticle).not.toHaveBeenCalled();
+  });
+
+  test("applies the favorite result through setArticle when favorite resolves", async () => {
+    const user = userEvent.setup();
+    const setArticle = vi.fn();
+    const updatedArticle = {
+      ...article,
+      favorited: true,
+      favoritesCount: 4,
+    };
+    localStorage.setItem(
+      "loggedUser",
+      JSON.stringify({
+        headers: { Authorization: "Token abc123" },
+        isAuth: true,
+        loggedUser: { username: "jane", token: "abc" },
+      }),
+    );
+    mockedGetUser.mockResolvedValue({
+      bio: null,
+      email: "jane@jane.jane",
+      image: null,
+      token: "abc",
+      username: "jane",
+    });
+    mockedToggleFav.mockResolvedValue(updatedArticle);
+
+    render(
+      <Wrapper>
+        <ArticlesButtons article={article} setArticle={setArticle as any} />
+      </Wrapper>,
+    );
+
+    await waitFor(() =>
+      expect(
+        screen.getByRole("button", { name: /favorite/i }),
+      ).toBeInTheDocument(),
+    );
+
+    await user.click(screen.getByRole("button", { name: /favorite/i }));
+
+    await waitFor(() => expect(setArticle).toHaveBeenCalled());
+
+    const updater = setArticle.mock.calls[0][0];
+    expect(updater(article)).toEqual({
+      ...article,
+      favorited: true,
+      favoritesCount: 4,
+    });
+  });
+
+  test("ignores an undefined favorite result", async () => {
+    const user = userEvent.setup();
+    const setArticle = vi.fn();
+    localStorage.setItem(
+      "loggedUser",
+      JSON.stringify({
+        headers: { Authorization: "Token abc123" },
+        isAuth: true,
+        loggedUser: { username: "jane", token: "abc" },
+      }),
+    );
+    mockedGetUser.mockResolvedValue({
+      bio: null,
+      email: "jane@jane.jane",
+      image: null,
+      token: "abc",
+      username: "jane",
+    });
+    mockedToggleFav.mockResolvedValue(undefined);
+
+    render(
+      <Wrapper>
+        <ArticlesButtons article={article} setArticle={setArticle as any} />
+      </Wrapper>,
+    );
+
+    await waitFor(() =>
+      expect(
+        screen.getByRole("button", { name: /favorite/i }),
+      ).toBeInTheDocument(),
+    );
+
+    await user.click(screen.getByRole("button", { name: /favorite/i }));
+
+    await waitFor(() => expect(mockedToggleFav).toHaveBeenCalled());
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(setArticle).not.toHaveBeenCalled();
+  });
 });
