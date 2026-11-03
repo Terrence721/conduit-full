@@ -8,6 +8,7 @@ import getUser from "../../services/getUser";
 import toggleFollow from "../../services/toggleFollow";
 import toggleFav from "../../services/toggleFav";
 import type { Article, Profile } from "../../types";
+import type { Dispatch, SetStateAction } from "react";
 
 vi.mock("../../services/getUser");
 vi.mock("../../services/toggleFollow");
@@ -255,7 +256,10 @@ describe("ArticlesButtons", () => {
 
     render(
       <Wrapper>
-        <ArticlesButtons article={article} setArticle={setArticle as any} />
+        <ArticlesButtons
+            article={article}
+            setArticle={setArticle as unknown as Dispatch<SetStateAction<Article>>}
+          />
       </Wrapper>,
     );
 
@@ -295,7 +299,10 @@ describe("ArticlesButtons", () => {
 
     render(
       <Wrapper>
-        <ArticlesButtons article={article} setArticle={setArticle as any} />
+        <ArticlesButtons
+            article={article}
+            setArticle={setArticle as unknown as Dispatch<SetStateAction<Article>>}
+          />
       </Wrapper>,
     );
 
@@ -340,7 +347,10 @@ describe("ArticlesButtons", () => {
 
     render(
       <Wrapper>
-        <ArticlesButtons article={article} setArticle={setArticle as any} />
+        <ArticlesButtons
+            article={article}
+            setArticle={setArticle as unknown as Dispatch<SetStateAction<Article>>}
+          />
       </Wrapper>,
     );
 
@@ -384,7 +394,10 @@ describe("ArticlesButtons", () => {
 
     render(
       <Wrapper>
-        <ArticlesButtons article={article} setArticle={setArticle as any} />
+        <ArticlesButtons
+            article={article}
+            setArticle={setArticle as unknown as Dispatch<SetStateAction<Article>>}
+          />
       </Wrapper>,
     );
 

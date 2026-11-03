@@ -2,7 +2,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import Home from "./Home";
-import type { Article } from "../types";
+import type { Article, User } from "../types";
 import AuthProvider from "../context/AuthContext";
 import getArticles from "../services/getArticles";
 import getUser from "../services/getUser";
@@ -191,7 +191,7 @@ describe("Home route", () => {
       username: "jake",
       email: "jake@jake.jake",
       token: "abc123",
-    } as any);
+    } as unknown as User);
     mockedGetArticles.mockResolvedValue({
       articles: [],
       articlesCount: 0,
@@ -248,7 +248,7 @@ describe("Home route", () => {
       username: "jake",
       email: "jake@jake.jake",
       token: "abc123",
-    } as any);
+    } as unknown as User);
     mockedGetArticles.mockResolvedValue({
       articles: [],
       articlesCount: 0,
