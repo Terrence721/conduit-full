@@ -177,4 +177,221 @@ describe("Home route", () => {
     const link = await screen.findByRole("link", { name: /start writing/i });
     expect(link).toHaveAttribute("href", "/login");
   });
+
+  test("writer card links to editor when logged in", async () => {
+    localStorage.setItem(
+      "loggedUser",
+      JSON.stringify({
+        headers: { Authorization: "Token abc123" },
+        isAuth: true,
+        loggedUser: { username: "jake", token: "abc123" },
+      }),
+    );
+    mockedGetUser.mockResolvedValue({
+      username: "jake",
+      email: "jake@jake.jake",
+      token: "abc123",
+    } as any);
+    mockedGetArticles.mockResolvedValue({
+      articles: [],
+      articlesCount: 0,
+    });
+
+    render(
+      <MemoryRouter>
+        <AuthProvider>
+          <Home />
+        </AuthProvider>
+      </MemoryRouter>,
+    );
+
+    const link = await screen.findByRole("link", { name: /start writing/i });
+    expect(link).toHaveAttribute("href", "/editor");
+    expect(screen.queryByText(/share your story/i)).not.toBeInTheDocument();
+  });
+
+  test("keeps a matching article after searching", async () => {
+    mockedGetArticles.mockResolvedValue({
+      articles: [article],
+      articlesCount: 1,
+    });
+
+    const user = userEvent.setup();
+
+    render(
+      <MemoryRouter>
+        <AuthProvider>
+          <Home />
+        </AuthProvider>
+      </MemoryRouter>,
+    );
+
+    await screen.findByText("Hello World");
+
+    await user.type(screen.getByRole("searchbox"), "hello");
+
+    await waitFor(() => {
+      expect(screen.getByText("Hello World")).toBeInTheDocument();
+    });
+  });
+
+  test("opens the following feed when authenticated", async () => {
+    localStorage.setItem(
+      "loggedUser",
+      JSON.stringify({
+        headers: { Authorization: "Token abc123" },
+        isAuth: true,
+        loggedUser: { username: "jake", token: "abc123" },
+      }),
+    );
+    mockedGetUser.mockResolvedValue({
+      username: "jake",
+      email: "jake@jake.jake",
+      token: "abc123",
+    } as any);
+    mockedGetArticles.mockResolvedValue({
+      articles: [],
+      articlesCount: 0,
+    });
+
+    const user = userEvent.setup();
+
+    render(
+      <MemoryRouter>
+        <AuthProvider>
+          <Home />
+        </AuthProvider>
+      </MemoryRouter>,
+    );
+
+    await waitFor(() => {
+      expect(mockedGetArticles).toHaveBeenCalled();
+    });
+
+    await user.click(screen.getByRole("tab", { name: "Following" }));
+
+    await waitFor(() => {
+      expect(mockedGetArticles).toHaveBeenCalledWith(
+        expect.objectContaining({ location: "feed" }),
+      );
+    });
+  });
+
+  test("renders loading state while articles are pending", () => {
+    mockedGetArticles.mockImplementation(() => new Promise(() => undefined));
+
+    render(
+      <MemoryRouter>
+        <AuthProvider>
+          <Home />
+        </AuthProvider>
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByText(/Loading articles list/)).toBeInTheDocument();
+  });
+
+  test("renders articles from a rich metadata profile", async () => {
+    const richArticle = {
+      ...article,
+      author: {
+        ...article.author,
+        username: "jane doe",
+        bio: "Product Designer",
+      },
+      body: "",
+      tagList: [],
+    } as Article;
+
+    mockedGetArticles.mockResolvedValue({
+      articles: [richArticle],
+      articlesCount: 1,
+    });
+
+    render(
+      <MemoryRouter>
+        <AuthProvider>
+          <Home />
+        </AuthProvider>
+      </MemoryRouter>,
+    );
+
+    expect(await screen.findByText("JD")).toBeInTheDocument();
+  });
+
+  test("renders helper-derived metadata for rich articles", async () => {
+    const richArticle = {
+      ...article,
+      author: {
+        ...article.author,
+        username: "jane doe",
+        bio: "Product Designer",
+      },
+      body: "",
+      tagList: [],
+    } as Article;
+
+    mockedGetArticles.mockResolvedValue({
+      articles: [richArticle],
+      articlesCount: 1,
+    });
+
+    render(
+      <MemoryRouter>
+        <AuthProvider>
+          <Home />
+        </AuthProvider>
+      </MemoryRouter>,
+    );
+
+    expect(await screen.findByText("JD")).toBeInTheDocument();
+    expect(screen.getByText(/Product Designer/)).toBeInTheDocument();
+    expect(screen.getByText(/3 min read/)).toBeInTheDocument();
+  });
+
+  test("filters by tag and clears the active filter", async () => {
+    mockedGetArticles.mockResolvedValue({
+      articles: [article],
+      articlesCount: 1,
+    });
+
+    const user = userEvent.setup();
+
+    render(
+      <MemoryRouter>
+        <AuthProvider>
+          <Home />
+        </AuthProvider>
+      </MemoryRouter>,
+    );
+
+    await screen.findByText("Hello World");
+
+    await user.click(screen.getAllByRole("button", { name: "Technology" })[0]);
+
+    expect(await screen.findByText("×")).toBeInTheDocument();
+  });
+
+  test("clears all filters from the empty state", async () => {
+    mockedGetArticles.mockResolvedValue({
+      articles: [],
+      articlesCount: 0,
+    });
+
+    const user = userEvent.setup();
+
+    render(
+      <MemoryRouter>
+        <AuthProvider>
+          <Home />
+        </AuthProvider>
+      </MemoryRouter>,
+    );
+
+    await screen.findByText(/nothing found/i);
+
+    await user.click(screen.getByRole("button", { name: /clear filters/i }));
+
+    expect(screen.getByRole("searchbox")).toHaveValue("");
+  });
 });
