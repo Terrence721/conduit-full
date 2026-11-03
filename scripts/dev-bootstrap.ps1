@@ -21,7 +21,7 @@ Set-Location $repoRoot
 
 # 1. Postgres container ---------------------------------------------------------
 Write-Host "==> Starting Postgres container..."
-docker compose up -d
+docker compose up -d postgres
 if ($LASTEXITCODE -ne 0) { throw "docker compose up failed ($LASTEXITCODE)" }
 
 # 2. Wait for readiness ---------------------------------------------------------

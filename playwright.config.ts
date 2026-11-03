@@ -13,10 +13,10 @@ export default defineConfig({
     trace: "on-first-retry",
   },
   webServer: {
-    command: "yarn dev:app",
+    command: "yarn dev",
     url: "http://localhost:3000",
     reuseExistingServer: !process.env.CI,
-    timeout: 120000,
+    timeout: 300000,
   },
   projects: [
     {
