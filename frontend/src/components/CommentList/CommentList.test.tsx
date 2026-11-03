@@ -81,6 +81,91 @@ describe("CommentList", () => {
     });
   });
 
+  test("does not delete a comment when confirmation is cancelled", async () => {
+    window.confirm = vi.fn(() => false);
+    localStorage.setItem(
+      "loggedUser",
+      JSON.stringify({
+        headers: { Authorization: "Token abc123" },
+        isAuth: true,
+        loggedUser: { username: "jake" },
+      }),
+    );
+    mockedGetUser.mockResolvedValue({
+      bio: null,
+      email: "jake@jake.jake",
+      image: null,
+      token: "abc123",
+      username: "jake",
+    });
+    mockedGetComments.mockResolvedValue([
+      {
+        author: { bio: null, image: null, username: "jake" },
+        body: "Nice post",
+        createdAt: "2024-01-01T00:00:00.000Z",
+        id: 1,
+      } as never,
+    ]);
+
+    render(<CommentList triggerUpdate={{}} updateComments={vi.fn()} />, {
+      wrapper: (props) => <Wrapper {...props} />,
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText("Nice post")).toBeInTheDocument();
+    });
+
+    await userEvent.setup().click(screen.getByRole("button"));
+
+    expect(mockedDeleteComment).not.toHaveBeenCalled();
+    window.confirm = vi.fn(() => true);
+  });
+
+  test("does not update comments when deletion returns no result", async () => {
+    window.confirm = vi.fn(() => true);
+    localStorage.setItem(
+      "loggedUser",
+      JSON.stringify({
+        headers: { Authorization: "Token abc123" },
+        isAuth: true,
+        loggedUser: { username: "jake" },
+      }),
+    );
+    mockedGetUser.mockResolvedValue({
+      bio: null,
+      email: "jake@jake.jake",
+      image: null,
+      token: "abc123",
+      username: "jake",
+    });
+    mockedGetComments.mockResolvedValue([
+      {
+        author: { bio: null, image: null, username: "jake" },
+        body: "Nice post",
+        createdAt: "2024-01-01T00:00:00.000Z",
+        id: 1,
+      } as never,
+    ]);
+    mockedDeleteComment.mockResolvedValue(undefined as never);
+
+    const updateComments = vi.fn();
+
+    render(<CommentList triggerUpdate={{}} updateComments={updateComments} />, {
+      wrapper: (props) => <Wrapper {...props} />,
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText("Nice post")).toBeInTheDocument();
+    });
+
+    await userEvent.setup().click(screen.getByRole("button"));
+
+    await waitFor(() => {
+      expect(mockedDeleteComment).toHaveBeenCalled();
+    });
+    expect(updateComments).not.toHaveBeenCalled();
+  });
+
   test("deletes a comment authored by the current user", async () => {
     localStorage.setItem(
       "loggedUser",
