@@ -193,7 +193,11 @@ if (process.env.NODE_ENV === "production") {
       standardHeaders: true,
       legacyHeaders: false,
     }),
-    express.static(frontendDist),
+    express.static(frontendDist, {
+      immutable: true,
+      index: false,
+      maxAge: "1y",
+    }),
   );
   app.use(
     rateLimit({
@@ -203,6 +207,7 @@ if (process.env.NODE_ENV === "production") {
       legacyHeaders: false,
     }),
     (_req, res) => {
+      res.set("Cache-Control", "no-cache");
       res.sendFile(path.join(frontendDist, "index.html"));
     },
   );
