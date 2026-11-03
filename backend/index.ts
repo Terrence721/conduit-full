@@ -88,19 +88,31 @@ app.get("/readyz", async (_req, res) => {
   }
 })();
 
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static("../frontend/dist"));
-} else {
-  app.get("/", (req, res) => res.json({ status: "API is running on /api" }));
+if (process.env.NODE_ENV !== "production") {
+  app.get("/", (_req, res) => res.json({ status: "API is running on /api" }));
 }
 app.use("/api/users", usersRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/articles", articlesRoutes);
 app.use("/api/profiles", profilesRoutes);
 app.use("/api/tags", tagsRoutes);
-app.all("/*any", (req, res) =>
-  res.status(404).json({ errors: { body: ["Not found"] } }),
-);
+// Unknown API routes keep the JSON 404 contract; everything else falls back
+// to the SPA so deep links / client-side routes resolve correctly.
+app.use("/api", (_req, res) => {
+  res.status(404).json({ errors: { body: ["Not found"] } });
+});
+
+if (process.env.NODE_ENV === "production") {
+  const frontendDist = path.resolve(__dirname, "..", "..", "frontend", "dist");
+  app.use(express.static(frontendDist));
+  app.use((_req, res) => {
+    res.sendFile(path.join(frontendDist, "index.html"));
+  });
+} else {
+  app.use((_req, res) => {
+    res.status(404).json({ errors: { body: ["Not found"] } });
+  });
+}
 app.use(errorHandler);
 
 if (require.main === module) {
