@@ -1,4 +1,5 @@
 import rateLimit from "express-rate-limit";
+import { ipKeyGenerator } from "express-rate-limit";
 import type { Options } from "express-rate-limit";
 import type { Request } from "express";
 import { createHash } from "crypto";
@@ -20,7 +21,7 @@ const createRateLimiter = (overrides: Partial<Options> = {}) =>
           return `token:${createHash("sha256").update(token).digest("hex")}`;
         }
       }
-      return req.ip ?? "unknown";
+      return ipKeyGenerator(req.ip ?? "unknown");
     },
     ...overrides,
   });

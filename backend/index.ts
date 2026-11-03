@@ -13,6 +13,7 @@ import tagsRoutes from "./routes/tags";
 import models from "./models";
 import errorHandler from "./middleware/errorHandler";
 import createRateLimiter from "./middleware/rateLimiter";
+import { ipKeyGenerator } from "express-rate-limit";
 
 const env = process.env.NODE_ENV || "development";
 const PORT = process.env.PORT || 3001;
@@ -37,7 +38,7 @@ app.use(
   "/api/users/login",
   createRateLimiter({
     limit: 10,
-    keyGenerator: (req) => req.ip ?? "unknown",
+    keyGenerator: (req) => ipKeyGenerator(req.ip ?? "unknown"),
   }),
 );
 
