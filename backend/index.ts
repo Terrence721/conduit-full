@@ -1,4 +1,5 @@
 import "dotenv/config";
+import { randomUUID } from "crypto";
 import express from "express";
 import path from "path";
 import { readFileSync } from "fs";
@@ -70,6 +71,30 @@ app.use(
   }),
 );
 app.use(express.json({ limit: process.env.JSON_BODY_LIMIT ?? "100kb" }));
+// Attach a request id (honoring an inbound one) to every request for
+// traceability, and emit a structured access log line on completion.
+app.use((req, res, next) => {
+  const incoming = req.get("x-request-id");
+  const requestId =
+    incoming && incoming.trim() ? incoming.trim() : randomUUID();
+  res.locals.requestId = requestId;
+  res.setHeader("X-Request-Id", requestId);
+
+  const startedAt = Date.now();
+  res.on("finish", () => {
+    console.log(
+      JSON.stringify({
+        durationMs: Date.now() - startedAt,
+        method: req.method,
+        path: req.originalUrl,
+        requestId,
+        status: res.statusCode,
+      }),
+    );
+  });
+  next();
+});
+
 // Stricter, IP-keyed limit on the login endpoint to slow brute-force
 // attempts; runs before the global /api limiter.
 app.use(
