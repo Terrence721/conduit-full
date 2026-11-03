@@ -15,7 +15,13 @@ function Consumer() {
   return null;
 }
 
-function Wrapper({ children, initialEntries }: { children: ReactNode; initialEntries?: string[] }) {
+function Wrapper({
+  children,
+  initialEntries,
+}: {
+  children: ReactNode;
+  initialEntries?: string[];
+}) {
   return (
     <MemoryRouter initialEntries={initialEntries ?? ["/editor"]}>
       <AuthProvider>
