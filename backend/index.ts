@@ -77,6 +77,9 @@ app.use(
 );
 
 app.use("/api", createRateLimiter());
+// General (coarser) rate limit on all other entry points, including file
+// serving and documentation, to avoid missing-rate-limiting findings and DoS.
+app.use(createRateLimiter());
 
 // API documentation (OpenAPI spec + Swagger UI, loaded from CDN so no
 // extra dependency is required).
