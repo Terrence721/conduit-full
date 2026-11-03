@@ -117,6 +117,33 @@ describe("useArticles", () => {
     });
   });
 
+  test("falls back to empty data when getArticles resolves undefined", async () => {
+    mockedGetArticles.mockResolvedValueOnce(undefined as never);
+
+    const { result } = renderHook(() => useArticles({ location: "global" }), {
+      wrapper: Wrapper,
+    });
+
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
+    expect(result.current.articles).toEqual([]);
+    expect(result.current.articlesCount).toBe(0);
+  });
+
+  test("handles getArticles rejection without crashing", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => undefined);
+    mockedGetArticles.mockRejectedValueOnce(new Error("boom"));
+
+    const { result } = renderHook(() => useArticles({ location: "global" }), {
+      wrapper: Wrapper,
+    });
+
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
+  });
+
   test("setArticlesData updates the result", async () => {
     const { result } = renderHook(() => useArticles({ location: "global" }), {
       wrapper: Wrapper,
