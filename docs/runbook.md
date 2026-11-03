@@ -27,7 +27,7 @@ Production mode refuses to boot when `JWT_KEY`, `CORS_ORIGIN`, or any
 3. Roll the application host to the new image tag.
 4. On container start, the entrypoint runs:
 
-   ```
+   ```shell
    yarn sqlz db:migrate && exec node backend/dist/index.js
    ```
 
