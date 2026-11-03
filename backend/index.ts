@@ -47,8 +47,6 @@ const validateProductionEnv = () => {
   }
 };
 
-validateProductionEnv();
-
 const allowedOrigins =
   env === "production"
     ? (process.env.CORS_ORIGIN ?? "").split(",").filter(Boolean)
@@ -146,6 +144,8 @@ if (process.env.NODE_ENV === "production") {
 app.use(errorHandler);
 
 if (require.main === module) {
+  validateProductionEnv();
+
   const server: Server = app.listen(PORT, () =>
     console.log(`Server running on http://localhost:${PORT}`),
   );
