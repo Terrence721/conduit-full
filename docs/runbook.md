@@ -65,4 +65,5 @@ Production mode refuses to boot when `JWT_KEY`, `CORS_ORIGIN`, or any
 - `X-Request-Id` is echoed on responses; structured access logs include
   request id, method, path, status, and duration.
 - Dummy seed data is development-only; production never runs `db:seed:all`.
+- Optional Sentry error reporting: set `SENTRY_DSN` (and install `@sentry/node`) to capture unhandled errors; unset by default.
 - CORS origins are env-driven in production (`CORS_ORIGIN`, comma-separated).
