@@ -169,6 +169,16 @@ describe("useArticleEditorForm", () => {
     expect(result.current.slug).toBe("dragons");
   });
 
+  test("does not update the form when getArticle resolves undefined", async () => {
+    mockedGetArticle.mockResolvedValueOnce(undefined as never);
+
+    renderHook(() => useArticleEditorForm(), { wrapper: SlugWrapper });
+
+    await waitFor(() => {
+      expect(mockedGetArticle).toHaveBeenCalled();
+    });
+  });
+
   test("redirects home when the existing article is owned by someone else", async () => {
     const redirectHome = vi.fn();
     mockedUseRequireAuthRedirect.mockReturnValue(
@@ -245,6 +255,22 @@ describe("useArticleEditorForm", () => {
     await waitFor(() => {
       expect(result.current.errorMessage).toBe(failure);
     });
+  });
+
+  test("does nothing when setArticle resolves without a slug", async () => {
+    mockedSetArticle.mockResolvedValueOnce(undefined as never);
+
+    const { result } = renderHook(() => useArticleEditorForm(), {
+      wrapper: Wrapper,
+    });
+
+    await act(async () => {
+      await result.current.formSubmit({
+        preventDefault: vi.fn(),
+      } as never);
+    });
+
+    expect(mockedSetArticle).toHaveBeenCalled();
   });
 
   test("does nothing when not authenticated", async () => {
