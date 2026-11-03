@@ -188,7 +188,7 @@ jobs:
   publish:
     name: Publish container image
     needs: [lint, typecheck, test, e2e, prettier, audit, docker]
-    if: github.ref == "refs/heads/main" && github.event_name == "push"
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:
       contents: read
