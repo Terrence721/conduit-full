@@ -53,6 +53,12 @@ const allowedOrigins =
     : ["http://localhost:3000", "http://127.0.0.1:3000"];
 
 const app = express();
+// Behind a load balancer / reverse proxy, trust the forwarded client IP
+// so rate limiting and any IP-based logic key on the real client.
+if (env === "production") {
+  app.set("trust proxy", process.env.TRUST_PROXY ?? 1);
+}
+
 app.use(helmet());
 app.use(
   cors({

@@ -93,7 +93,6 @@ production database and JWT secrets (see `backend/.env.example`) via environment
 variables — production refuses to boot when `JWT_KEY`, `CORS_ORIGIN`, or any
 `PROD_DB_*` value is missing or still a placeholder.
 
-
 ## License
 
 MIT — see [LICENSE](LICENSE). Original work Copyright (c) 2021 RealWorld.
