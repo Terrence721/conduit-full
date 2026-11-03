@@ -1,9 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import models from "../models";
 import helpers from "../helper/helpers";
-import customErrors from "../helper/customErrors";
 
-const { ValidationError } = customErrors;
 const { appendFollowers, findProfileByUsernameOrFail } = helpers;
 const { User } = models;
 
@@ -12,10 +10,6 @@ const getProfile = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { loggedUser } = req;
     const { username } = req.params;
-
-    if (typeof username !== "string" || !username.trim()) {
-      throw new ValidationError("username is required");
-    }
 
     const profile = await findProfileByUsernameOrFail(User, username as string);
 
@@ -38,10 +32,6 @@ const followToggler =
       const { loggedUser } = req;
 
       const { username } = req.params;
-
-      if (typeof username !== "string" || !username.trim()) {
-        throw new ValidationError("username is required");
-      }
 
       const profile = await findProfileByUsernameOrFail(
         User,
