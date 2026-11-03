@@ -98,4 +98,76 @@ describe("DropdownMenu", () => {
 
     expect(localStorage.getItem("loggedUser")).toBeNull();
   });
+
+  test("closes the dropdown on mouse leave", async () => {
+    seedAuth();
+
+    render(
+      <Wrapper>
+        <ul>
+          <DropdownMenu />
+        </ul>
+      </Wrapper>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("jake")).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByText("jake"));
+    expect(document.querySelector(".dropdown-menu")).not.toBeNull();
+
+    const menu = document.querySelector(".dropdown-menu") as HTMLDivElement;
+    fireEvent.mouseLeave(menu);
+
+    expect(document.querySelector(".dropdown-menu")).toBeNull();
+  });
+
+  test("closes the dropdown on Escape", async () => {
+    seedAuth();
+
+    render(
+      <Wrapper>
+        <ul>
+          <DropdownMenu />
+        </ul>
+      </Wrapper>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("jake")).toBeInTheDocument();
+    });
+
+    const toggle = screen.getByText("jake");
+    fireEvent.click(toggle);
+    expect(document.querySelector(".dropdown-menu")).not.toBeNull();
+
+    fireEvent.keyDown(toggle, { key: "Escape" });
+
+    expect(document.querySelector(".dropdown-menu")).toBeNull();
+  });
+
+  test("keeps the dropdown open for other keys", async () => {
+    seedAuth();
+
+    render(
+      <Wrapper>
+        <ul>
+          <DropdownMenu />
+        </ul>
+      </Wrapper>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("jake")).toBeInTheDocument();
+    });
+
+    const toggle = screen.getByText("jake");
+    fireEvent.click(toggle);
+    expect(document.querySelector(".dropdown-menu")).not.toBeNull();
+
+    fireEvent.keyDown(toggle, { key: "Enter" });
+
+    expect(document.querySelector(".dropdown-menu")).not.toBeNull();
+  });
 });
