@@ -142,6 +142,11 @@ app.get(
 );
 
 app.get("/api-docs", (_req, res) => {
+  const nonce = randomUUID().replace(/-/g, "");
+  res.set(
+    "Content-Security-Policy",
+    `default-src 'self'; script-src 'self' 'nonce-${nonce}' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; img-src 'self' data:; connect-src 'self'; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; frame-ancestors 'none'; object-src 'none'; base-uri 'self'`,
+  );
   res.type("html").send(`<!DOCTYPE html>
 <html lang="en">
   <head>
@@ -151,8 +156,8 @@ app.get("/api-docs", (_req, res) => {
   </head>
   <body>
     <div id="swagger-ui"></div>
-    <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
-    <script>
+    <script nonce="${nonce}" src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
+    <script nonce="${nonce}">
       SwaggerUIBundle({ url: "/openapi.yaml", dom_id: "#swagger-ui" });
     </script>
   </body>
