@@ -87,12 +87,12 @@ yarn install
 
 The provided `Dockerfile` builds both the frontend and backend, and `docker-compose.yml`
 brings up Postgres alongside the app. On container start the entrypoint runs pending
-Sequelize migrations (`yarn sqlz db:migrate`) before launching the Node server; if a
+Sequelize migrations (`yarn sqlz db:migrate`) before launching the Node server (dummy seed data is never loaded in production); if a
 migration fails, the container exits instead of booting with a stale schema. Set the
 production database and JWT secrets (see `backend/.env.example`) via environment
 variables — production refuses to boot when `JWT_KEY`, `CORS_ORIGIN`, or any
 `PROD_DB_*` value is missing or still a placeholder. Set `PROD_DB_SSL=true` to
-enable TLS for managed Postgres (with certificate verification).
+enable TLS for managed Postgres (with certificate verification). Dummy seed data is development-only (`yarn sqlz db:seed:all`); production never runs it.
 
 ## License
 
