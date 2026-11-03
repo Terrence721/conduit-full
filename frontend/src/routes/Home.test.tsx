@@ -394,4 +394,26 @@ describe("Home route", () => {
 
     expect(screen.getByRole("searchbox")).toHaveValue("");
   });
+  test("exercises topic and active-filter clicks", async () => {
+    mockedGetArticles.mockResolvedValue({
+      articles: [article],
+      articlesCount: 1,
+    });
+
+    const user = userEvent.setup();
+
+    render(
+      <MemoryRouter>
+        <AuthProvider>
+          <Home />
+        </AuthProvider>
+      </MemoryRouter>,
+    );
+
+    await screen.findByText("Hello World");
+    await user.click(screen.getByRole("button", { name: "View all" }));
+    await user.click(screen.getAllByRole("button", { name: "dragons" })[0]);
+    const clear = await screen.findByText("×");
+    await user.click(clear);
+  });
 });
