@@ -57,6 +57,17 @@ describe("middleware/errorHandler.ts", () => {
     });
   });
 
+  test("exercises the Sentry branch when configured without the package", () => {
+    vi.stubEnv("SENTRY_DSN", "https://example.invalid/1");
+    const res = buildRes();
+
+    errorHandler(new Error("boom"), {} as any, res, vi.fn());
+
+    expect(res.status).toHaveBeenCalledWith(500);
+
+    vi.unstubAllEnvs();
+  });
+
   test("never calls next()", () => {
     const res = buildRes();
     const next = vi.fn();

@@ -30,8 +30,8 @@ const errorHandler = (
     }),
   );
 
-  if (sentryModule && process.env.SENTRY_DSN) {
-    sentryModule.captureException?.(error, {
+  if (process.env.SENTRY_DSN) {
+    sentryModule?.captureException?.(error, {
       extra: { method: req.method, path: req.originalUrl, requestId },
     });
   }
