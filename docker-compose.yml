@@ -5,8 +5,8 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: conduit
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-conduit}
     ports:
       - "${POSTGRES_PORT:-5432}:5432"
     volumes:
@@ -22,14 +22,14 @@ services:
       NODE_ENV: production
       PORT: "3001"
       PROD_DB_DIALECT: postgres
-      PROD_DB_USERNAME: postgres
-      PROD_DB_PASSWORD: postgres
-      PROD_DB_NAME: conduit
+      PROD_DB_USERNAME: ${PROD_DB_USERNAME:?set PROD_DB_USERNAME}
+      PROD_DB_PASSWORD: ${PROD_DB_PASSWORD:?set PROD_DB_PASSWORD}
+      PROD_DB_NAME: ${PROD_DB_NAME:-conduit_production}
       PROD_DB_HOSTNAME: postgres
       PROD_DB_PORT: "5432"
       PROD_DB_LOGGING: "false"
-      JWT_KEY: "change-me-in-production"
-      CORS_ORIGIN: "http://localhost:3001"
+      JWT_KEY: ${JWT_KEY:?set JWT_KEY}
+      CORS_ORIGIN: ${CORS_ORIGIN:?set CORS_ORIGIN}
     ports:
       - "3001:3001"
 volumes:
