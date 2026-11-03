@@ -52,6 +52,28 @@ describe("routes/users.ts", () => {
     expect(res.status).toBe(422);
   });
 
+  test("POST / 422s when email is missing", async () => {
+    const db = await buildTestDb();
+    const app = await loadApp(db);
+
+    const res = await request(app)
+      .post("/users")
+      .send({ user: { username: "jake", password: "pw" } });
+
+    expect(res.status).toBe(422);
+  });
+
+  test("POST / 422s when password is missing", async () => {
+    const db = await buildTestDb();
+    const app = await loadApp(db);
+
+    const res = await request(app)
+      .post("/users")
+      .send({ user: { username: "jake", email: "jake@jake.jake" } });
+
+    expect(res.status).toBe(422);
+  });
+
   test("POST /login signs in an existing user with a real token", async () => {
     const db = await buildTestDb();
     await db.User.create({
