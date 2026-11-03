@@ -1,4 +1,5 @@
 import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import type { ReactNode } from "react";
 import PopularTags from "./PopularTags";
 import AuthProvider from "../../context/AuthContext";
@@ -48,6 +49,9 @@ describe("PopularTags", () => {
       expect(screen.getByRole("button", { name: "react" })).toBeInTheDocument();
     });
     expect(screen.getByRole("button", { name: "redux" })).toBeInTheDocument();
+
+    const user = userEvent.setup();
+    await user.click(screen.getByRole("button", { name: "react" }));
   });
 
   test("shows an unavailable message when tags resolve empty", async () => {
