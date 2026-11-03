@@ -79,6 +79,19 @@ describe("SettingsForm", () => {
     });
   });
 
+  test("shows an error message when update throws", async () => {
+    const user = userEvent.setup();
+    mockedUserUpdate.mockRejectedValueOnce("boom");
+
+    render(<SettingsForm />);
+
+    await user.click(screen.getByRole("button", { name: "Update Settings" }));
+
+    await waitFor(() => {
+      expect(screen.getByText("boom")).toBeInTheDocument();
+    });
+  });
+
   test("renders nothing when logged out", () => {
     mockedUseRequireAuthRedirect.mockReturnValue({
       isAuth: false,
