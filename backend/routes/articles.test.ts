@@ -196,11 +196,7 @@ describe("routes/articles.ts", () => {
     const token = await tokenFor(author);
 
     const slug = article.slug;
-    for (const updates of [
-      { title: "" },
-      { description: "" },
-      { body: "" },
-    ]) {
+    for (const updates of [{ title: "" }, { description: "" }, { body: "" }]) {
       const res = await request(app)
         .put(`/articles/${slug}`)
         .set("Authorization", `Token ${token}`)

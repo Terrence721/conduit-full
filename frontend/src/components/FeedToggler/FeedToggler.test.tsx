@@ -97,6 +97,8 @@ describe("FeedToggler", () => {
       </Wrapper>,
     );
 
-    expect(screen.getByRole("button", { name: /dragons/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /dragons/i }),
+    ).toBeInTheDocument();
   });
 });
