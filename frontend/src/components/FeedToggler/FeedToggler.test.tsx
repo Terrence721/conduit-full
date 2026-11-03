@@ -1,4 +1,6 @@
 import { render, screen, waitFor } from "@testing-library/react";
+import { useEffect } from "react";
+import { useFeedContext } from "../../hooks/useFeedContext";
 import type { ReactNode } from "react";
 import FeedToggler from "./FeedToggler";
 import AuthProvider from "../../context/AuthContext";
@@ -78,5 +80,23 @@ describe("FeedToggler", () => {
     expect(
       screen.queryByRole("button", { name: /dragons/i }),
     ).not.toBeInTheDocument();
+  });
+
+  test("shows a tag tab when a tag is active", () => {
+    function TagSetter() {
+      const { changeTab } = useFeedContext();
+      useEffect(() => {
+        changeTab("tag", "dragons");
+      }, [changeTab]);
+      return <FeedToggler />;
+    }
+
+    render(
+      <Wrapper>
+        <TagSetter />
+      </Wrapper>,
+    );
+
+    expect(screen.getByRole("button", { name: /dragons/i })).toBeInTheDocument();
   });
 });
