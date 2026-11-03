@@ -138,6 +138,78 @@ describe("routes/articles.ts", () => {
     expect(res.body.article.favorited).toBe(true);
   });
 
+  test("POST / 422s when the article payload is missing", async () => {
+    const db = await buildTestDb();
+    const author = await createUser(db);
+    const app = await loadApp(db);
+    const token = await tokenFor(author);
+
+    const res = await request(app)
+      .post("/articles")
+      .set("Authorization", `Token ${token}`)
+      .send({});
+
+    expect(res.status).toBe(422);
+  });
+
+  test("POST / 422s when required article fields are missing or invalid", async () => {
+    const db = await buildTestDb();
+    const author = await createUser(db);
+    const app = await loadApp(db);
+    const token = await tokenFor(author);
+
+    for (const article of [
+      { description: "d", body: "b" },
+      { title: "T", body: "b" },
+      { title: "T", description: "d" },
+      { title: "T", description: "d", body: "b", tagList: 5 },
+    ]) {
+      const res = await request(app)
+        .post("/articles")
+        .set("Authorization", `Token ${token}`)
+        .send({ article });
+
+      expect(res.status).toBe(422);
+    }
+  });
+
+  test("PUT /:slug 422s when the article payload is missing", async () => {
+    const db = await buildTestDb();
+    const author = await createUser(db);
+    const article = await createArticle(db, author);
+    const app = await loadApp(db);
+    const token = await tokenFor(author);
+
+    const res = await request(app)
+      .put(`/articles/${article.slug}`)
+      .set("Authorization", `Token ${token}`)
+      .send({});
+
+    expect(res.status).toBe(422);
+  });
+
+  test("PUT /:slug 422s on invalid field updates", async () => {
+    const db = await buildTestDb();
+    const author = await createUser(db);
+    const article = await createArticle(db, author);
+    const app = await loadApp(db);
+    const token = await tokenFor(author);
+
+    const slug = article.slug;
+    for (const updates of [
+      { title: "" },
+      { description: "" },
+      { body: "" },
+    ]) {
+      const res = await request(app)
+        .put(`/articles/${slug}`)
+        .set("Authorization", `Token ${token}`)
+        .send({ article: updates });
+
+      expect(res.status).toBe(422);
+    }
+  });
+
   test("mounts the comments sub-router at the same base path", async () => {
     const db = await buildTestDb();
     const author = await createUser(db);
