@@ -2,7 +2,7 @@ import "dotenv/config";
 import { randomUUID } from "crypto";
 import express from "express";
 import path from "path";
-import { readFileSync } from "fs";
+import { existsSync, readFileSync } from "fs";
 import type { Server } from "http";
 import cors from "cors";
 import helmet from "helmet";
@@ -50,7 +50,16 @@ const validateProductionEnv = () => {
   }
 };
 
-const openApiSpec = readFileSync(path.join(__dirname, "openapi.yaml"), "utf8");
+const openApiPath = [
+  path.join(__dirname, "openapi.yaml"),
+  path.join(__dirname, "..", "openapi.yaml"),
+].find((candidate) => existsSync(candidate));
+if (!openApiPath) throw new Error("openapi.yaml not found");
+const openApiSpec = readFileSync(openApiPath, "utf8");
+
+// Minimal, dependency-free Prometheus-style counters. They are process-local
+// and reset on restart, which is sufficient for a single-instance deployment.
+const metrics = { httpRequestsTotal: 0, http5xxTotal: 0 };
 
 const allowedOrigins =
   env === "production"
@@ -110,6 +119,15 @@ app.use("/api", createRateLimiter());
 // serving and documentation, to avoid missing-rate-limiting findings and DoS.
 app.use(createRateLimiter());
 
+// Count completed requests for the /metrics endpoint.
+app.use((req, res, next) => {
+  res.on("finish", () => {
+    metrics.httpRequestsTotal += 1;
+    if (res.statusCode >= 500) metrics.http5xxTotal += 1;
+  });
+  next();
+});
+
 // API documentation (OpenAPI spec + Swagger UI, loaded from CDN so no
 // extra dependency is required).
 app.get(
@@ -160,6 +178,23 @@ app.get(
     }
   },
 );
+
+app.get("/metrics", (_req, res) => {
+  res.type("text/plain").send(
+    `# HELP conduit_http_requests_total Total HTTP requests handled.
+` +
+      `# TYPE conduit_http_requests_total counter
+` +
+      `conduit_http_requests_total ${metrics.httpRequestsTotal}
+` +
+      `# HELP conduit_http_5xx_total Total HTTP 5xx responses.
+` +
+      `# TYPE conduit_http_5xx_total counter
+` +
+      `conduit_http_5xx_total ${metrics.http5xxTotal}
+`,
+  );
+});
 
 (async () => {
   try {
