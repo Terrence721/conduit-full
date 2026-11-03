@@ -35,6 +35,7 @@ type RawDbConfig = {
   port: string | undefined;
   dialect: Dialect;
   logging: string | undefined;
+  ssl?: string | undefined;
 };
 
 // process.env.<NAME> and parseDialect("<NAME>") stay as literal calls at
@@ -50,6 +51,7 @@ const buildDbConfig = ({
   port,
   dialect,
   logging,
+  ssl,
 }: RawDbConfig): Options => ({
   username,
   password,
@@ -58,6 +60,10 @@ const buildDbConfig = ({
   port: Number(port),
   dialect,
   logging: logging === "true" ? console.log : false,
+  dialectOptions:
+    ssl === "true"
+      ? { ssl: { require: true, rejectUnauthorized: true } }
+      : undefined,
 });
 
 const config = {
@@ -87,6 +93,7 @@ const config = {
     port: process.env.PROD_DB_PORT,
     dialect: parseDialect("PROD_DB_DIALECT"),
     logging: process.env.PROD_DB_LOGGING,
+    ssl: process.env.PROD_DB_SSL,
   }),
 } satisfies Record<"development" | "test" | "production", Options>;
 
