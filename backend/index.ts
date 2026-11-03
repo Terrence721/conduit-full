@@ -83,7 +83,7 @@ app.use(createRateLimiter());
 
 // API documentation (OpenAPI spec + Swagger UI, loaded from CDN so no
 // extra dependency is required).
-app.get("/openapi.yaml", (_req, res) =>
+app.get("/openapi.yaml", createRateLimiter(), (_req, res) =>
   res.sendFile(path.join(__dirname, "openapi.yaml")),
 );
 
@@ -141,8 +141,8 @@ app.use("/api", (_req, res) => {
 
 if (process.env.NODE_ENV === "production") {
   const frontendDist = path.resolve(__dirname, "..", "..", "frontend", "dist");
-  app.use(express.static(frontendDist));
-  app.use((_req, res) => {
+  app.use(createRateLimiter(), express.static(frontendDist));
+  app.use(createRateLimiter(), (_req, res) => {
     res.sendFile(path.join(frontendDist, "index.html"));
   });
 } else {
