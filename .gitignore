@@ -49,3 +49,7 @@ yarn-error.log*
 
 # local dev bootstrap state
 .seeded
+
+# stray dependency copies
+/tmp_modules/
+/frontend/tmp_modules/
