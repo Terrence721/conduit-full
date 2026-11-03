@@ -19,6 +19,36 @@ const env = process.env.NODE_ENV || "development";
 const PORT = process.env.PORT || 3001;
 const { sequelize } = models;
 
+const validateProductionEnv = () => {
+  if (env !== "production") return;
+
+  const required = [
+    "JWT_KEY",
+    "CORS_ORIGIN",
+    "PROD_DB_USERNAME",
+    "PROD_DB_PASSWORD",
+    "PROD_DB_NAME",
+    "PROD_DB_HOSTNAME",
+    "PROD_DB_PORT",
+    "PROD_DB_DIALECT",
+  ];
+  const missing = required.filter((key) => !process.env[key]);
+  const jwtKey = process.env.JWT_KEY;
+  if (
+    jwtKey === "change-me-in-production" ||
+    jwtKey === "supersecretkey_example"
+  ) {
+    missing.push("JWT_KEY (replace placeholder)");
+  }
+  if (missing.length) {
+    throw new Error(
+      `Missing or invalid production environment variables: ${missing.join(", ")}`,
+    );
+  }
+};
+
+validateProductionEnv();
+
 const allowedOrigins =
   env === "production"
     ? (process.env.CORS_ORIGIN ?? "").split(",").filter(Boolean)
