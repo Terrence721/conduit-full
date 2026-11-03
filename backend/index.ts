@@ -12,6 +12,7 @@ import profilesRoutes from "./routes/profiles";
 import tagsRoutes from "./routes/tags";
 import models from "./models";
 import errorHandler from "./middleware/errorHandler";
+import rateLimit from "express-rate-limit";
 import createRateLimiter from "./middleware/rateLimiter";
 import { ipKeyGenerator } from "express-rate-limit";
 
@@ -83,8 +84,15 @@ app.use(createRateLimiter());
 
 // API documentation (OpenAPI spec + Swagger UI, loaded from CDN so no
 // extra dependency is required).
-app.get("/openapi.yaml", createRateLimiter(), (_req, res) =>
-  res.sendFile(path.join(__dirname, "openapi.yaml")),
+app.get(
+  "/openapi.yaml",
+  rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 100,
+    standardHeaders: true,
+    legacyHeaders: false,
+  }),
+  (_req, res) => res.sendFile(path.join(__dirname, "openapi.yaml")),
 );
 
 app.get("/api-docs", (_req, res) => {
@@ -141,10 +149,26 @@ app.use("/api", (_req, res) => {
 
 if (process.env.NODE_ENV === "production") {
   const frontendDist = path.resolve(__dirname, "..", "..", "frontend", "dist");
-  app.use(createRateLimiter(), express.static(frontendDist));
-  app.use(createRateLimiter(), (_req, res) => {
-    res.sendFile(path.join(frontendDist, "index.html"));
-  });
+  app.use(
+    rateLimit({
+      windowMs: 15 * 60 * 1000,
+      limit: 100,
+      standardHeaders: true,
+      legacyHeaders: false,
+    }),
+    express.static(frontendDist),
+  );
+  app.use(
+    rateLimit({
+      windowMs: 15 * 60 * 1000,
+      limit: 100,
+      standardHeaders: true,
+      legacyHeaders: false,
+    }),
+    (_req, res) => {
+      res.sendFile(path.join(frontendDist, "index.html"));
+    },
+  );
 } else {
   app.use((_req, res) => {
     res.status(404).json({ errors: { body: ["Not found"] } });
