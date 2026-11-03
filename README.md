@@ -83,6 +83,17 @@ yarn install
    The frontend is fully wired now — `main.tsx`, `App.tsx`, and all 12 route
    pages exist — so this renders the real app at `http://localhost:3000`.
 
+## 🐳 Deploying with Docker
+
+The provided `Dockerfile` builds both the frontend and backend, and `docker-compose.yml`
+brings up Postgres alongside the app. On container start the entrypoint runs pending
+Sequelize migrations (`yarn sqlz db:migrate`) before launching the Node server; if a
+migration fails, the container exits instead of booting with a stale schema. Set the
+production database and JWT secrets (see `backend/.env.example`) via environment
+variables — production refuses to boot when `JWT_KEY`, `CORS_ORIGIN`, or any
+`PROD_DB_*` value is missing or still a placeholder.
+
+
 ## License
 
 MIT — see [LICENSE](LICENSE). Original work Copyright (c) 2021 RealWorld.

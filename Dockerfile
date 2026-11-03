@@ -24,4 +24,5 @@ COPY --from=build /app/frontend/dist ./frontend/dist
 COPY backend/package.json ./backend/
 COPY package.json ./
 EXPOSE 3001
-CMD ["node", "backend/dist/index.js"]
+# Run pending migrations, then start the app. A failed migration aborts startup.
+CMD ["sh", "-c", "yarn sqlz db:migrate && exec node backend/dist/index.js"]
