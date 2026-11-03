@@ -106,4 +106,18 @@ describe("routes/articles/comments.ts", () => {
     const persisted = await db.Comment.findByPk(comment.id);
     expect(persisted).toBeNull();
   });
+  test("POST /:slug/comments 422s when the comment body is missing", async () => {
+    const db = await buildTestDb();
+    const author = await createUser(db);
+    const article = await createArticle(db, author);
+    const app = await loadApp(db);
+    const token = await tokenFor(author);
+
+    const res = await request(app)
+      .post(`/articles/${article.slug}/comments`)
+      .set("Authorization", `Token ${token}`)
+      .send({ comment: {} });
+
+    expect(res.status).toBe(422);
+  });
 });
