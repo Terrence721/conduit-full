@@ -257,9 +257,11 @@ describe("ArticlesButtons", () => {
     render(
       <Wrapper>
         <ArticlesButtons
-            article={article}
-            setArticle={setArticle as unknown as Dispatch<SetStateAction<Article>>}
-          />
+          article={article}
+          setArticle={
+            setArticle as unknown as Dispatch<SetStateAction<Article>>
+          }
+        />
       </Wrapper>,
     );
 
@@ -300,9 +302,11 @@ describe("ArticlesButtons", () => {
     render(
       <Wrapper>
         <ArticlesButtons
-            article={article}
-            setArticle={setArticle as unknown as Dispatch<SetStateAction<Article>>}
-          />
+          article={article}
+          setArticle={
+            setArticle as unknown as Dispatch<SetStateAction<Article>>
+          }
+        />
       </Wrapper>,
     );
 
@@ -348,9 +352,11 @@ describe("ArticlesButtons", () => {
     render(
       <Wrapper>
         <ArticlesButtons
-            article={article}
-            setArticle={setArticle as unknown as Dispatch<SetStateAction<Article>>}
-          />
+          article={article}
+          setArticle={
+            setArticle as unknown as Dispatch<SetStateAction<Article>>
+          }
+        />
       </Wrapper>,
     );
 
@@ -395,9 +401,11 @@ describe("ArticlesButtons", () => {
     render(
       <Wrapper>
         <ArticlesButtons
-            article={article}
-            setArticle={setArticle as unknown as Dispatch<SetStateAction<Article>>}
-          />
+          article={article}
+          setArticle={
+            setArticle as unknown as Dispatch<SetStateAction<Article>>
+          }
+        />
       </Wrapper>,
     );
 
