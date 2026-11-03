@@ -1,6 +1,7 @@
 import "dotenv/config";
 import express from "express";
 import path from "path";
+import { readFileSync } from "fs";
 import type { Server } from "http";
 import cors from "cors";
 import helmet from "helmet";
@@ -48,6 +49,8 @@ const validateProductionEnv = () => {
   }
 };
 
+const openApiSpec = readFileSync(path.join(__dirname, "openapi.yaml"), "utf8");
+
 const allowedOrigins =
   env === "production"
     ? (process.env.CORS_ORIGIN ?? "").split(",").filter(Boolean)
@@ -92,7 +95,7 @@ app.get(
     standardHeaders: true,
     legacyHeaders: false,
   }),
-  (_req, res) => res.sendFile(path.join(__dirname, "openapi.yaml")),
+  (_req, res) => res.type("text/yaml").send(openApiSpec),
 );
 
 app.get("/api-docs", (_req, res) => {
