@@ -26,9 +26,11 @@ Production mode refuses to boot when `JWT_KEY`, `CORS_ORIGIN`, or any
 2. The `publish` job builds and pushes `ghcr.io/<repo>:<sha>` and `:latest`.
 3. Roll the application host to the new image tag.
 4. On container start, the entrypoint runs:
+
    ```
    yarn sqlz db:migrate && exec node backend/dist/index.js
    ```
+
    A failed migration aborts startup. Database connections use TLS when
    `PROD_DB_SSL=true`.
 
