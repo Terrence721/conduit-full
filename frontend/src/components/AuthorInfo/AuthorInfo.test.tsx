@@ -154,4 +154,41 @@ describe("AuthorInfo", () => {
       ).toBeInTheDocument();
     });
   });
+  test("ignores an empty profile response", async () => {
+    mockedGetProfile.mockResolvedValueOnce(undefined as never);
+
+    render(
+      <MemoryRouter initialEntries={["/profile/jake"]}>
+        <AuthProvider>
+          <Routes>
+            <Route path="/profile/:username" element={<AuthorInfo />} />
+          </Routes>
+        </AuthProvider>
+      </MemoryRouter>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole("heading", { name: "jake" })).toBeInTheDocument();
+    });
+  });
+
+  test("navigates away when profile loading fails", async () => {
+    mockedGetProfile.mockRejectedValueOnce(new Error("boom"));
+    vi.spyOn(console, "error").mockImplementation(() => undefined);
+
+    render(
+      <MemoryRouter initialEntries={["/profile/jake"]}>
+        <AuthProvider>
+          <Routes>
+            <Route path="/profile/:username" element={<AuthorInfo />} />
+            <Route path="/not-found" element={<div>not found</div>} />
+          </Routes>
+        </AuthProvider>
+      </MemoryRouter>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("not found")).toBeInTheDocument();
+    });
+  });
 });
