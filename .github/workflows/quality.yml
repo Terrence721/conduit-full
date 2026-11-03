@@ -174,3 +174,14 @@ jobs:
       - name: Run Yarn audit (critical)
         run: yarn audit --level critical
         continue-on-error: true
+
+  docker:
+    name: Docker build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Build container image
+        run: docker build -t conduit-full .
+
